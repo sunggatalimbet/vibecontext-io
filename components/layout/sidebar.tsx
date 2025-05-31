@@ -1,42 +1,47 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import AnimatedBulbLogo from "@/components/ui/animated-bulb-logo";
+import { useState } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import {
   FileTextIcon,
   LogOutIcon,
   MenuIcon,
   FolderIcon,
   CodeIcon,
-  FileIcon
-} from "lucide-react";
+  FileIcon,
+} from 'lucide-react'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Skeleton } from "@/components/ui/skeleton";
+} from '@/components/ui/accordion'
+import AnimatedBulbLogo from '@/components/ui/animated-bulb-logo'
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@/components/ui/separator'
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from '@/components/ui/sheet'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
 
 interface DocumentItem {
-  id: string;
-  name: string;
-  status: 'generating' | 'completed';
-  href: string;
+  id: string
+  name: string
+  status: 'generating' | 'completed'
+  href: string
 }
 
 interface ProjectItem {
-  id: string;
-  name: string;
-  href: string;
-  icon: React.ReactNode;
+  id: string
+  name: string
+  href: string
+  icon: React.ReactNode
 }
 
 const projects: ProjectItem[] = [
@@ -44,99 +49,97 @@ const projects: ProjectItem[] = [
     id: '1',
     name: 'AI Studio',
     href: '/projects/ai-studio',
-    icon: <CodeIcon className="h-4 w-4" />
+    icon: <CodeIcon className="h-4 w-4" />,
   },
   {
     id: '2',
     name: 'Web3 Shop',
     href: '/projects/web3-shop',
-    icon: <CodeIcon className="h-4 w-4" />
+    icon: <CodeIcon className="h-4 w-4" />,
   },
   {
     id: '3',
     name: 'Personal Blog',
     href: '/projects/personal-blog',
-    icon: <CodeIcon className="h-4 w-4" />
-  }
-];
+    icon: <CodeIcon className="h-4 w-4" />,
+  },
+]
 
 const documents: DocumentItem[] = [
   {
     id: '1',
     name: 'Product Requirements',
     status: 'completed',
-    href: '/docs/product-requirements'
+    href: '/docs/product-requirements',
   },
   {
     id: '2',
     name: 'Technical Requirements',
     status: 'completed',
-    href: '/docs/technical-requirements'
+    href: '/docs/technical-requirements',
   },
   {
     id: '3',
     name: 'Technology Stack',
     status: 'generating',
-    href: '/docs/technology-stack'
+    href: '/docs/technology-stack',
   },
   {
     id: '4',
     name: 'Architecture Overview',
     status: 'generating',
-    href: '/docs/architecture'
+    href: '/docs/architecture',
   },
   {
     id: '5',
     name: 'Development Timeline',
     status: 'completed',
-    href: '/docs/timeline'
-  }
-];
+    href: '/docs/timeline',
+  },
+]
 
 const DocumentItem = ({ document }: { document: DocumentItem }) => {
-  const pathname = usePathname();
-  const isActive = pathname === document.href;
+  const pathname = usePathname()
+  const isActive = pathname === document.href
 
   return (
     <Button
       asChild
       variant="ghost"
       className={cn(
-        "w-full justify-start gap-2 px-2 h-9",
-        isActive 
-          ? "bg-sidebar-accent text-sidebar-primary font-medium" 
-          : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
+        'w-full justify-start gap-2 px-2 h-9',
+        isActive
+          ? 'bg-sidebar-accent text-sidebar-primary font-medium'
+          : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary'
       )}
     >
       <Link href={document.href} className="flex items-center">
-        <span 
+        <span
           className={cn(
-            "h-2 w-2 rounded-full mr-2",
-            document.status === 'generating' 
-              ? "bg-yellow-500" 
-              : "bg-green-500"
-          )} 
+            'h-2 w-2 rounded-full mr-2',
+            document.status === 'generating' ? 'bg-yellow-500' : 'bg-green-500'
+          )}
           aria-hidden="true"
         />
         <span className="text-sm">{document.name}</span>
       </Link>
     </Button>
-  );
-};
+  )
+}
 
 const ProjectItem = ({ project }: { project: ProjectItem }) => {
-  const pathname = usePathname();
-  const isActive = pathname === project.href;
+  const pathname = usePathname()
+  const isActive = pathname === project.href
 
   return (
     <Button
       asChild
       variant="ghost"
       className={cn(
-        "w-full justify-start gap-2 px-2 h-9",
-        isActive 
-          ? "bg-sidebar-accent text-sidebar-primary font-medium" 
-          : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
+        'w-full justify-start gap-2 px-2 h-9',
+        isActive
+          ? 'bg-sidebar-accent text-sidebar-primary font-medium'
+          : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary'
       )}
     >
       <Link href={project.href} className="flex items-center w-full">
@@ -144,8 +147,8 @@ const ProjectItem = ({ project }: { project: ProjectItem }) => {
         <span className="text-sm ml-2">{project.name}</span>
       </Link>
     </Button>
-  );
-};
+  )
+}
 
 const DocumentSkeleton = () => (
   <div className="px-2 py-1">
@@ -154,16 +157,16 @@ const DocumentSkeleton = () => (
       <Skeleton className="h-4 w-[160px]" />
     </div>
   </div>
-);
+)
 
 const SidebarContent = ({ className }: { className?: string }) => {
-  const [isLoading] = useState(false);
+  const [isLoading] = useState(false)
 
   return (
-    <div className={cn("flex h-full w-full flex-col", className)}>
+    <div className={cn('flex h-full w-full flex-col', className)}>
       <div className="flex h-[60px] items-center px-6">
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="flex items-center gap-2 font-semibold text-sidebar-primary transition-opacity hover:opacity-80"
         >
           <div className="w-6 h-6">
@@ -172,9 +175,13 @@ const SidebarContent = ({ className }: { className?: string }) => {
           <span>vibecontext.io</span>
         </Link>
       </div>
-      
+
       <ScrollArea className="flex-1 px-3">
-        <Accordion type="multiple" defaultValue={["projects", "docs"]} className="space-y-1">
+        <Accordion
+          type="multiple"
+          defaultValue={['projects', 'docs']}
+          className="space-y-1"
+        >
           <AccordionItem value="projects" className="border-none">
             <AccordionTrigger className="py-2 hover:no-underline">
               <div className="flex items-center gap-2 text-sm font-medium">
@@ -184,7 +191,7 @@ const SidebarContent = ({ className }: { className?: string }) => {
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col gap-1">
-                {projects.map((project) => (
+                {projects.map(project => (
                   <ProjectItem key={project.id} project={project} />
                 ))}
               </div>
@@ -207,7 +214,7 @@ const SidebarContent = ({ className }: { className?: string }) => {
                     <DocumentSkeleton />
                   </>
                 ) : (
-                  documents.map((doc) => (
+                  documents.map(doc => (
                     <DocumentItem key={doc.id} document={doc} />
                   ))
                 )}
@@ -216,10 +223,10 @@ const SidebarContent = ({ className }: { className?: string }) => {
           </AccordionItem>
         </Accordion>
       </ScrollArea>
-      
+
       <div className="border-t border-border p-3">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           className="w-full justify-start gap-2 px-2 text-muted-foreground hover:text-destructive"
         >
           <LogOutIcon className="h-4 w-4" />
@@ -227,8 +234,8 @@ const SidebarContent = ({ className }: { className?: string }) => {
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export function Sidebar() {
   return (
@@ -250,5 +257,5 @@ export function Sidebar() {
         </SheetContent>
       </Sheet>
     </>
-  );
+  )
 }

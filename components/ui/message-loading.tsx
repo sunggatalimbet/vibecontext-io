@@ -40,7 +40,7 @@ function MessageLoading() {
         />
       </circle>
     </svg>
-  );
+  )
 }
 
-export { MessageLoading };
+export { MessageLoading }
