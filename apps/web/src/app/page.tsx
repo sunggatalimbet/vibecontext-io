@@ -1,16 +1,17 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
-import { Paperclip, Mic, SendIcon } from 'lucide-react'
-import AnimatedBulbLogo from '@/components/ui/animated-bulb-logo'
-import { Button } from '@/components/ui/button'
+import { ArrowUp, SendHorizonalIcon, SendIcon } from 'lucide-react'
 import {
   ChatBubble,
   ChatBubbleAvatar,
   ChatBubbleMessage,
-} from '@/components/ui/chat-bubble'
-import { ChatInput } from '@/components/ui/chat-input'
-import { ChatMessageList } from '@/components/ui/chat-message-list'
+} from '@/components/chat/chat-bubble'
+import { ChatInput } from '@/components/chat/chat-input'
+import { ChatMessageList } from '@/components/chat/chat-message-list'
+import { Button } from '@/components/ui/button'
+import AnimatedBulbLogo from '../components/shared/animated-bulb-logo'
+import { ScrollArea, ScrollBar } from '../components/ui/scroll-area'
 
 export default function Home() {
   const [messages, setMessages] = useState<
@@ -49,9 +50,10 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="flex flex-col justify-between h-full w-full max-w-none mx-auto">
+      {/* Welcome Section - Hidden when messages exist */}
       <div
-        className={`text-center space-y-4 transition-all duration-500 ease-in-out ${
+        className={`flex-shrink-0 text-center transition-all duration-500 ease-in-out ${
           messages.length > 0
             ? 'opacity-0 -translate-y-4 h-0 overflow-hidden'
             : 'opacity-100 translate-y-0'
@@ -60,76 +62,70 @@ export default function Home() {
         <div className="flex justify-center w-96 h-96 mx-auto">
           <AnimatedBulbLogo size={384} />
         </div>
-        <h1 className="text-4xl font-bold tracking-tight">
+        <h1 className="text-4xl font-bold font-satoshi italic tracking-tight mb-4">
           Welcome to vibecontext.io
         </h1>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-lg text-muted-foreground font-satoshi italic">
           type idea → get your docs → start shipping
         </p>
       </div>
 
-      <div className="h-[600px] flex flex-col bg-background/50 backdrop-blur-xs">
-        <div className="flex-1 overflow-hidden">
-          <ChatMessageList>
-            {messages.map(message => (
-              <ChatBubble
-                key={message.id}
+      {/* Chat Messages Area - Scrollable */}
+      <ScrollArea className="flex-1 overflow-hidden max-h-[72vh]">
+        <ChatMessageList smooth>
+          {messages.map(message => (
+            <ChatBubble
+              key={message.id}
+              variant={message.sender === 'user' ? 'sent' : 'received'}
+            >
+              {message.sender === 'ai' && (
+                <ChatBubbleAvatar className="shrink-0" fallback="AI" />
+              )}
+              <ChatBubbleMessage
                 variant={message.sender === 'user' ? 'sent' : 'received'}
-                className="max-w-[70%]"
               >
-                <ChatBubbleAvatar
-                  className="h-8 w-8 shrink-0"
-                  src={
-                    message.sender === 'user'
-                      ? 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg'
-                      : undefined
-                  }
-                  fallback={message.sender === 'user' ? 'US' : 'AI'}
-                />
-                <ChatBubbleMessage
-                  variant={message.sender === 'user' ? 'sent' : 'received'}
-                >
-                  {message.content}
-                </ChatBubbleMessage>
-              </ChatBubble>
-            ))}
+                {message.content}
+              </ChatBubbleMessage>
+            </ChatBubble>
+          ))}
 
-            {isLoading && (
-              <ChatBubble variant="received" className="max-w-[70%]">
-                <ChatBubbleAvatar className="h-8 w-8 shrink-0" fallback="AI" />
-                <ChatBubbleMessage isLoading />
-              </ChatBubble>
-            )}
-          </ChatMessageList>
-        </div>
+          {isLoading && (
+            <ChatBubble variant="received">
+              <ChatBubbleAvatar className="shrink-0" fallback="AI" />
+              <ChatBubbleMessage isLoading />
+            </ChatBubble>
+          )}
+        </ChatMessageList>
+        <ScrollBar orientation="vertical" />
+      </ScrollArea>
 
-        <div className="p-4">
-          <form
-            onSubmit={handleSubmit}
-            className="relative rounded-xl bg-background/50 backdrop-blur-xs focus-within:ring-1 focus-within:ring-ring p-1"
-          >
+      {/* Fixed Input Area */}
+      <div className="flex-shrink-0 border-t bg-background/80 backdrop-blur-sm">
+        <div className="max-w-4xl mx-auto p-4">
+          <div className="flex items-center pl-2 pr-4 border rounded-lg shadow-lg bg-background">
             <ChatInput
               value={input}
               onChange={e => setInput(e.target.value)}
-              placeholder="write your idea, and we will figure it out"
-              className="min-h-12 resize-none rounded-lg bg-transparent border-0 p-3 shadow-none focus-visible:ring-0"
+              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  handleSubmit(e as unknown as FormEvent)
+                }
+              }}
+              placeholder="Type your message here..."
+              className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 resize-none min-h-[auto]"
             />
-            <div className="flex items-center p-3 pt-0 justify-between">
-              <div className="flex">
-                <Button variant="ghost" size="icon" type="button">
-                  <Paperclip className="size-4" />
-                </Button>
-
-                <Button variant="ghost" size="icon" type="button">
-                  <Mic className="size-4" />
-                </Button>
-              </div>
-              <Button type="submit" size="sm" className="ml-auto gap-1.5">
-                Send
-                <SendIcon className="size-3.5" />
-              </Button>
-            </div>
-          </form>
+            <Button
+              type="submit"
+              size="icon"
+              onClick={handleSubmit}
+              disabled={!input.trim() || isLoading}
+              className="rounded-md flex-shrink-0 w-10 h-10"
+            >
+              <ArrowUp className="w-5 h-5" />
+              <span className="sr-only">Send message</span>
+            </Button>
+          </div>
         </div>
       </div>
     </div>
