@@ -242,7 +242,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-satoshi);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
 
@@ -259,6 +259,14 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+
+  /* Add custom font variables */
+  --font-satoshi: var(--font-satoshi);
+  --font-ibm-plex-sans: var(--font-ibm-plex-sans);
+  --font-heading: var(--font-satoshi);
+  --font-body: var(--font-ibm-plex-sans);
+  --font-ui: var(--font-ibm-plex-sans);
+  --font-display: var(--font-satoshi);
 }
 
 @layer base {
