@@ -4,7 +4,7 @@ This is a multi-package workspace powered by [Turborepo](https://turborepo.com/)
 
 ## Project Structure
 
-```
+```text
 ├── apps/
 │   └── web/              # Next.js web application
 │       ├── src/          # Development source code
