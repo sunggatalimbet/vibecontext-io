@@ -1,167 +1,92 @@
-# Vibecontext.io
+# VibeContext Monorepo
 
-This Next.js 15.3.3 project is configured with comprehensive ESLint and Prettier setup following best practices.
+This is a multi-package workspace powered by [Turborepo](https://turborepo.com/).
 
-## 🚀 Tech Stack
+## Project Structure
 
-- **Next.js 15.3.3** - Latest stable version with React 19
-- **React 19** - Latest stable version
-- **TypeScript 5.2.2** - Type safety
-- **Tailwind CSS 4.1.8** - Styling
-- **Radix UI** - Component primitives
-- **ESLint 9** - Code linting
-- **Prettier 3.5.3** - Code formatting
+```
+├── apps/
+│   └── web/          # Next.js web application
+├── packages/         # Shared packages (future)
+├── turbo.json        # Turborepo configuration
+├── pnpm-workspace.yaml # pnpm workspace configuration
+└── package.json      # Root package.json
+```
 
-## 📋 Development Tools
+## Getting Started
 
-### ESLint Configuration
+### Prerequisites
 
-The project uses a comprehensive ESLint setup located in `.eslintrc.json`:
+- Node.js 18+ 
+- pnpm 10+
 
-- **next/core-web-vitals** - Next.js recommended rules
-- **prettier** - Integration with Prettier
-- Custom rules for code quality and consistency
-
-### Prettier Configuration
-
-Prettier is configured in `.prettierrc` with:
-
-- **Semi**: `false` - No semicolons
-- **Single Quotes**: `true` - Prefer single quotes
-- **Tab Width**: `2` - 2-space indentation
-- **Trailing Comma**: `es5` - ES5-compatible trailing commas
-- **Print Width**: `80` - 80 character line length
-- **Arrow Parens**: `avoid` - Avoid parentheses when possible
-
-### Prettier Plugins
-
-1. **prettier-plugin-tailwindcss** - Automatic Tailwind class sorting
-2. **@ianvs/prettier-plugin-sort-imports** - Automatic import organization
-
-#### Import Order
-
-Imports are automatically sorted in this order:
-
-1. React imports
-2. Next.js imports
-3. Third-party modules
-4. Internal imports with `@/` alias
-5. Relative imports
-
-## 📝 Available Scripts
+### Installation
 
 ```bash
-# Development
-pnpm dev              # Start development server
+# Install dependencies
+pnpm install
 
-# Building
-pnpm build            # Build for production
-pnpm start            # Start production server
-
-# Code Quality
-pnpm lint             # Run ESLint
-pnpm lint:fix         # Run ESLint with auto-fix
-pnpm format           # Format code with Prettier
-pnpm format:check     # Check formatting without changes
-pnpm type-check       # Run TypeScript type checking
-pnpm check-all        # Run all checks (types, lint, format)
+# Install turbo globally (optional but recommended)
+pnpm add turbo --global
 ```
 
-## 🛠️ Editor Setup
+### Development
 
-### VS Code
+```bash
+# Start development server for all apps
+pnpm dev
 
-The project includes VS Code settings in `.vscode/settings.json`:
-
-- **Format on Save** - Automatic formatting with Prettier
-- **ESLint Auto-fix** - Fix linting issues on save
-- **Import Organization** - Disabled in favor of Prettier plugin
-- **Rulers at 80 chars** - Visual line length guide
-
-### Recommended Extensions
-
-- ESLint
-- Prettier - Code formatter
-- Tailwind CSS IntelliSense
-
-## 🚦 Configuration Details
-
-### Key Features
-
-- ✅ **Next.js 15** with React 19 support
-- ✅ **ESLint 9** compatibility
-- ✅ **Automatic code formatting** on save
-- ✅ **Import sorting** with logical grouping
-- ✅ **Tailwind class sorting**
-- ✅ **TypeScript integration**
-- ✅ **Consistent code style** across the project
-
-### File Structure
-
-```
-.
-├── .eslintrc.json          # ESLint configuration
-├── .prettierrc             # Prettier configuration
-├── .prettierignore         # Files to ignore in formatting
-├── .vscode/
-│   └── settings.json       # VS Code workspace settings
-├── components/             # React components
-├── app/                    # Next.js app directory
-├── lib/                    # Utility functions
-└── public/                 # Static assets
+# Start development server for specific app
+turbo dev --filter=@repo/web
 ```
 
-## 🔧 Customization
+### Building
 
-### Adding New ESLint Rules
+```bash
+# Build all apps
+pnpm build
 
-Edit `.eslintrc.json` to add custom rules:
-
-```json
-{
-  "rules": {
-    "your-custom-rule": "error"
-  }
-}
+# Build specific app
+turbo build --filter=@repo/web
 ```
 
-### Modifying Prettier Settings
+### Other Commands
 
-Edit `.prettierrc` to change formatting preferences:
+```bash
+# Type checking
+pnpm check-types
 
-```json
-{
-  "printWidth": 100,
-  "tabWidth": 4
-}
+# Linting
+pnpm lint
+
+# Formatting
+pnpm format
+pnpm format:check
 ```
 
-### Ignoring Files
+## Turborepo Features
 
-Add patterns to `.prettierignore` to exclude files from formatting:
+- **Caching**: Turborepo caches task outputs to speed up subsequent runs
+- **Parallel Execution**: Tasks run in parallel when possible
+- **Dependency Graph**: Tasks run in the correct order based on dependencies
+- **Incremental Builds**: Only rebuild what has changed
 
-```
-build/
-*.generated.ts
-```
+## Adding New Packages
 
-## 🚀 Getting Started
+To add a new package to the workspace:
 
-1. **Install dependencies**:
+1. Create a new directory in `apps/` or `packages/`
+2. Add a `package.json` with a name like `@repo/package-name`
+3. Update the workspace configuration if needed
+4. Add any new tasks to `turbo.json`
 
-   ```bash
-   pnpm install
-   ```
+## Remote Caching
 
-2. **Start development server**:
+To enable remote caching for your team:
 
-   ```bash
-   pnpm dev
-   ```
+1. Sign up for [Vercel](https://vercel.com)
+2. Install the Vercel CLI: `pnpm add -g vercel`
+3. Link your repository: `vercel link`
+4. Enable remote caching: `turbo login` and `turbo link`
 
-3. **Run code quality checks**:
-   ```bash
-   pnpm check-all
-   ```
-
-The setup ensures consistent, high-quality code across your entire project!
+For more information, see the [Turborepo documentation](https://turborepo.com/docs).
