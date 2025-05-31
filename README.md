@@ -1,167 +1,150 @@
-# Vibecontext.io
+# VibeContext Monorepo
 
-This Next.js 15.3.3 project is configured with comprehensive ESLint and Prettier setup following best practices.
+This is a multi-package workspace powered by [Turborepo](https://turborepo.com/).
 
-## 🚀 Tech Stack
+## Project Structure
 
-- **Next.js 15.3.3** - Latest stable version with React 19
-- **React 19** - Latest stable version
-- **TypeScript 5.2.2** - Type safety
-- **Tailwind CSS 4.1.8** - Styling
-- **Radix UI** - Component primitives
-- **ESLint 9** - Code linting
-- **Prettier 3.5.3** - Code formatting
+```text
+├── apps/
+│   └── web/              # Next.js web application
+│       ├── src/          # Development source code
+│       │   ├── app/      # Next.js App Router pages
+│       │   ├── components/ # React components
+│       │   ├── hooks/    # Custom React hooks
+│       │   ├── lib/      # Utility libraries
+│       │   └── out/      # Build output (generated)
+│       ├── .eslintrc.json     # ESLint configuration
+│       ├── components.json    # shadcn/ui configuration
+│       ├── next-env.d.ts      # Next.js type definitions
+│       ├── next.config.js     # Next.js configuration
+│       ├── package.json       # Package dependencies
+│       ├── postcss.config.js  # PostCSS configuration
+│       └── tsconfig.json      # TypeScript configuration
+├── packages/         # Shared packages (future)
+├── .prettierrc       # Prettier configuration (root level)
+├── .prettierignore   # Prettier ignore patterns (root level)
+├── .turborc          # Turborepo cache configuration
+├── turbo.json        # Turborepo task configuration
+├── pnpm-workspace.yaml # pnpm workspace configuration
+└── package.json      # Root package.json
+```
 
-## 📋 Development Tools
+## Getting Started
 
-### ESLint Configuration
+### Prerequisites
 
-The project uses a comprehensive ESLint setup located in `.eslintrc.json`:
+- Node.js 18+
+- pnpm 10+
 
-- **next/core-web-vitals** - Next.js recommended rules
-- **prettier** - Integration with Prettier
-- Custom rules for code quality and consistency
-
-### Prettier Configuration
-
-Prettier is configured in `.prettierrc` with:
-
-- **Semi**: `false` - No semicolons
-- **Single Quotes**: `true` - Prefer single quotes
-- **Tab Width**: `2` - 2-space indentation
-- **Trailing Comma**: `es5` - ES5-compatible trailing commas
-- **Print Width**: `80` - 80 character line length
-- **Arrow Parens**: `avoid` - Avoid parentheses when possible
-
-### Prettier Plugins
-
-1. **prettier-plugin-tailwindcss** - Automatic Tailwind class sorting
-2. **@ianvs/prettier-plugin-sort-imports** - Automatic import organization
-
-#### Import Order
-
-Imports are automatically sorted in this order:
-
-1. React imports
-2. Next.js imports
-3. Third-party modules
-4. Internal imports with `@/` alias
-5. Relative imports
-
-## 📝 Available Scripts
+### Installation
 
 ```bash
-# Development
-pnpm dev              # Start development server
+# Install dependencies
+pnpm install
 
-# Building
-pnpm build            # Build for production
-pnpm start            # Start production server
-
-# Code Quality
-pnpm lint             # Run ESLint
-pnpm lint:fix         # Run ESLint with auto-fix
-pnpm format           # Format code with Prettier
-pnpm format:check     # Check formatting without changes
-pnpm type-check       # Run TypeScript type checking
-pnpm check-all        # Run all checks (types, lint, format)
+# Install turbo globally (optional but recommended)
+pnpm add turbo --global
 ```
 
-## 🛠️ Editor Setup
+### Development
 
-### VS Code
+```bash
+# Start development server for all apps
+pnpm dev
 
-The project includes VS Code settings in `.vscode/settings.json`:
-
-- **Format on Save** - Automatic formatting with Prettier
-- **ESLint Auto-fix** - Fix linting issues on save
-- **Import Organization** - Disabled in favor of Prettier plugin
-- **Rulers at 80 chars** - Visual line length guide
-
-### Recommended Extensions
-
-- ESLint
-- Prettier - Code formatter
-- Tailwind CSS IntelliSense
-
-## 🚦 Configuration Details
-
-### Key Features
-
-- ✅ **Next.js 15** with React 19 support
-- ✅ **ESLint 9** compatibility
-- ✅ **Automatic code formatting** on save
-- ✅ **Import sorting** with logical grouping
-- ✅ **Tailwind class sorting**
-- ✅ **TypeScript integration**
-- ✅ **Consistent code style** across the project
-
-### File Structure
-
-```
-.
-├── .eslintrc.json          # ESLint configuration
-├── .prettierrc             # Prettier configuration
-├── .prettierignore         # Files to ignore in formatting
-├── .vscode/
-│   └── settings.json       # VS Code workspace settings
-├── components/             # React components
-├── app/                    # Next.js app directory
-├── lib/                    # Utility functions
-└── public/                 # Static assets
+# Start development server for specific app
+turbo dev --filter=@repo/web
 ```
 
-## 🔧 Customization
+### Building
 
-### Adding New ESLint Rules
+```bash
+# Build all apps
+pnpm build
 
-Edit `.eslintrc.json` to add custom rules:
-
-```json
-{
-  "rules": {
-    "your-custom-rule": "error"
-  }
-}
+# Build specific app
+turbo build --filter=@repo/web
 ```
 
-### Modifying Prettier Settings
+### Code Quality
 
-Edit `.prettierrc` to change formatting preferences:
+```bash
+# Lint all packages
+pnpm lint
 
-```json
-{
-  "printWidth": 100,
-  "tabWidth": 4
-}
+# Format all packages (using root-level prettier config)
+pnpm format
+
+# Check formatting
+pnpm format:check
+
+# Type checking
+pnpm check-types
 ```
 
-### Ignoring Files
+### Caching
 
-Add patterns to `.prettierignore` to exclude files from formatting:
+Turborepo automatically caches task outputs for faster subsequent builds. The cache is stored in `.turbo/` at the root level.
 
+```bash
+# Clear cache if needed
+rm -rf .turbo
 ```
-build/
-*.generated.ts
+
+## Architecture
+
+### Monorepo Benefits
+
+- **Shared Dependencies**: All packages share the same `node_modules` at the root
+- **Task Caching**: Turborepo caches build outputs for faster rebuilds
+- **Type Safety**: Shared TypeScript configurations and type checking
+- **Code Quality**: Shared linting and formatting rules
+- **Easy Development**: Run all apps with a single command
+
+### File Organization
+
+- **Development Code**: All source code is organized under `src/` directories
+- **Configuration**: Configuration files are kept at the appropriate package level
+- **Global Config**: Prettier and other global configs are at the root level
+- **Build Outputs**: Generated files are isolated within `src/out/` and `.next/`
+
+For more information, see the [Turborepo documentation](https://turborepo.com/docs).
+
+## Troubleshooting Caching
+
+If you're experiencing cache misses when you expect cache hits, here are common solutions:
+
+### 1. Uncommitted Changes
+
+**Problem**: Files tracked by git but not committed cause cache misses.
+**Solution**: Commit your changes or add files to `.gitignore`.
+
+```bash
+git status  # Check for uncommitted changes
+git add . && git commit -m "your message"
 ```
 
-## 🚀 Getting Started
+### 2. Build Artifacts in Git
 
-1. **Install dependencies**:
+**Problem**: Build outputs and `node_modules` tracked by git affect cache hashing.
+**Solution**: Remove them from git tracking and update `.gitignore`.
 
-   ```bash
-   pnpm install
-   ```
+```bash
+git rm -r --cached apps/*/node_modules apps/*/.next apps/*/src/out
+git add .gitignore && git commit -m "fix: remove build artifacts from git tracking"
+```
 
-2. **Start development server**:
+### 3. Non-Deterministic Tasks
 
-   ```bash
-   pnpm dev
-   ```
+**Problem**: Tasks that produce different outputs each time (like Next.js builds) cause cache misses.
+**Solution**: This is expected behavior for build tasks. Focus on deterministic tasks like lint, type-check, and test.
 
-3. **Run code quality checks**:
-   ```bash
-   pnpm check-all
-   ```
+### 4. Debug Cache Issues
 
-The setup ensures consistent, high-quality code across your entire project!
+**Problem**: Need to understand why cache is missing.
+**Solution**: Use dry run mode to analyze what would be cached.
+
+```bash
+turbo build --dry=json  # See what would be executed and cached
+turbo build --summarize # Get detailed cache hit/miss information
+```
