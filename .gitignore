@@ -38,5 +38,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# turbo
+# turbo cache (both root and local logs)
 .turbo
+**/.turbo

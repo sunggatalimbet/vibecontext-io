@@ -125,7 +125,7 @@ export default function Home() {
                 </Button>
               </div>
               <Button type="submit" size="sm" className="ml-auto gap-1.5">
-                Send Message
+                Send
                 <SendIcon className="size-3.5" />
               </Button>
             </div>

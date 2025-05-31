@@ -6,9 +6,25 @@ This is a multi-package workspace powered by [Turborepo](https://turborepo.com/)
 
 ```
 ├── apps/
-│   └── web/          # Next.js web application
+│   └── web/              # Next.js web application
+│       ├── src/          # Development source code
+│       │   ├── app/      # Next.js App Router pages
+│       │   ├── components/ # React components
+│       │   ├── hooks/    # Custom React hooks
+│       │   ├── lib/      # Utility libraries
+│       │   └── out/      # Build output (generated)
+│       ├── .eslintrc.json     # ESLint configuration
+│       ├── components.json    # shadcn/ui configuration
+│       ├── next-env.d.ts      # Next.js type definitions
+│       ├── next.config.js     # Next.js configuration
+│       ├── package.json       # Package dependencies
+│       ├── postcss.config.js  # PostCSS configuration
+│       └── tsconfig.json      # TypeScript configuration
 ├── packages/         # Shared packages (future)
-├── turbo.json        # Turborepo configuration
+├── .prettierrc       # Prettier configuration (root level)
+├── .prettierignore   # Prettier ignore patterns (root level)
+├── .turborc          # Turborepo cache configuration
+├── turbo.json        # Turborepo task configuration
 ├── pnpm-workspace.yaml # pnpm workspace configuration
 └── package.json      # Root package.json
 ```
@@ -17,7 +33,7 @@ This is a multi-package workspace powered by [Turborepo](https://turborepo.com/)
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - pnpm 10+
 
 ### Installation
@@ -50,43 +66,85 @@ pnpm build
 turbo build --filter=@repo/web
 ```
 
-### Other Commands
+### Code Quality
 
 ```bash
-# Type checking
-pnpm check-types
-
-# Linting
+# Lint all packages
 pnpm lint
 
-# Formatting
+# Format all packages (using root-level prettier config)
 pnpm format
+
+# Check formatting
 pnpm format:check
+
+# Type checking
+pnpm check-types
 ```
 
-## Turborepo Features
+### Caching
 
-- **Caching**: Turborepo caches task outputs to speed up subsequent runs
-- **Parallel Execution**: Tasks run in parallel when possible
-- **Dependency Graph**: Tasks run in the correct order based on dependencies
-- **Incremental Builds**: Only rebuild what has changed
+Turborepo automatically caches task outputs for faster subsequent builds. The cache is stored in `.turbo/` at the root level.
 
-## Adding New Packages
+```bash
+# Clear cache if needed
+rm -rf .turbo
+```
 
-To add a new package to the workspace:
+## Architecture
 
-1. Create a new directory in `apps/` or `packages/`
-2. Add a `package.json` with a name like `@repo/package-name`
-3. Update the workspace configuration if needed
-4. Add any new tasks to `turbo.json`
+### Monorepo Benefits
 
-## Remote Caching
+- **Shared Dependencies**: All packages share the same `node_modules` at the root
+- **Task Caching**: Turborepo caches build outputs for faster rebuilds
+- **Type Safety**: Shared TypeScript configurations and type checking
+- **Code Quality**: Shared linting and formatting rules
+- **Easy Development**: Run all apps with a single command
 
-To enable remote caching for your team:
+### File Organization
 
-1. Sign up for [Vercel](https://vercel.com)
-2. Install the Vercel CLI: `pnpm add -g vercel`
-3. Link your repository: `vercel link`
-4. Enable remote caching: `turbo login` and `turbo link`
+- **Development Code**: All source code is organized under `src/` directories
+- **Configuration**: Configuration files are kept at the appropriate package level
+- **Global Config**: Prettier and other global configs are at the root level
+- **Build Outputs**: Generated files are isolated within `src/out/` and `.next/`
 
 For more information, see the [Turborepo documentation](https://turborepo.com/docs).
+
+## Troubleshooting Caching
+
+If you're experiencing cache misses when you expect cache hits, here are common solutions:
+
+### 1. Uncommitted Changes
+
+**Problem**: Files tracked by git but not committed cause cache misses.
+**Solution**: Commit your changes or add files to `.gitignore`.
+
+```bash
+git status  # Check for uncommitted changes
+git add . && git commit -m "your message"
+```
+
+### 2. Build Artifacts in Git
+
+**Problem**: Build outputs and `node_modules` tracked by git affect cache hashing.
+**Solution**: Remove them from git tracking and update `.gitignore`.
+
+```bash
+git rm -r --cached apps/*/node_modules apps/*/.next apps/*/src/out
+git add .gitignore && git commit -m "fix: remove build artifacts from git tracking"
+```
+
+### 3. Non-Deterministic Tasks
+
+**Problem**: Tasks that produce different outputs each time (like Next.js builds) cause cache misses.
+**Solution**: This is expected behavior for build tasks. Focus on deterministic tasks like lint, type-check, and test.
+
+### 4. Debug Cache Issues
+
+**Problem**: Need to understand why cache is missing.
+**Solution**: Use dry run mode to analyze what would be cached.
+
+```bash
+turbo build --dry=json  # See what would be executed and cached
+turbo build --summarize # Get detailed cache hit/miss information
+```
