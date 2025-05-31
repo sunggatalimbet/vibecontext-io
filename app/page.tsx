@@ -59,7 +59,7 @@ export default function Home() {
         <p className="text-lg text-muted-foreground">type idea → get your docs → start shipping</p>
       </div>
 
-      <div className="h-[600px] flex flex-col bg-background/50 backdrop-blur-sm">
+      <div className="h-[600px] flex flex-col bg-background/50 backdrop-blur-xs">
         <div className="flex-1 overflow-hidden">
           <ChatMessageList>
             {messages.map((message) => (
@@ -100,7 +100,7 @@ export default function Home() {
         <div className="p-4">
           <form
             onSubmit={handleSubmit}
-            className="relative rounded-xl bg-background/50 backdrop-blur-sm focus-within:ring-1 focus-within:ring-ring p-1"
+            className="relative rounded-xl bg-background/50 backdrop-blur-xs focus-within:ring-1 focus-within:ring-ring p-1"
           >
             <ChatInput
               value={input}
