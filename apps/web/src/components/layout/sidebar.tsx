@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  FileTextIcon,
   LogOutIcon,
   MenuIcon,
   FolderIcon,
@@ -17,10 +16,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import AnimatedBulbLogo from '@/components/ui/animated-bulb-logo'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
 import {
   Sheet,
   SheetContent,
@@ -29,22 +26,23 @@ import {
 } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
+import AnimatedBulbLogo from '../shared/animated-bulb-logo'
 
-interface DocumentItem {
+interface Document {
   id: string
   name: string
   status: 'generating' | 'completed'
   href: string
 }
 
-interface ProjectItem {
+interface Project {
   id: string
   name: string
   href: string
   icon: React.ReactNode
 }
 
-const projects: ProjectItem[] = [
+const projects: Project[] = [
   {
     id: '1',
     name: 'AI Studio',
@@ -65,7 +63,7 @@ const projects: ProjectItem[] = [
   },
 ]
 
-const documents: DocumentItem[] = [
+const documents: Document[] = [
   {
     id: '1',
     name: 'Product Requirements',
@@ -98,7 +96,7 @@ const documents: DocumentItem[] = [
   },
 ]
 
-const DocumentItem = ({ document }: { document: DocumentItem }) => {
+const DocumentItem = ({ document }: { document: Document }) => {
   const pathname = usePathname()
   const isActive = pathname === document.href
 
@@ -127,7 +125,7 @@ const DocumentItem = ({ document }: { document: DocumentItem }) => {
   )
 }
 
-const ProjectItem = ({ project }: { project: ProjectItem }) => {
+const ProjectItem = ({ project }: { project: Project }) => {
   const pathname = usePathname()
   const isActive = pathname === project.href
 
@@ -172,7 +170,7 @@ const SidebarContent = ({ className }: { className?: string }) => {
           <div className="w-6 h-6">
             <AnimatedBulbLogo size={24} />
           </div>
-          <span>vibecontext.io</span>
+          <span className="font-bold italic font-satoshi">vibecontext.io</span>
         </Link>
       </div>
 
