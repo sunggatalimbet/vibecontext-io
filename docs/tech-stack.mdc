@@ -1,0 +1,150 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+## VibeContext - Technology Stack Recommendation
+
+- **Version:** 0.1.0
+- **Date:** 2025-01-06
+
+---
+
+## 1. Technology Summary
+
+The proposed architecture for vibe-context.io is a full-stack application leveraging Next.js for both the frontend and API route handlers. Supabase will serve as the Backend-as-a-Service (BaaS), providing the PostgreSQL database, user authentication (Supabase Auth), and file storage (Supabase Storage). Drizzle ORM will be used for type-safe database interactions from the Next.js backend.
+
+**Frontend Responsibilities:**
+- User interface rendering (React components with Next.js pages/app router).
+- Client-side state management for UI interactions (React state, hooks, and potentially React Context for simple global UI state).
+- Data fetching and caching using TanStack Query (React Query) to interact with Next.js API routes.
+- Handling OAuth flow redirects and Supabase Auth client-side operations.
+
+**Backend Responsibilities (Next.js API Routes):**
+- Business logic for core features (project creation, PRD/prompt tree generation orchestration).
+- Securely interacting with the Supabase database via Drizzle ORM.
+- Handling communication with external LLM services for AI-driven generation tasks.
+- Managing file uploads/metadata for documents generated (e.g., app idea summaries, PRDs) to Supabase Storage.
+- Supabase Auth server-side validation if needed.
+
+**Database (Supabase - PostgreSQL):**
+- Storing user data (via Supabase Auth).
+- Storing project information, including names and references (filenames) to generated documents (app ideas, PRDs, chat transcripts).
+- Storing the hierarchical structure and content of prompt nodes.
+- Utilizing Row Level Security (RLS) to ensure data isolation between users.
+
+**Suitability for MVP:**
+This stack is well-suited for MVP development due to:
+- **Speed of Development:** Next.js provides a highly productive environment with integrated frontend and backend capabilities. Supabase offers ready-to-use auth, database, and storage, significantly reducing backend setup time. Shadcn/UI accelerates UI development.
+- **Simplicity & Maintainability:** TypeScript across the stack enhances code quality and refactorability. Drizzle ORM provides type-safe database access, reducing runtime errors. The clear separation of concerns between Next.js (app logic) and Supabase (BaaS) simplifies the architecture.
+- **Future Scalability:** Next.js applications can be deployed and scaled effectively on platforms like Vercel. Supabase is designed for scalability. The component-based nature of React and the robust features of Next.js allow for incremental feature additions and performance optimizations as the product grows.
+
+---
+
+## 2. Technology Stack
+
+- **Framework:** **Next.js (Version 15+ recommended)**
+    - *Justification:* Full-stack React framework with a flexible App Router, built-in API routes, server components, and various rendering strategies (SSR, SSG, ISR, CSR). Ideal for MVPs requiring fast iteration, a rich interactive UI, and good performance. Its ecosystem and deployment options (e.g., Vercel) are excellent.
+- **Language:** **TypeScript**
+    - *Justification:* Provides static typing for JavaScript, significantly enhancing code quality, maintainability, and developer velocity by catching errors early. Essential for building robust applications, especially with multiple interacting components on both frontend (React) and backend (Next.js API routes, Drizzle schemas).
+- **Query Management:** **TanStack Query (React Query) (Version 5+)**
+    - *Justification:* Simplifies server state management, including data fetching, caching, synchronization, and background updates. Ideal for applications like VibeContext that will frequently interact with backend APIs (Next.js API routes) and Supabase, ensuring a responsive UI and efficient data handling.
+- **State Management (Client-Side UI):** **React Context & Hooks / Zustand (Optional)**
+    - *Justification:* For most MVP UI state, React's built-in Context API and hooks (`useState`, `useReducer`) will suffice, keeping complexity low. If more complex global client-side state management is needed beyond what TanStack Query handles for server state, a lightweight library like Zustand can be considered. Avoids premature adoption of more complex state management libraries like Redux unless explicitly required.
+- **UI Library:** **shadcn/ui**
+    - *Justification:* Provides a set of beautifully designed, accessible, and customizable UI components built on Radix UI primitives and styled with Tailwind CSS. It allows for rapid development of a modern UI by providing copy-pasteable components that can be easily adapted, fitting the project's current dependency list.
+- **Database & BaaS:** **Supabase**
+    - *Justification:* A scalable, hosted PostgreSQL-based backend-as-a-service. Provides essential MVP features out-of-the-box, including a relational database, secure user authentication (Supabase Auth with OAuth2 support), and file storage (Supabase Storage for generated documents). Its integration with PostgreSQL allows for powerful querying and data integrity, and Row Level Security is crucial for multi-tenant applications.
+- **ORM:** **Drizzle ORM**
+    - *Justification:* A TypeScript-first, type-safe SQL query builder and ORM. It offers excellent static analysis, ensuring queries are correct at build time, and integrates seamlessly with modern TypeScript workflows. Its schema declaration and migration tools are well-suited for managing the Supabase PostgreSQL database structure.
+
+---
+
+## 3. Database Model Considerations
+
+Core entities will be defined using Drizzle ORM schemas, ensuring type safety across the Next.js backend. Supabase Row Level Security (RLS) will be enforced to ensure users can only access their own data.
+
+**Implicit Entity (Handled by Supabase Auth):**
+- `auth.users`: Stores user authentication details. Other tables will reference `auth.users.id`.
+
+**Core Entities (Managed with Drizzle):**
+
+1.  **`projects` Table**
+    -   **Purpose:** Stores information about each user-created project, including references to generated files.
+    -   **Schema (Drizzle Definition Example):**
+        ```typescript
+        import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
+        import { users } from './auth-users'; // Assuming a way to reference auth.users for FKs
+
+        export const projects = pgTable('projects', {
+          id: uuid('id').defaultRandom().primaryKey(),
+          userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+          name: text('name').notNull(),
+          appIdeaSummaryFilename: text('app_idea_summary_filename'), // e.g., "app-idea-summary-<uuid>.md"
+          chatTranscriptFilename: text('chat_transcript_filename'),   // e.g., "chat-transcript-<uuid>.md"
+          prdFilename: text('prd_filename'),                         // e.g., "prd-<uuid>.md", nullable
+          createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+          updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+        });
+        ```
+    -   **Fields:**
+        -   `id`: Primary Key (UUID)
+        -   `userId`: Foreign Key to `auth.users.id` (UUID, indexed)
+        -   `name`: Project name (TEXT)
+        -   `appIdeaSummaryFilename`: Filename for the AI-generated app idea summary (TEXT)
+        -   `chatTranscriptFilename`: Filename for the initial AI chat transcript (TEXT)
+        -   `prdFilename`: Filename for the generated PRD (TEXT, Nullable)
+        -   `createdAt`: Timestamp of creation
+        -   `updatedAt`: Timestamp of last update
+    -   **Indexes:** `userId`.
+    -   **RLS Policies (Supabase):**
+        -   Users can `SELECT`, `INSERT`, `UPDATE`, `DELETE` their own projects (`auth.uid() = user_id`).
+    -   **Expected Query Patterns:**
+        -   Fetch all projects for a user.
+        -   Fetch a single project by ID (and user ID for security).
+        -   Create a new project.
+        -   Update project name or linked filenames.
+
+2.  **`prompt_nodes` Table**
+    -   **Purpose:** Stores each node within a project's hierarchical prompt tree.
+    -   **Schema (Drizzle Definition Example):**
+        ```typescript
+        import { pgTable, uuid, text, integer, timestamp } from 'drizzle-orm/pg-core';
+        import { projects } from './projects';
+
+        export const promptNodes = pgTable('prompt_nodes', {
+          id: uuid('id').defaultRandom().primaryKey(),
+          projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+          parentNodeId: uuid('parent_node_id').references(() => promptNodes.id, { onDelete: 'cascade' }), // Self-referencing, nullable for root
+          promptText: text('prompt_text').notNull(),
+          codeSnippet: text('code_snippet'), // Nullable
+          displayOrder: integer('display_order').default(0).notNull(),
+          createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+          updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+        });
+        ```
+    -   **Fields:**
+        -   `id`: Primary Key (UUID)
+        -   `projectId`: Foreign Key to `projects.id` (UUID, indexed)
+        -   `parentNodeId`: Foreign Key to `prompt_nodes.id` (UUID, nullable for root nodes, indexed for hierarchical queries)
+        -   `promptText`: The main text content of the prompt (TEXT)
+        -   `codeSnippet`: Optional code snippet associated with the prompt (TEXT, Nullable)
+        -   `displayOrder`: Integer to maintain order of sibling nodes (INTEGER)
+        -   `createdAt`: Timestamp of creation
+        -   `updatedAt`: Timestamp of last update
+    -   **Indexes:** `projectId`, `parentNodeId`.
+    -   **RLS Policies (Supabase):**
+        -   Users can `SELECT`, `INSERT`, `UPDATE`, `DELETE` prompt nodes belonging to projects they own (checked via join to `projects` table and `projects.user_id`).
+    -   **Expected Query Patterns:**
+        -   Fetch all nodes for a given project, ordered by hierarchy/display order.
+        -   Fetch children of a specific parent node.
+        -   Create, update, or delete individual nodes.
+        -   Recursive queries (or application-level logic) to fetch entire sub-trees.
+
+**File Storage (Supabase Storage):**
+-   The actual generated files (app idea summaries, chat transcripts, PRDs) will be stored in Supabase Storage.
+-   Filenames stored in the `projects` table will correspond to object paths in a designated Supabase Storage bucket.
+-   RLS policies on Supabase Storage will be configured to ensure users can only access files associated with their projects.
+
+**Type Safety with Drizzle:**
+- Drizzle schemas will generate TypeScript types, ensuring that data exchanged between Next.js API routes and the database (via Drizzle queries) is type-checked, reducing integration errors and improving developer experience.

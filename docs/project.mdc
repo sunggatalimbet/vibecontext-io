@@ -1,0 +1,188 @@
+---
+description: General project description
+globs: 
+alwaysApply: false
+---
+# VibeContext - AI-Powered App Development Assistant
+
+## Overview
+
+VibeContext is a solo-first AI assistant tool designed to take a user's app idea and generate a tree of prompt-driven development tasks, primarily for AI-powered applications. The tool aims to provide an experience similar to a Jupyter Notebook, facilitating a structured approach to building AI applications. Its core value lies in generating product requirements documentation for AI context, creating hierarchical prompt nodes, enabling shared context between prompts, and allowing for editable nodes that regenerate downstream tasks.
+
+It can be conceptualized as a combination of Whimsical for visual planning, Notion for documentation, and GPT for AI-driven task generation, specifically for AI builders.
+
+## Architecture
+
+The project is structured as a monorepo, managed with pnpm workspaces and Turbo. This setup allows for modular development, with separate applications and potentially shared packages in the future.
+
+Currently, the primary application is a web interface. The architectural details of the web application itself (e.g., if it follows FSD or another pattern) would be defined within the `apps/web` directory.
+
+### Monorepo Structure:
+
+- **apps/** - Contains individual applications.
+  - `web/` - The main web application for VibeContext.
+- **packages/** - Intended for shared libraries, UI components, or utilities (currently empty).
+- **docs/** - For project documentation, including this document.
+
+## Technology Stack
+
+### Monorepo Management
+
+- **pnpm** - Efficient package manager.
+- **Turbo** - High-performance build system for monorepos.
+
+### Web Application (`apps/web`)
+
+#### Framework & Core
+
+- **Next.js 15.3.3** - React framework for server-rendered applications.
+- **React 19.1.0** - Library for building user interfaces.
+- **TypeScript 5.2.2** - Typed JavaScript for robust development.
+
+#### UI & Styling
+
+- **Tailwind CSS 4.1.8** - Utility-first CSS framework.
+- **Radix UI** - Primitives for building accessible UI components (various `@radix-ui/*` packages).
+- **Lucide React** - Icon library.
+- **Sonner** - Toast notifications.
+- **Next Themes** - Theme management (e.g., dark/light mode).
+- **clsx, tailwind-merge, tailwindcss-animate** - Styling utility libraries.
+- **Framer Motion** - Animation library.
+- **CMDK** - Likely used for command palette functionality.
+- **Vaul** - Drawer component.
+
+#### Forms & Validation
+
+- **React Hook Form 7.53.0** - Form state management and validation.
+- **Zod 3.23.8** - Schema declaration and validation.
+- **@hookform/resolvers** - Resolver for integrating Zod with React Hook Form.
+
+#### UI Components (Specific)
+- **Input OTP** - For one-time password inputs.
+- **React Day Picker** - Date picker component.
+- **React Resizable Panels** - For creating resizable panel layouts.
+- **Recharts** - Charting library.
+
+
+#### Development Tools
+
+- **ESLint** - Code linting.
+- **Prettier** - Code formatting.
+- **TypeScript** - Static type checking.
+
+## Project Structure (Monorepo Level)
+
+```
+vibecontext-monorepo/
+├── apps/
+│   └── web/                # Next.js web application
+│       ├── public/         # Static assets
+│       ├── app/            # Next.js App Router (assumption based on Next.js version)
+│       ├── components/     # UI components (common practice)
+│       ├── lib/            # Utility functions (common practice)
+│       └── ...             # Other Next.js specific files and folders
+├── packages/               # Shared packages (currently empty)
+├── docs/                   # Project documentation (including this file)
+├── .git/                   # Git version control
+├── .vscode/                # VSCode editor settings
+├── node_modules/           # Project dependencies
+├── .gitignore              # Files to ignore for Git
+├── .npmrc                  # pnpm configuration
+├── .prettierignore         # Files to ignore for Prettier
+├── .prettierrc             # Prettier configuration
+├── eslint.config.mjs       # ESLint configuration (new flat config)
+├── package.json            # Root package configuration
+├── pnpm-lock.yaml          # pnpm lockfile
+├── pnpm-workspace.yaml     # pnpm workspace configuration
+├── README.md               # Project README
+├── tsconfig.json           # Root TypeScript configuration
+├── turbo.json              # Turbo configuration
+└── vercel.json             # Vercel deployment configuration
+```
+*(Note: The internal structure of `apps/web/` is a typical Next.js layout; specific subdirectories like `app/`, `components/`, `lib/` are common but would need verification by inspecting `apps/web/` further if a more detailed breakdown is required.)*
+
+## Core Features (as per DESCRIPTION)
+
+- **Product Requirements Document (PRD) Generation:** For AI agent context.
+- **Prompt Tree Generation:** Hierarchical prompts for AI agent interaction.
+- **Shared Context:** Parent-child node context sharing for prompts.
+- **Optional Code Snippets:** Within prompt nodes.
+- **Editable Nodes:** Changes trigger regeneration of downstream prompts.
+
+## Setup Instructions (General for Monorepo)
+
+### Prerequisites
+
+- Node.js (version compatible with project dependencies, e.g., >=18)
+- pnpm (version 10.11.0 or as specified in `packageManager`)
+
+### Installation
+
+1.  Clone the repository.
+2.  Install dependencies from the root:
+    ```bash
+    pnpm install
+    ```
+
+### Development
+
+1.  To run the web application (and potentially other apps/packages defined in `turbo.json`):
+    ```bash
+    pnpm dev
+    ```
+    (This will likely use Turbo to run the `dev` script in `apps/web/package.json`, which is `next dev`)
+
+2.  To build all apps/packages:
+    ```bash
+    pnpm build
+    ```
+
+### Available Root Scripts (from `package.json`)
+
+-   `pnpm build`: Build all packages.
+-   `pnpm dev`: Run all packages in development mode.
+-   `pnpm lint`: Lint all packages.
+-   `pnpm format`: Format code in all packages.
+-   `pnpm format:check`: Check formatting in all packages.
+-   `pnpm check-types`: Perform type checking for all packages.
+-   `pnpm clean`: Clean build artifacts for all packages.
+
+*(Refer to `apps/web/package.json` for scripts specific to the web application, such as `next start`, `next lint`, etc.)*
+
+## Development Guidelines
+
+### Code Organization
+
+-   Adhere to the monorepo structure (`apps/`, `packages/`).
+-   Within `apps/web`, follow Next.js conventions.
+-   Utilize TypeScript for all new code.
+
+### Styling
+
+-   Primarily use Tailwind CSS utility classes.
+-   Leverage Radix UI components for accessible primitives.
+-   Ensure responsive design.
+-   Implement theme support using `next-themes`.
+
+### State Management
+
+-   No state management needed
+-   Use `react-hook-form` for form state.
+
+## Current Development Status
+
+This document provides a snapshot based on the current prosject structure and stated goals. The development status of specific features outlined in the "DESCRIPTION" would need to be tracked separately.
+
+### Initial Setup Completed:
+
+- ✅ Monorepo setup with pnpm and Turbo.
+- ✅ Next.js web application initialized (`apps/web`).
+- ✅ Core technology stack for the web app identified (Next.js, React, TypeScript, Tailwind CSS, Radix UI).
+- ✅ Basic linting, formatting, and type-checking scripts configured.
+
+### Next Steps (Potential):
+
+-   🔄 Define the detailed architecture within `apps/web` (e.g., Feature-Sliced Design if desired, or Next.js App Router conventions).
+-   🔄 Begin implementation of the core VibeContext features.
+-   🔄 Populate the `packages/` directory with any planned shared libraries.
+-   🔄 Further detail the API design if a backend service is separate from the Next.js app.
