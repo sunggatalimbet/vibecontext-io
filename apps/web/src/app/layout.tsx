@@ -2,6 +2,8 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { IBM_Plex_Sans } from 'next/font/google'
 import localFont from 'next/font/local'
+import { AuthProvider } from '@repo/auth/react'
+import { createAuthConfig } from '@repo/auth/server'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { ThemeProvider } from '@/components/theme-provider'
 
@@ -40,6 +42,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const authConfig = createAuthConfig(process.env)
+
   return (
     <html
       lang="en"
@@ -58,7 +62,9 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <DashboardLayout>{children}</DashboardLayout>
+          <AuthProvider config={authConfig}>
+            <DashboardLayout>{children}</DashboardLayout>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { UserMenu } from '@/components/auth/UserMenu'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 
@@ -40,10 +40,9 @@ export function Topbar() {
           </Tabs>
         </div>
 
-        <Avatar className="h-8 w-8 transition-transform hover:scale-105 shrink-0">
-          <AvatarImage src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg" />
-          <AvatarFallback>JD</AvatarFallback>
-        </Avatar>
+        <div className="shrink-0">
+          <UserMenu />
+        </div>
       </div>
     </header>
   )
