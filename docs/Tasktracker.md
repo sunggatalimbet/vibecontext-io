@@ -29,13 +29,13 @@
 
 - [To Do] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Backend: API Route).
   - [To Do] **[High]** Create Next.js API route for project creation.
-  - [To Do] **[High]** Define `projects` table schema with Drizzle (including `app_idea_summary_filename`, `chat_transcript_filename`).
-  - [To Do] **[High]** Implement Drizzle logic to insert new project record into Supabase.
+  - [To Do] **[High]** Define `projects` table schema with Drizzle (including `appIdeaSummary_text`, `chat_transcript_filename`).
+  - [To Do] **[High]** Implement Drizzle logic to insert new project record (with `appIdeaSummary_text`) into Supabase.
   - [To Do] **[Medium]** Logic for generating unique filenames for stored documents.
 - [To Do] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Frontend: UI).
   - [To Do] **[High]** Create "Start New Project" button and initial chat interface.
   - [To Do] **[High]** Handle project naming and confirmation.
-  - [To Do] **[High]** Redirect to project workspace and display app idea summary from file.
+  - [To Do] **[High]** Redirect to project workspace and display `appIdeaSummary_text` from project record.
 - [To Do] **[Medium]** Implement "View Project List" (FR 2.2.2 - Backend: API Route).
   - [To Do] **[Medium]** Create Next.js API route to fetch projects for a user.
   - [To Do] **[Medium]** Implement Drizzle logic to query `projects` table.
@@ -44,61 +44,72 @@
   - [To Do] **[Medium]** Handle navigation to selected project workspace.
 - [To Do] **[Low]** Implement "(Stretch Goal) Update Project Name" (FR 2.2.3 - Backend & Frontend).
 
-## 4. AI Idea Generation Chat (Next.js, External LLM, Supabase Storage)
+## 4. AI & LLM Orchestration (LangChain.js, OpenRouter, Next.js, Supabase Storage)
 
+- [To Do] **[Critical]** Set up LangChain.js core and relevant modules (Chains, Prompts, Memory, LLMs integration with OpenRouter).
+  - **Description:** Integrate LangChain.js into the Next.js backend for orchestrating all LLM interactions.
+  - **Tasks:** Install LangChain.js packages, configure it to use OpenRouter for LLM calls, create utility services for LangChain.js usage.
+- [To Do] **[High]** Integrate OpenRouter for all LLM API calls (now via LangChain.js).
+  - **Description:** Abstract LLM interactions through OpenRouter, managed by LangChain.js, to support multiple models and providers.
+  - **Tasks:** Set up OpenRouter API key (if not done), ensure LangChain.js service correctly routes calls through OpenRouter.
 - [To Do] **[High]** Develop chat interface in Next.js (FR 2.2.1 related).
   - [To Do] **[High]** UI for displaying chat messages (user and AI).
   - [To Do] **[High]** Input field for user messages.
-- [To Do] **[High]** Implement Next.js API route to handle chat interactions with LLM.
-  - [To Do] **[High]** Send user messages to LLM.
-  - [To Do] **[High]** Receive LLM responses.
-- [To Do] **[High]** Implement logic to save chat transcript and AI-summarized app idea as files to Supabase Storage (FR 2.2.1 related).
-  - [To Do] **[Medium]** API route logic to upload files to Supabase Storage.
-  - [To Do] **[Medium]** Ensure RLS for Supabase Storage is configured for user-specific file access.
+- [To Do] **[High]** Implement Next.js API route to handle chat interactions using LangChain.js for conversation management (memory) and LLM calls (via OpenRouter).
+  - [To Do] **[High]** Use LangChain.js to send user messages to LLM and get responses.
+  - [To Do] **[High]** Implement LangChain.js conversational memory for the idea generation chat.
+- [To Do] **[High]** Implement logic to save chat transcript to Supabase Storage and AI-summarized app idea as text in `projects` table (FR 2.2.1 related, chat part managed by LangChain.js).
+  - [To Do] **[Medium]** API route logic to upload chat transcript file to Supabase Storage.
+  - [To Do] **[Medium]** API route logic to update `projects` table with `appIdeaSummary_text`.
 
-## 5. PRD Generation (Next.js, External LLM, Supabase Storage)
+## 5. PRD Generation (LangChain.js, Next.js, External LLM, Supabase Storage)
 
-- [To Do] **[High]** Implement "Utilize AI-Generated App Idea File for PRD" (FR 2.3.1 - Frontend).
-  - [To Do] **[High]** UI to display content of `app_idea_summary_filename`.
-  - [To Do] **[Medium]** (Optional) UI for minor edits to the summary.
-- [To Do] **[High]** Implement "Generate PRD from AI-Formulated App Idea File" (FR 2.3.2 - Backend: API Route).
-  - [To Do] **[High]** API route to fetch app idea file content from Supabase Storage.
-  - [To Do] **[High]** Send content to LLM for PRD generation.
+- [To Do] **[High]** Implement "Utilize AI-Generated App Idea Text for PRD" (FR 2.3.1 - Frontend).
+  - [To Do] **[High]** UI to display content of `projects.appIdeaSummary_text`.
+  - [To Do] **[Medium]** (Optional) UI for minor edits to the `appIdeaSummary_text`.
+- [To Do] **[High]** Implement "Generate PRD from AI-Formulated App Idea Text" (FR 2.3.2 - Backend: API Route using LangChain.js).
+  - [To Do] **[High]** API route to retrieve `appIdeaSummary_text` from `projects` table.
+  - [To Do] **[High]** Use LangChain.js to construct prompt and send `appIdeaSummary_text` to LLM (via OpenRouter) for PRD generation.
   - [To Do] **[High]** Save generated PRD as a new file to Supabase Storage.
   - [To Do] **[High]** Update `projects` table (or `project_documents`) with `prd_filename`.
-- [To Do] **[High]** Implement "Generate PRD from AI-Formulated App Idea File" (FR 2.3.2 - Frontend: UI).
+- [To Do] **[High]** Implement "Generate PRD from AI-Formulated App Idea Text" (FR 2.3.2 - Frontend: UI).
   - [To Do] **[High]** "Generate PRD" button.
   - [To Do] **[High]** Loading state during generation.
   - [To Do] **[High]** Display content of newly generated PRD file.
   - [To Do] **[Medium]** Error handling from LLM/storage.
 
-## 6. Prompt Tree Generation & Management (Next.js, Supabase, Drizzle, External LLM)
+## 6. Prompt Tree Generation & Management (LangChain.js, Next.js, Supabase, Drizzle, External LLM)
 
-- [To Do] **[Critical]** Define `prompt_nodes` table schema with Drizzle (FR 2.4.1).
-- [To Do] **[High]** Implement "Generate Initial Prompt Tree" (FR 2.4.1 - Backend: API Route).
-  - [To Do] **[High]** API route to interact with LLM, providing project context (from app idea/PRD file).
-  - [To Do] **[High]** Logic to parse LLM response and save structured tree data to `prompt_nodes` table using Drizzle.
+- [To Do] **[Critical]** Define `prompt_nodes` table schema with Drizzle (linking to `prompts` table via `prompt_id`) (FR 2.4.1).
+- [To Do] **[Critical]** Define `prompts` table schema with Drizzle (to store reusable prompt content, using `prompt_markdown_filename`, no `codeSnippet`).
+- [To Do] **[High]** Implement "Generate Initial Prompt Tree" (FR 2.4.1 - Backend: API Route using LangChain.js).
+  - [To Do] **[High]** API route to use LangChain.js to interact with LLM (via OpenRouter), providing project context (e.g., `appIdeaSummary_text`).
+  - [To Do] **[High]** Use LangChain.js to manage LLM interaction for structured tree output, parse LLM response, save each prompt's Markdown content to a new file in Supabase Storage, create entries in `prompts` table (linking to the markdown file via `prompt_markdown_filename`), and save structured tree data to `prompt_nodes` table (linking to `prompts`) using Drizzle.
 - [To Do] **[High]** Implement "Generate Initial Prompt Tree" (FR 2.4.1 - Frontend: UI).
   - [To Do] **[High]** "Generate Prompt Tree" button.
-  - [To Do] **[High]** Dynamically render tree structure (recursive components).
+  - [To Do] **[High]** Dynamically render tree structure (fetching prompt Markdown file content via `prompt_id` -> `prompt_markdown_filename`).
   - [To Do] **[Medium]** Loading state and error handling.
 - [To Do] **[Medium]** Implement "Manually Add Prompt Node" (FR 2.4.2 - Backend & Frontend).
-- [To Do] **[Medium]** Implement "Edit Prompt Node Content (Text & Code Snippet)" (FR 2.4.3 - Backend & Frontend).
-- [To Do] **[Medium]** Implement "Delete Prompt Node" (FR 2.4.4 - Backend & Frontend).
+  - [To Do] **[Medium]** UI for adding node and creating/selecting prompt.
+  - [To Do] **[Medium]** API logic to create `prompts` entry (saving Markdown to new file, linking via `prompt_markdown_filename`) if new, and `prompt_nodes` entry.
+- [To Do] **[Medium]** Implement "Edit Prompt Node Content" (FR 2.4.3 - Backend & Frontend).
+  - **Description:** This involves editing Markdown content. A new Markdown file is created in Supabase Storage, and a new `prompts` record is created on edit to ensure reusability is handled correctly.
+  - [To Do] **[Medium]** UI for editing prompt Markdown content associated with a node (fetched from file via `prompt_markdown_filename`).
+  - [To Do] **[Medium]** API logic to handle creation of new Markdown file in Supabase Storage, new prompt entry in `prompts` table upon edit, and update `prompt_nodes.prompt_id`.
+- [To Do] **[Medium]** Implement "Delete Prompt Node" (FR 2.4.4 - Backend & Frontend) (Note: this only deletes the node, not the prompt from `prompts` table).
 
-## 7. Node Editing & Downstream Regeneration (Next.js, Supabase, External LLM)
+## 7. Node Editing & Downstream Regeneration (LangChain.js, Next.js, Supabase, External LLM)
 
-- [To Do] **[High]** Implement "Automatic Downstream Prompt Regeneration" (FR 2.5.1 - Backend: API Route).
-  - [To Do] **[High]** Logic to identify descendant nodes.
-  - [To Do] **[High]** For each descendant, send context to LLM for regeneration.
-  - [To Do] **[High]** Update `prompt_nodes` table with regenerated content via Drizzle.
+- [To Do] **[High]** Implement "Automatic Downstream Prompt Regeneration" (FR 2.5.1 - Backend: API Route using LangChain.js).
+  - [To Do] **[High]** Use LangChain.js to identify descendant nodes when a parent node's `prompt_id` changes.
+  - [To Do] **[High]** For each descendant, use LangChain.js to fetch/construct context (resolving `prompt_id` to `prompt_markdown_filename` and fetching file content for all parent nodes in path), send to LLM (via OpenRouter) for regeneration, create new Markdown file in Supabase Storage, create new prompt entry in `prompts` table (linking to new file), and update descendant's `prompt_id` in `prompt_nodes`.
 - [To Do] **[High]** Implement "Automatic Downstream Prompt Regeneration" (FR 2.5.1 - Frontend: UI).
-  - [To Do] **[High]** Dynamic UI updates for regenerated nodes.
+  - [To Do] **[High]** Dynamic UI updates for regenerated nodes (fetching new prompt Markdown file content).
   - [To Do] **[Medium]** Visual feedback (loading indicators) during regeneration.
 
 ## 8. Database Setup & ORM (Drizzle & Supabase)
 
-- [To Do] **[High]** Finalize Drizzle schemas for all tables (`projects`, `prompt_nodes`). (Covered by other sections, but good to track overall schema readiness)
+- [To Do] **[High]** Finalize Drizzle schemas for all tables (`projects`, `prompt_nodes`, `prompts`). (Covered by other sections, but good to track overall schema readiness)
 - [To Do] **[High]** Implement Drizzle migrations strategy.
 - [To Do] **[Critical]** Implement and thoroughly test Supabase Row Level Security (RLS) policies for all tables and Supabase Storage.
 
@@ -127,6 +138,7 @@
 - [To Do] **[Medium]** Create a basic README.md for the `apps/web` application.
 - [To Do] **[Low]** Document core Drizzle schemas and their relationships.
 - [To Do] **[Low]** Document environment variable setup for developers.
+- [To Do] **[Medium]** Review and address questions in `docs/quality-assurance-questions.md` to refine requirements and design before extensive development.
 
 ## 12. Testing
 
@@ -134,3 +146,25 @@
 - [To Do] **[Low]** Write unit tests for critical helper functions and API route logic.
 - [To Do] **[Medium]** Set up integration testing for API routes interacting with Supabase/Drizzle.
 - [To Do] **[Low]** (Post-MVP) Plan for E2E testing framework (e.g., Playwright or Cypress).
+
+## 13. Future Considerations & Research
+
+- [To Do] **[Low]** Research and define requirements for Model Context Protocol (MCP) server integration (FC 7.1 from `tech-requirements.mdc`).
+  - **Description:** Explore making VibeContext an MCP Host to connect with external tools (Windsurf, Cursor) and data sources via MCP Servers, enhancing context sharing.
+  - **Tasks:** Investigate MCP client implementation, assess existing MCP server ecosystem, define specific use cases for VibeContext.
+
+## 14. Monetization (Polar.sh Integration)
+
+- [To Do] **[High]** Design and define subscription tiers and feature entitlements (FR 2.6.1).
+- [To Do] **[High]** Integrate Polar.sh SDK/API for checkout process (FR 2.6.2 - Backend & Frontend).
+  - [To Do] **[High]** Set up Polar.sh account and configure products/tiers.
+  - [To Do] **[High]** Implement UI for selecting tiers and initiating Polar.sh checkout.
+  - [To Do] **[High]** Create Next.js API routes for handling Polar.sh webhooks (e.g., subscription created, updated, canceled).
+- [To Do] **[Medium]** Implement logic to update and manage user subscription status in VibeContext database based on Polar.sh webhooks (FR 2.6.2).
+  - [To Do] **[Medium]** Design schema for storing user subscription status (e.g., new table `user_subscriptions` or extend existing user table).
+- [To Do] **[Medium]** Implement redirection to Polar.sh customer portal for subscription management (FR 2.6.3).
+- [To Do] **[High]** Implement feature entitlement logic based on user's subscription tier (FR 2.6.4 - Backend & Frontend).
+  - [To Do] **[High]** Backend checks for API endpoints.
+  - [To Do] **[High]** UI changes to reflect entitlements (e.g., disable/hide features, show upgrade prompts).
+- [To Do] **[Medium]** Create pricing page UI detailing tiers and features.
+- [To Do] **[Low]** Set up and test Polar.sh sandbox/test environment.
