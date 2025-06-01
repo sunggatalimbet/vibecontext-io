@@ -1,0 +1,330 @@
+---
+description: Project technical requirements that consists of non-functional requirements, functional requirements, dependencies and constraints, out of scope, and risk assessment sections
+globs: 
+alwaysApply: false
+---
+## VibeContext - MVP Requirements Document
+
+*Version: 0.1.0*
+
+*Date: 2024-07-27*
+
+---
+
+## 1. Project Overview
+
+**1.1 Purpose**
+
+vibe-context.io is a solo-first AI assistant tool that helps users formulate their application idea through an interactive AI chat. Based on this AI-clarified idea, the tool then generates a tree of prompt-driven development tasks, specifically for AI-powered applications that generates the code. It aims to provide an experience similar to a Jupyter Notebook, where users can iteratively define, refine, and manage prompts for AI development.
+
+It solves the problem of initial idea ambiguity and unstructured prompt engineering for AI app development by offering a guided, AI-driven process for idea formulation, followed by a systematic way to create, organize, and evolve prompt chains. The core user value is enabling AI builders to move from a nascent idea to a structured AI interaction flow more efficiently, saving time and improving the quality of AI-generated outputs.
+
+Users will typically use this app at the very beginning of an AI project lifecycle, starting with the AI chat for idea generation, then proceeding to AI interaction design, and iteratively as they refine their application's AI capabilities.
+
+**1.2 Goals**
+
+- **Goal 1 (PRD Generation):** To enable users to input an app idea and receive a structured Product Requirements Document (PRD) suitable for AI agent context, with the PRD generated within 30 seconds for typical inputs.
+- **Goal 2 (Prompt Tree Interface):** To provide an interactive Next.js-based interface using TypeScript for users to generate, visualize, and manage a hierarchical tree of development prompts based on their app idea, with core CRUD operations for nodes functional within the first month of MVP launch.
+- **Goal 3 (Shared Context):** To implement a system using Supabase (with Drizzle schema) where child prompt nodes automatically inherit and can build upon the context of their parent nodes, ensuring contextual consistency in generated prompts, deployable in the MVP.
+- **Goal 4 (Editable Nodes & Regeneration):** To allow users to edit prompt text and optional code snippets within any node, triggering an automatic and accurate regeneration of all dependent downstream prompts via Next.js API routes, with changes persisted in Supabase, by MVP release.
+- **Goal 5 (Secure User Management):** To establish a secure user registration and login system using Supabase Auth, allowing users to create accounts, log in, and have their projects associated with their identity, fully integrated into the Next.js application by MVP release.
+- **Goal 6 (Data Persistence):** To reliably store all user-generated projects, PRDs, and prompt tree data (including text, code snippets, and hierarchy) in a Supabase PostgreSQL database, managed via Drizzle ORM, ensuring data integrity and availability for logged-in users.
+
+**1.3 Target Users**
+
+- Solo AI developers and small teams building AI-powered applications.
+- Technical product managers or vibe coders who need to define and iterate on AI interaction flows.
+- Users familiar with concepts like prompt engineering and seeking tools to streamline this process.
+
+---
+
+## 2. Functional Requirements
+
+**2.1 User Authentication Module (Supabase Auth with OAuth2, Next.js, TypeScript)**
+
+- **FR 2.1.1: User Sign-Up / Login via OAuth2 Provider**
+    - **Description:** Users can sign up or log in to the application using a supported third-party OAuth2 provider (Google, GitHub).
+    - **Acceptance Criteria:**
+        - The Next.js UI provides clear buttons/links for each supported OAuth2 provider (e.g., "Continue with Google", "Continue with GitHub").
+        - Clicking an OAuth2 provider button initiates the Supabase Auth `signInWithOAuth()` flow for the selected provider.
+        - Users are redirected to the OAuth2 provider's authentication page.
+        - Upon successful authentication with the provider, the user is redirected back to a designated callback URL within the Next.js application.
+        - Supabase Auth handles the OAuth2 callback, creating a new user record in Supabase Auth if it's their first login, or authenticating an existing user.
+        - A user session is established, and the user is redirected to their project dashboard.
+        - Error messages from Supabase Auth or the OAuth2 provider (e.g., "Access denied", "Provider error") are handled and clearly displayed in the UI.
+- **FR 2.1.2: User Logout**
+    - **Description:** Logged-in users can securely end their session.
+    - **Acceptance Criteria:**
+        - A "Logout" button/option is clearly visible and accessible within the authenticated sections of the Next.js application.
+        - Clicking "Logout" calls the Supabase Auth `signOut()` method via a Next.js client-side or API route.
+        - The user's session is invalidated.
+        - The user is redirected to the login page or public homepage.
+
+**2.2 Project Management Module (Next.js, Supabase, Drizzle)**
+
+- **FR 2.2.1: Create New Project & Initiate Idea Generation Chat**
+    - **Description:** Authenticated users can start a new project, which initiates an AI-driven chat (orchestrated by LangChain.js) to help them formulate and refine their application idea. The project is formally created upon completion or a significant milestone in the chat. The AI-summarized app idea is stored as text, and the chat transcript is saved as a file.
+    - **Acceptance Criteria:**
+        - A "Start New Project" or "Develop New App Idea" button in the Next.js dashboard's sidebar.
+        - Clicking this initiates a chat interface powered by an LLM (via OpenRouter, managed by LangChain.js). LangChain.js will handle conversation memory and orchestrate calls to the LLM.
+        - The AI chat guides the user through questions to clarify their app idea (e.g., target audience, core problem, key features).
+        - User responses are captured. The full chat transcript is saved as a uniquely named file (e.g., `chat-transcript-<projectID>-<timestamp>.md`) in Supabase Storage. The final AI-summarized app idea is stored as text directly in the project record.
+        - At a logical point (e.g., user confirmation of the summarized idea), the user can name their project.
+        - On project naming/confirmation, a Next.js API route is called to create a new record in the `projects` table in Supabase using Drizzle. The table fields will be: `id` (PK), `user_id` (FK to `auth.users`), `name` (TEXT), `appIdeaSummary_text` (TEXT), `chat_transcript_filename` (URI LINK, e.g., "chat-transcript-qvo3459d.md"), `created_at` (TIMESTAMPTZ), `updated_at` (TIMESTAMPTZ).
+        - The `appIdeaSummary_text` field stores the AI-generated app idea summary as plain text.
+        - The `chat_transcript_filename` field stores the unique filename of the document containing the full chat history.
+        - The new project is associated with the currently logged-in user's ID (from Supabase Auth).
+        - User is redirected to the newly created project's workspace. The content of `appIdeaSummary_text` is displayed.
+- **FR 2.2.2: View Project List**
+    - **Description:** Authenticated users can see a list of their projects.
+    - **Acceptance Criteria:**
+        - A dedicated page/section in the Next.js app lists all projects created by the logged-in user.
+        - The list is fetched from the Supabase `projects` table using Drizzle queries (e.g., `select().from(projects).where(eq(projects.userId, currentUserId))`).
+        - Each list item displays at least the project name and last modified date.
+        - Clicking a project name navigates the user to that project's workspace.
+- **FR 2.2.3: (Stretch Goal for MVP) Update Project Name**
+    - **Description:** Users can rename their existing projects.
+    - **Acceptance Criteria:**
+        - UI option to edit the project name.
+        - Changes are persisted to the `projects` table in Supabase via a Next.js API route using Drizzle.
+
+**2.3 PRD Generation Module (Next.js, External LLM via OpenRouter, LangChain.js)**
+
+- **FR 2.3.1: Utilize AI-Generated App Idea Text for PRD**
+    - **Description:** The core application idea, which was formulated through the initial AI chat and stored as text in the project record, serves as the primary input for PRD generation. Users can view this text before PRD generation.
+    - **Acceptance Criteria:**
+        - The Next.js project workspace displays the content of `projects.appIdeaSummary_text`.
+        - Optionally, users might be able to trigger a regeneration or refinement of this app idea summary text through further AI interaction, which would update the text in the `projects` table.
+        - The content of this `appIdeaSummary_text` is used as the primary input when triggering PRD generation (FR 2.3.2).
+- **FR 2.3.2: Generate PRD from AI-Formulated App Idea Text**
+    - **Description:** Users can trigger the generation of a Product Requirements Document (PRD) by an AI. The `appIdeaSummary_text` from the project record is used as input, with LangChain.js orchestrating the LLM call via OpenRouter.
+    - **Acceptance Criteria:**
+        - A "Generate PRD" button is present in the project workspace.
+        - Clicking the button calls a Next.js API route.
+        - The API route retrieves the `appIdeaSummary_text` from the `projects` table.
+        - This text (and potentially other project context) is sent to an external LLM service (via OpenRouter, orchestrated by LangChain.js).
+        - A loading state is displayed in the UI while waiting for the LLM response.
+        - The generated PRD is saved as a new uniquely named file (e.g., `prd-<projectID>-<timestamp>.md`).
+        - The `projects` table (or a related `project_documents` table) is updated with a reference to this new PRD filename (e.g., a field like `prd_filename`).
+        - The Next.js UI displays the content of the newly generated PRD file.
+        - Errors from the LLM service or network issues are handled gracefully and communicated to the user.
+
+**2.4 Prompt Tree Generation & Management Module (Next.js, Supabase, Drizzle, External LLM via OpenRouter, LangChain.js)**
+
+- **FR 2.4.1: Generate Initial Prompt Tree**
+    - **Description:** Based on the project's app idea (`appIdeaSummary_text`) or PRD, the system can generate an initial hierarchical tree of development prompt nodes. LangChain.js will orchestrate the LLM interaction (via OpenRouter) and the structuring of the output. Each node will be linked to a prompt entry in a central `prompts` table, where the prompt content is stored as a Markdown file.
+    - **Acceptance Criteria:**
+        - A "Generate Prompt Tree" button is available.
+        - Clicking it calls a Next.js API route that uses LangChain.js to interact with an LLM (via OpenRouter), providing project context.
+        - LangChain.js helps manage the LLM interaction to return a structured representation of the prompt tree (e.g., JSON with nodes, parent-child relationships, and for each node, its initial prompt Markdown content).
+        - For each prompt suggested by the LLM, its Markdown content is saved as a uniquely named file (e.g., `prompt-<uuid>.md`) in Supabase Storage. A new entry is created in the `prompts` table storing a reference to this file (`prompt_markdown_filename`).
+        - Each node's data (including `project_id`, `parent_node_id`, the `prompt_id` linking to the `prompts` table, and `display_order`) is saved to the `prompt_nodes` table in Supabase using Drizzle.
+        - The Next.js UI dynamically renders this tree structure visually.
+        - Loading state and error handling are implemented.
+- **FR 2.4.2: Manually Add Prompt Node**
+    - **Description:** Users can manually add new nodes (child or sibling) to the prompt tree. They can create a new prompt (as a Markdown file) or select an existing one.
+    - **Acceptance Criteria:**
+        - UI controls allow adding a new prompt node.
+        - User can specify the position relative to an existing node.
+        - User is prompted to either:
+            - Enter new prompt content (Markdown text, which will be saved to a new file in Supabase Storage, and a new entry created in `prompts` table linking to it).
+            - (Optional for MVP, Stretch Goal) Select an existing prompt from a searchable/browsable list of prompts in the `prompts` table (these link to existing Markdown files).
+        - A new node is added to the UI, its `prompt_id` in `prompt_nodes` links to the chosen/created prompt, and persisted in Supabase via Drizzle.
+- **FR 2.4.3: Edit Prompt Node Content (via `prompts` table and Markdown file)**
+    - **Description:** Users can edit the Markdown content associated with any node. Editing a prompt linked to a node should result in a *new* Markdown file and a *new* prompt entry being created if the original prompt (file) is shared.
+    - **Acceptance Criteria:**
+        - Clicking a node makes its linked prompt's Markdown content (fetched from Supabase Storage) editable (e.g., in a text area).
+        - Upon saving changes:
+            - The system checks if the original prompt (referenced by `prompt_nodes.prompt_id`) is used by other nodes.
+            - If it's shared or to ensure non-destructive edits, the modified Markdown content is saved as a *new* file in Supabase Storage. A *new* record is created in the `prompts` table with `prompt_markdown_filename` pointing to this new file.
+            - The `prompt_nodes` record for the current node is updated to set its `prompt_id` to this new prompt's ID.
+            - (Alternative for non-shared or explicit "edit master prompt" action: overwrite the existing Markdown file in Supabase Storage and do not change the `prompts` table record. For MVP, creating a new prompt file and record on edit is safer.)
+        - The UI reflects the saved changes by displaying content from the (potentially new) linked prompt Markdown file.
+- **FR 2.4.4: Delete Prompt Node**
+    - **Description:** Users can delete a prompt node from the tree. This does not delete the prompt from the `prompts` table, allowing it to be reused.
+    - **Acceptance Criteria:**
+        - UI option to delete a node.
+        - A confirmation dialog is shown before deletion.
+        - Upon confirmation, the node and all its descendant nodes are removed from the UI and deleted from the `prompt_nodes` table in Supabase.
+        - The corresponding prompt entries in the `prompts` table are *not* deleted by this action. (A separate mechanism might be needed for managing/deleting unused prompts from the `prompts` table later).
+
+**2.5 Node Editing & Downstream Regeneration Module (Next.js, Supabase, External LLM via OpenRouter, LangChain.js)**
+
+- **FR 2.5.1: Automatic Downstream Prompt Regeneration**
+    - **Description:** When a parent prompt node's associated prompt changes (i.e., its `prompt_id` in `prompt_nodes` is updated to a new prompt, or the content of the linked prompt Markdown file is considered changed for regeneration purposes), all its direct and indirect child nodes (downstream prompts) are automatically re-evaluated and regenerated by an LLM, orchestrated by LangChain.js via OpenRouter.
+    - **Acceptance Criteria:**
+        - After a parent node's `prompt_id` is successfully updated in `prompt_nodes` (pointing to a new or modified prompt in the `prompts` table).
+        - A Next.js API route is triggered, which uses LangChain.js to identify all descendant nodes and manage the regeneration process.
+        - For each descendant, LangChain.js constructs the context (including the updated path from the root to itself, resolving `prompt_id` to actual Markdown file content from `prompts` table/Supabase Storage for each node in the path) and sends it to the LLM (via OpenRouter) for regeneration.
+        - The regenerated Markdown content results in a *new* Markdown file saved to Supabase Storage, and a *new* entry in the `prompts` table linking to this file.
+        - The `prompt_id` for each affected descendant `prompt_nodes` record is updated to link to its new, regenerated prompt in the `prompts` table.
+        - The Next.js UI dynamically updates to show the new content for the regenerated downstream nodes by fetching and rendering the Markdown from the newly linked prompt files.
+        - Visual feedback is provided during the regeneration process.
+        - Errors during regeneration are handled.
+
+**2.6 Monetization & Subscription Management (Polar.sh, Next.js)**
+
+- **FR 2.6.1: Define Subscription Tiers & Features**
+    - **Description:** Define clear subscription tiers (e.g., Free, Pro) with distinct feature sets or usage limits.
+    - **Acceptance Criteria:**
+        - At least two tiers (e.g., Free, Pro) are defined with specific entitlements (e.g., number of projects, advanced features, LLM usage quotas).
+        - Pricing for paid tiers is established.
+        - These tiers and their benefits are clearly communicable to users (e.g., on a pricing page).
+- **FR 2.6.2: User Subscription & Payment via Polar.sh**
+    - **Description:** Users can subscribe to a paid tier using Polar.sh checkout.
+    - **Acceptance Criteria:**
+        - UI elements (e.g., "Upgrade" buttons, pricing page) direct users to Polar.sh checkout for the selected tier.
+        - Integration with Polar.sh SDK/API handles the checkout process.
+        - Successful payment results in the user's account being associated with the chosen subscription tier.
+        - Webhooks from Polar.sh are handled to update subscription status in the VibeContext database (e.g., in a new `user_subscriptions` table or by adding fields to `auth.users` or a related table).
+- **FR 2.6.3: Manage Subscription & View Billing History (via Polar.sh Customer Portal)**
+    - **Description:** Users can manage their subscription (e.g., change tier, update payment method, cancel) and view billing history via Polar.sh's customer portal.
+    - **Acceptance Criteria:**
+        - A link/button in the user's account settings directs them to the Polar.sh customer portal.
+        - User authentication with Polar.sh portal is seamless if possible, or clearly guided.
+- **FR 2.6.4: Enforce Feature Entitlements Based on Subscription Tier**
+    - **Description:** The application restricts or enables features and usage based on the user's active subscription tier.
+    - **Acceptance Criteria:**
+        - Backend logic checks user's subscription status before allowing access to tier-specific features or exceeding usage limits.
+        - UI clearly indicates features that require a higher tier or when usage limits are approached/exceeded.
+
+---
+
+## 3. Non-Functional Requirements
+
+- **NFR 3.1: Performance**
+    - **Description:** Defines responsiveness and processing times for key operations.
+    - **Acceptance Criteria:**
+        - Next.js page loads (SSR/SSG for static parts, client-side for dynamic) complete within 2-3 seconds on a typical broadband connection.
+        - UI interactions (e.g., opening modals, expanding tree nodes, inline editing) respond within 300ms.
+        - Initial PRD or Prompt Tree generation (LLM dependent) aims for completion within 15-45 seconds for average complexity inputs.
+        - Downstream prompt regeneration for a small tree (5-10 affected nodes) completes within 10-20 seconds.
+        - Supabase queries via Drizzle for typical data fetches (e.g., loading a project's prompt tree) complete within 500ms.
+- **NFR 3.2: Security**
+    - **Description:** Ensures protection of user accounts and data, leveraging Supabase capabilities and secure payment processing.
+    - **Acceptance Criteria:**
+        - All client-server communication utilizes HTTPS.
+        - User authentication is handled by Supabase Auth, including secure password hashing and session management (e.g., JWTs). Row Level Security (RLS) policies are configured in Supabase to ensure users can only access their own data.
+        - Supabase client SDKs are used correctly in Next.js (client-side for user session, server-side with service role keys for admin tasks or Drizzle access from API routes).
+        - Drizzle ORM usage must prevent SQL injection vulnerabilities (by using its query builder and not raw SQL with concatenated user input).
+        - Basic input sanitization on Next.js API routes for data sent to LLMs to prevent prompt injection where feasible.
+        - Payment processing is handled by Polar.sh, which is responsible for PCI compliance and secure handling of payment details. VibeContext itself does not store raw payment card information.
+        - Secure handling of Polar.sh API keys and webhook secrets.
+- **NFR 3.3: Usability & UI/UX**
+    - **Description:** The application should be intuitive and align with the "Whimsical + Notion + GPT" concept.
+    - **Acceptance Criteria:**
+        - A clean, modern, and minimalist UI, built with Next.js and TypeScript using a component library like Shadcn/UI.
+        - Core actions (Create Project, Generate PRD, Generate/Edit Tree) are prominent and easily discoverable.
+        - The prompt tree visualization is clear, allowing easy navigation and understanding of hierarchy.
+        - Consistent visual language and interaction patterns throughout the application.
+        - The application is responsive and usable on standard desktop/laptop screen sizes.
+- **NFR 3.4: Technical Requirements**
+    - **Description:** Specifies the core technology stack and development practices.
+    - **Acceptance Criteria:**
+        - Web application built with Next.js (latest stable version) and React using TypeScript for all new code.
+        - Data persistence and user authentication handled by Supabase (PostgreSQL database, Supabase Auth).
+        - Drizzle ORM is used for all database interactions (schema definition, migrations, queries) with Supabase from Next.js API routes or server components.
+        - Codebase follows linting (ESLint) and formatting (Prettier) rules defined in the project.
+        - Version control using Git, with a clear branching strategy.
+
+---
+
+## 4. Dependencies and Constraints
+
+- **DEP 4.1: External LLM Service via OpenRouter:** The application's core generation features (PRD, prompt tree, regeneration) depend entirely on the availability, performance, and API of various Large Language Models accessed through OpenRouter. OpenRouter itself becomes a critical dependency for accessing these models.
+- **DEP 4.2: LangChain.js Framework:** LLM interaction orchestration (chat, PRD generation, prompt tree generation, regeneration) relies on the LangChain.js library. Its capabilities, stability, and compatibility with chosen LLMs (via OpenRouter) are crucial.
+- **DEP 4.3: Supabase Platform:** Relies on Supabase for authentication (Supabase Auth) and database (Supabase PostgreSQL). Any Supabase outages or service limitations will directly impact the application.
+- **DEP 4.4: Polar.sh Platform:** Relies on Polar.sh for payment processing, subscription management, and tax handling. Any Polar.sh outages, API changes, or policy changes could impact monetization features.
+- **DEP 4.5: Internet Connectivity:** Users must have an active and stable internet connection to use any features involving LLM calls, Supabase data synchronization, or Polar.sh payment processing.
+- **DEP 4.6: Node.js Ecosystem:** Built upon the Node.js runtime and npm/pnpm package ecosystem.
+- **CON 4.1: MVP Scope Limitation:** Features beyond those explicitly listed (e.g., real-time collaboration, version history for prompts, advanced PRD customization, AI agent execution of prompts, complex metered billing beyond simple tiers) are out of scope for this MVP unless explicitly added to monetization FRs.
+- **CON 4.2: LLM Costs and Rate Limits (via OpenRouter):** The frequency and complexity of LLM calls (routed via OpenRouter) will be subject to API costs and rate limits of the chosen underlying models and OpenRouter's own policies. This could constrain usage in the MVP.
+- **CON 4.3: Browser Compatibility:** MVP primarily targets latest versions of modern evergreen desktop browsers (Chrome, Firefox, Edge, Safari). Extensive testing on older browsers or mobile browsers is out of MVP scope.
+- **CON 4.4: Drizzle ORM Maturity & Features:** While powerful, Drizzle is a newer ORM. Specific complex query needs might encounter limitations, though unlikely for MVP scope.
+
+---
+
+## 5. Out of Scope (for MVP)
+
+- Real-time multi-user collaboration on projects or prompt trees.
+- Advanced analytics dashboards on prompt usage or generation quality.
+- Granular user roles and permissions within a project (beyond owner).
+- Native mobile applications (iOS/Android).
+- Direct integration with external project management tools (e.g., Jira, Trello).
+- Offline mode or local-first capabilities beyond browser caching.
+- Extensive PRD template library or user-defined PRD templates.
+- The actual execution of generated prompts by an AI agent; the tool focuses on prompt generation.
+- Versioning and rollback for individual prompts or entire prompt trees.
+- A/B testing frameworks for prompt effectiveness.
+
+---
+
+## 6. Risk Assessment
+
+- **RISK 6.1: LLM Output Quality & Consistency**
+    - **Description:** Generated PRDs or prompts may be irrelevant, inaccurate, inconsistent, or fail to respect hierarchical context, diminishing user value.
+    - **Impact:** High
+    - **Likelihood:** Medium
+    - **Mitigation:**
+        - Extensive prompt engineering and testing for core generation tasks.
+        - All generated content is fully editable by the user.
+        - Provide clear examples and guidance to users on formulating effective initial app ideas.
+        - Allow users to easily regenerate specific nodes or sub-trees.
+        - Plan for post-MVP iteration on LLM choice, fine-tuning, or more sophisticated context management.
+- **RISK 6.2: Performance of Downstream Regeneration**
+    - **Description:** Regenerating a large number of downstream prompt nodes upon a parent edit could be slow, leading to poor UX.
+    - **Impact:** Medium
+    - **Likelihood:** Medium (for MVP, assuming moderate tree sizes)
+    - **Mitigation:**
+        - Optimize Next.js API routes and Drizzle queries involved in regeneration.
+        - Implement asynchronous regeneration with clear UI feedback (e.g., loading states per node).
+        - For MVP, accept potential moderate delays for very large trees; investigate partial/selective regeneration post-MVP.
+- **RISK 6.3: Vendor Lock-in (Supabase, OpenRouter, LangChain.js)**
+    - **Description:** Deep integration with Supabase, reliance on OpenRouter for LLM access, and use of LangChain.js for orchestration could make future migration to alternative services complex or costly if OpenRouter's model availability or pricing changes unfavorably, or if LangChain.js development introduces breaking changes or shifts direction.
+    - **Impact:** Medium
+    - **Likelihood:** Low (for MVP, benefits of rapid development outweigh this risk)
+    - **Mitigation:**
+        - Encapsulate direct vendor SDK calls within specific service modules/API routes in the Next.js backend to simplify future refactoring.
+        - This is primarily a long-term strategic consideration, less critical for MVP success.
+- **RISK 6.4: User Data Privacy with LLM Interactions (via OpenRouter)**
+    - **Description:** User-provided app ideas and prompt content are sent through OpenRouter to external LLM services, which may have implications for data privacy and confidentiality. Policies of both OpenRouter and the end LLM provider apply.
+    - **Impact:** High
+    - **Likelihood:** Medium
+    - **Mitigation:**
+        - Clearly disclose data handling practices in the Terms of Service and Privacy Policy, specifically mentioning LLM usage.
+        - Select LLM providers with explicit commitments to data privacy and options for zero data retention if available.
+        - Remind users not to input highly sensitive or proprietary information if relying on third-party LLMs.
+- **RISK 6.5: Complexity of Managing Prompt Context with LangChain.js**
+    - **Description:** Ensuring that the correct and relevant context (from parent nodes and overall project) is always passed during prompt generation and regeneration using LangChain.js can be technically complex, despite the framework's help.
+    - **Impact:** High
+    - **Likelihood:** Medium
+    - **Mitigation:**
+        - Design a clear data model in Supabase (using Drizzle) for storing context and relationships.
+        - Develop robust logic in Next.js API routes using LangChain.js for context aggregation and chain management before LLM calls.
+        - Thoroughly test various tree structures and edit scenarios with LangChain.js chains.
+- **RISK 6.6: Supabase RLS and Drizzle Integration Complexity**
+    - **Description:** Incorrectly configuring Supabase Row Level Security (RLS) policies or bugs in Drizzle's interaction with RLS could lead to data leakage or incorrect data access.
+    - **Impact:** High
+    - **Likelihood:** Low-Medium (if RLS is well-tested)
+    - **Mitigation:**
+        - Implement comprehensive RLS policies in Supabase from the start.
+        - Thoroughly test all Drizzle queries from Next.js API routes under different user roles/scenarios to ensure RLS is enforced as expected.
+        - Keep Drizzle and Supabase client libraries updated.
+- **RISK 6.7: Payment Integration & Compliance (Polar.sh)**
+    - **Description:** Issues with Polar.sh integration (API changes, webhook handling failures, incorrect entitlement logic) could lead to incorrect billing, subscription status mismatches, or inability for users to subscribe/manage payments. Polar.sh handles direct PCI compliance, but VibeContext must correctly integrate and manage subscription state.
+    - **Impact:** High (if monetization is critical)
+    - **Likelihood:** Medium (for initial integration)
+    - **Mitigation:**
+        - Thoroughly test Polar.sh integration flow (checkout, webhooks, customer portal redirection).
+        - Implement robust error handling and logging for payment-related API calls and webhooks.
+        - Clearly define and test logic for mapping Polar.sh subscription statuses to VibeContext entitlements.
+        - Rely on Polar.sh for all sensitive payment data storage and processing.
+
+---
+
+## 7. Future considerations
+
+- **FC 7.1: MCP Server Integration**
+    - **Description:** Explore integrating vibe-context.io with a Model Context Protocol (MCP) server. This would allow vibe-context.io to act as an MCP Host, connecting to various MCP Servers (e.g., for existing codebases, external tools like Windsurf or Cursor).
+    - **Benefit:** Standardizes context sharing with a broader ecosystem of AI tools and data sources, potentially enabling VibeContext to leverage or provide context to tools like Cursor or custom-built MCP servers for specific development environments or enterprise systems. This could enhance the "shared context" capabilities significantly.
+    - **Considerations:** Requires implementing an MCP client within VibeContext. Need to investigate MCP server availability and development for relevant tools/data sources.

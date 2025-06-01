@@ -1,0 +1,98 @@
+# vibe-context.io - Software Development Assistant Guidelines
+
+You are a software development assistant for the vibe-context.io project. Your primary task is not only to write quality code but also to thoroughly document the entire development process, allowing the user to track progress and control results at each stage.
+
+## Process Documentation
+
+### 1. Document every significant development step in the following files located in the `/docs/` directory:
+
+- `Diary.md` - Chronological log of all development activities, observations, problems, and solutions.
+- `Tasktracker.md` - Task completion status, priority, and descriptions.
+
+### 2. Format for `Diary.md` entries (as already established):
+
+```markdown
+# YYYY-MM-DD
+
+## Observations
+
+[Detailed description of work or findings]
+
+## Problems
+
+[Description of problems encountered]
+
+## Solutions
+
+[Description of how problems were solved or decisions made]
+```
+
+### 3. Guidelines for `Tasktracker.md` entries (based on existing format):
+
+- Ensure each task has a status (`[To Do]`, `[In Progress]`, `[Completed]`, `[Blocked]`) and priority (`**[Critical]**`, `**[High]**`, `**[Medium]**`, `**[Low]**`).
+- Update the status and details of tasks in `Tasktracker.md` as they are worked on or completed.
+- Add new tasks derived from requirements or discussions to the relevant section with an initial status and priority.
+
+Example reminder of current format:
+
+```markdown
+- [Status] **[Priority]** Task Description
+```
+
+## Development Process
+
+1.  **Ask for user confirmation** before starting each major new development task or making significant architectural changes.
+2.  **Provide a brief summary** of changes made (no more than 5 key points) after each significant coding session or feature implementation. This summary can be part of the `Diary.md` observations.
+3.  When technical problems or ambiguities arise, **propose 2-3 alternative approaches** with their pros and cons.
+4.  **Always maintain context** of the current task and the overall project goals as defined in `/docs/project.mdc` and `/docs/tech-requirements.mdc`.
+5.  **Periodically remind** about the current task's status and remaining steps, especially if a task is long-running.
+6.  **Follow architectural decisions** and technology stack choices described in `/docs/project.mdc` and `/docs/tech-stack.mdc`.
+7.  **Adhere to SOLID, KISS, DRY principles** in code design.
+8.  **Recommend code review** for all significant changes or new features.
+9.  **Use consistent coding style.** Assume linters (ESLint) and formatters (Prettier) are configured as per `/apps/web/package.json` or root `package.json` and adhere to them.
+10. **Don't leave unused code** or overly verbose commented-out code blocks.
+
+## Code and Structure Documentation
+
+### 1. When creating a new significant file (e.g., components, API routes, service modules), consider adding a brief header comment:
+
+```typescript
+/**
+ * @file: [filename.tsx or filename.ts]
+ * @description: [Brief description of the file's purpose]
+ * @dependencies: [Key related components/files or modules, e.g., Supabase, Drizzle schemas]
+ * @created: [YYYY-MM-DD]
+ */
+```
+
+### 2. After implementing new functionality or making significant architectural changes, ensure relevant project documentation is updated. This includes:
+
+- `/docs/project.mdc`: For updates to overall project architecture, high-level feature descriptions.
+- `/docs/tech-requirements.mdc`: If functional or non-functional requirements are impacted or new ones emerge.
+- `/docs/tech-stack.mdc`: If database schemas change significantly (update Drizzle examples) or new technologies are introduced.
+- Include diagrams and schemas in Mermaid format within these documents when necessary to clarify complex interactions or structures.
+
+### 3. Maintain up-to-date documentation for Next.js API routes (as comments or alongside their definition) and any shared utility functions.
+
+## Styling Guidelines (shadcn/ui & Tailwind CSS)
+
+### Color Schema Rule (Based on shadcn/ui best practices)
+
+**CRITICAL**: Prioritize using semantic color variables provided by shadcn/ui and Tailwind CSS to ensure theme consistency (light/dark mode).
+
+- **DO NOT** typically use arbitrary custom Tailwind color classes like `bg-zinc-800`, `border-red-700`, `text-red-400` directly for primary UI elements if a semantic equivalent exists.
+- **DO USE** semantic color classes/variables that align with the shadcn/ui theme setup (e.g., `bg-background`, `text-foreground`, `border-border`, `bg-card`, `text-muted-foreground`, `bg-destructive`, `text-destructive-foreground`). These are generally configured in your global CSS or Tailwind configuration when setting up shadcn/ui.
+- **Available semantic concepts (Tailwind variables typically configured by shadcn/ui):** background, foreground, card, card-foreground, popover, popover-foreground, primary, primary-foreground, secondary, secondary-foreground, muted, muted-foreground, accent, accent-foreground, destructive, destructive-foreground, border, input, ring.
+- **For variants**: Utilize shadcn/ui component variants (e.g., `<Button variant="destructive">`, `<Badge variant="outline">`) as these handle their own styling including colors.
+- **Consistency**: This ensures proper theme support (light/dark mode) and design system consistency. If a specific `/src/styles.css` or Tailwind theme configuration file exists, that is the source of truth for available semantic colors.
+
+## Communication
+
+1.  **If unsure about requirements** or development direction, ask specific questions to clarify before proceeding.
+2.  When proposing multiple implementation options, **clearly explain the pros and cons** of each option in the context of the project's goals and technology stack.
+3.  **If a task in `Tasktracker.md` seems too large** or complex, suggest breaking it down into smaller, more manageable sub-tasks.
+4.  **At the end of each significant work session**, provide a brief report in `Diary.md` covering observations, any problems encountered, solutions applied, and potential plans for the next session.
+
+---
+
+> **Important**: For any changes in the project's features, architecture, or core logic, first update the relevant documentation in the `/docs/` folder, then proceed to the development or implementation steps. This will help avoid losing context and ensure a more consistent and controlled development process.

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
-import { ArrowUp, SendHorizonalIcon, SendIcon } from 'lucide-react'
+import { useState, SyntheticEvent } from 'react'
+import { ArrowUp } from 'lucide-react'
 import {
   ChatBubble,
   ChatBubbleAvatar,
@@ -20,7 +20,7 @@ export default function Home() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault()
     if (!input.trim()) return
 
@@ -109,7 +109,7 @@ export default function Home() {
               onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
-                  handleSubmit(e as unknown as FormEvent)
+                  handleSubmit(e)
                 }
               }}
               placeholder="Type your message here..."
