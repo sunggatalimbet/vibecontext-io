@@ -27,6 +27,41 @@
 - Used the provided templates and examples to structure the `.mdc` files and `Tasktracker.md`.
 - Iteratively refined the functional requirements to ensure clarity on how features like AI chat for idea generation, file-based storage of artifacts, and prompt tree management would work together.
 
+Successfully resolved the "Missing Supabase environment variables" error and got the authentication system fully working:
+
+1. **Environment Variables Issue**: The error was caused by the `.env.local` file being located at the project root instead of in the Next.js app directory (`apps/web/`)
+2. **Next.js Configuration**: Discovered that the Next.js config had static export enabled (`output: 'export'`) which conflicts with server-side authentication routes
+3. **Build Errors**: Fixed multiple build errors related to:
+   - Static export incompatibility with dynamic authentication routes
+   - Missing auth error page (`/auth/error`)
+   - `useSearchParams()` requiring Suspense boundaries in Next.js 15
+4. **Authentication System**: Confirmed the complete authentication system is working properly with:
+   - Supabase client and server configurations
+   - OAuth authentication flows (Google, GitHub)
+   - Route protection middleware
+   - User authentication state management
+   - Proper error handling and user feedback
+
+The application is now successfully running on `http://localhost:3000` with full authentication functionality.
+
+## Problems
+
+1. **Environment Variables Location**: `.env.local` was at project root but Next.js looks for it in the app directory
+2. **Static Export Conflict**: Next.js config had `output: 'export'` which prevents server-side authentication
+3. **Missing Pages**: Auth error page was referenced but didn't exist
+4. **Suspense Boundaries**: Next.js 15 requires `useSearchParams()` to be wrapped in Suspense boundaries
+5. **Build Cache**: Stale build cache was causing persistent errors
+
+## Solutions
+
+1. **Fixed Environment Variables**: Copied `.env.local` from project root to `apps/web/.env.local` where Next.js can find it
+2. **Removed Static Export**: Removed `output: 'export'` from `next.config.js` since authentication requires server-side functionality
+3. **Created Missing Pages**: Created `/auth/error` page with proper error handling and user feedback
+4. **Added Suspense Boundaries**: Wrapped `useSearchParams()` usage in both login and error pages with Suspense components
+5. **Clean Build**: Removed `.next` directory and performed fresh build to clear cache
+
+The authentication system is now fully functional and the application builds and runs without errors.
+
 ---
 
 # 2025-06-01
@@ -125,3 +160,79 @@
 ## Solutions
 
 - Integrated LangChain.js into the project documentation, clarifying its role in the architecture.
+
+# 2024-12-19
+
+## Observations
+
+Successfully simplified the `@repo/auth` package by removing unnecessary build complexity:
+
+1. **Removed bundling infrastructure**: Eliminated tsup, build scripts, and compiled output
+2. **Direct TypeScript exports**: Package now exports TypeScript source files directly via package.json exports
+3. **Simplified dependencies**: Removed build tools and kept only essential runtime dependencies
+4. **Cleaner structure**: Package is now just source TypeScript code without build artifacts
+5. **Maintained functionality**: All authentication features remain functional in the web app
+
+The auth package is now much simpler and more appropriate for an internal monorepo package. No need for compilation/bundling when the consuming applications (web app) can handle TypeScript directly.
+
+## Problems
+
+Initially overcomplicated the internal auth package with unnecessary build tooling and bundling setup that added complexity without benefit.
+
+## Solutions
+
+Simplified the package to be just TypeScript source code:
+
+- Removed tsup.config.ts and build-related package.json scripts
+- Updated package.json exports to point directly to .ts files
+- Cleaned up dist folder and unnecessary dependencies
+- Maintained all functionality while dramatically reducing complexity
+
+This approach is much more suitable for internal monorepo packages where the consuming applications handle compilation.
+
+Implemented comprehensive Supabase user authentication system for the vibe-context.io application. The authentication system includes:
+
+1. **Supabase Client Configuration**: Created both client-side and server-side Supabase configurations with proper cookie handling for SSR
+2. **Authentication Context**: Implemented React context for managing authentication state across the application
+3. **OAuth Authentication**: Set up OAuth login flow supporting Google and GitHub providers
+4. **Authentication Pages**: Created login and error pages with proper error handling and user feedback
+5. **User Interface Components**: Built UserMenu component with avatar, user info, and logout functionality
+6. **Route Protection**: Implemented middleware for protecting routes and handling authentication redirects
+7. **Integration**: Successfully integrated authentication into the existing layout structure
+
+The implementation follows Next.js 15 App Router patterns and uses shadcn/ui components for consistent styling. All authentication flows are properly handled including OAuth callbacks, session management, and error states.
+
+**MAJOR REFACTORING**: Created a reusable `@repo/auth` package that separates authentication concerns from the web application:
+
+1. **Package Structure**: Created `packages/auth` with proper TypeScript configuration and build setup
+2. **Core Authentication**: Moved all authentication logic into reusable classes (`AuthClient`, `AuthServer`)
+3. **React Integration**: Created React-specific hooks and providers that can be used in any React application
+4. **Platform Independence**: The auth package can now be used across web apps, mobile apps, CLI tools, etc.
+5. **Clean Separation**: Removed all authentication code from `apps/web` and replaced with clean imports from `@repo/auth`
+
+The auth package exports:
+
+- `@repo/auth` - Core types and utilities
+- `@repo/auth/client` - Browser-side authentication
+- `@repo/auth/server` - Server-side authentication for SSR/API routes
+- `@repo/auth/react` - React hooks and providers
+
+## Problems
+
+1. **Environment Variables**: Cannot directly create .env files due to gitignore restrictions, so created documentation file instead
+2. **Component Dependencies**: Had to verify that required shadcn/ui components (Card, Alert, Avatar, etc.) were already installed
+3. **Layout Integration**: Needed to carefully integrate AuthProvider into existing layout structure without breaking current functionality
+4. **Build Configuration**: Had to fix TypeScript and tsup configuration for the auth package to build correctly
+5. **Import Restructuring**: Required updating all authentication-related imports across the web app
+
+## Solutions
+
+1. **Environment Setup**: Created comprehensive README-env.md file documenting all required environment variables with clear setup instructions
+2. **Component Verification**: Verified all required shadcn/ui components exist in the project before implementation
+3. **Gradual Integration**: Integrated authentication step-by-step, starting with core configuration and building up to UI components and middleware
+4. **Error Handling**: Implemented comprehensive error handling for authentication failures and edge cases
+5. **Package Architecture**: Designed the auth package with proper separation of concerns and multiple entry points for different use cases
+6. **Build System**: Fixed TypeScript configuration and package.json exports to ensure proper building and type generation
+7. **Clean Migration**: Successfully migrated all authentication code to the new package while maintaining functionality
+
+The authentication system is now completely modular and reusable. The `@repo/auth` package can be used in any JavaScript/TypeScript project, making it easy to add authentication to future applications (mobile, CLI, etc.) while maintaining consistency.
