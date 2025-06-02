@@ -5,8 +5,9 @@
  * @created: 2024-12-19
  */
 
+import type { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import { cookies } from 'next/headers'
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import {
   createAuthServer,
   createAuthConfig,
@@ -30,7 +31,7 @@ export async function GET(request: NextRequest) {
           getAll() {
             return cookieStore.getAll()
           },
-          set(name, value, options) {
+          set(name: string, value: string, options: RequestCookie) {
             cookieStore.set(name, value, options)
           },
         },
@@ -38,9 +39,9 @@ export async function GET(request: NextRequest) {
     })
 
     try {
-      const { error } = await authServer.exchangeCodeForSession(code)
+      const response = await authServer.exchangeCodeForSession(code)
 
-      if (!error) {
+      if (!response.error) {
         // Successful authentication - redirect to the app
         const forwardedHost = request.headers.get('x-forwarded-host')
         const isLocalEnv = process.env.NODE_ENV === 'development'
@@ -53,19 +54,21 @@ export async function GET(request: NextRequest) {
           return NextResponse.redirect(`${origin}${next}`)
         }
       } else {
-        console.error('Auth callback error:', error)
+        console.error('Auth callback error:', response.error)
         const errorMessage = sanitizeErrorMessage(
-          error.message,
+          response.error?.message ?? 'Authentication failed',
           'Authentication failed'
         )
         return NextResponse.redirect(
           `${origin}/auth/error?message=${encodeURIComponent(errorMessage)}`
         )
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Unexpected auth callback error:', err)
       const errorMessage = sanitizeErrorMessage(
-        'Unexpected error during authentication',
+        err instanceof Error
+          ? err.message
+          : 'Unexpected error during authentication',
         'Authentication failed'
       )
       return NextResponse.redirect(

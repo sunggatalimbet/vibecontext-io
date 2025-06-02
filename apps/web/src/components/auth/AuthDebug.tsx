@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export function AuthDebug() {
-  const { user, session, loading, error } = useAuth()
+  const { user, session: _session, loading, error } = useAuth()
 
   if (loading) {
     return (
