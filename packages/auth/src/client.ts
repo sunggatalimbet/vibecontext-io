@@ -21,6 +21,7 @@ export class AuthClient {
   private config: AuthConfig
   private state: AuthState
   private listeners: Set<AuthEventCallback>
+  private authSubscription?: { data: { subscription: any } }
 
   constructor(options: AuthClientOptions) {
     this.config = {
@@ -89,22 +90,24 @@ export class AuthClient {
     }
 
     // Listen for auth state changes
-    this.supabase.auth.onAuthStateChange((event, session) => {
-      const authEvent: AuthEvent = {
-        type: event as AuthEvent['type'],
-        session,
-        user: session?.user ?? null,
+    this.authSubscription = this.supabase.auth.onAuthStateChange(
+      (event, session) => {
+        const authEvent: AuthEvent = {
+          type: event as AuthEvent['type'],
+          session,
+          user: session?.user ?? null,
+        }
+
+        this.updateState({
+          session,
+          user: session?.user ?? null,
+          loading: false,
+          error: null,
+        })
+
+        this.notifyListeners(authEvent)
       }
-
-      this.updateState({
-        session,
-        user: session?.user ?? null,
-        loading: false,
-        error: null,
-      })
-
-      this.notifyListeners(authEvent)
-    })
+    )
   }
 
   private updateState(updates: Partial<AuthState>) {
@@ -205,6 +208,9 @@ export class AuthClient {
 
   public destroy(): void {
     this.listeners.clear()
+    if (this.authSubscription) {
+      this.authSubscription.data.subscription.unsubscribe()
+    }
   }
 }
 
