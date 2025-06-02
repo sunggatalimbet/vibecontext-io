@@ -13,7 +13,6 @@ import {
   validateRedirectUrl,
   sanitizeErrorMessage,
 } from '@repo/auth'
-import { toast } from 'sonner'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -54,7 +53,7 @@ export async function GET(request: NextRequest) {
           return NextResponse.redirect(`${origin}${next}`)
         }
       } else {
-        toast.error('Auth callback error:', error)
+        console.error('Auth callback error:', error)
         const errorMessage = sanitizeErrorMessage(
           error.message,
           'Authentication failed'
@@ -64,8 +63,7 @@ export async function GET(request: NextRequest) {
         )
       }
     } catch (err) {
-      console.error(err)
-      toast.error('Unexpected auth callback error')
+      console.error('Unexpected auth callback error:', err)
       const errorMessage = sanitizeErrorMessage(
         'Unexpected error during authentication',
         'Authentication failed'
