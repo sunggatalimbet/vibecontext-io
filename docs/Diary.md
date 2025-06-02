@@ -4,6 +4,155 @@
 
 ## Observations
 
+**Enhanced OAuth Authentication UX: Added Loading States to Sign-in Buttons**
+
+Improved user experience on the login page by adding responsive loading states to OAuth authentication buttons:
+
+**User Experience Improvements:**
+
+1. **Immediate Visual Feedback**:
+
+   - Added individual loading states for Google and GitHub OAuth buttons
+   - Users get instant feedback when clicking authentication buttons
+   - Eliminates uncertainty about whether the click was registered
+
+2. **Clear Loading Indicators**:
+
+   - Replaced provider icons with animated spinner during authentication
+   - Dynamic button text changes to "Signing in with Google..." / "Signing in with GitHub..."
+   - Used semantic `Loader2` component from Lucide React for consistency
+
+3. **Smart Button State Management**:
+   - Both buttons disabled when any OAuth process is active
+   - Prevents accidental multiple authentication attempts
+   - Loading state properly reset on authentication errors
+   - Successful authentications redirect users before state reset needed
+
+**Technical Implementation:**
+
+```typescript
+// Individual loading states for each provider
+const [googleLoading, setGoogleLoading] = useState(false)
+const [githubLoading, setGithubLoading] = useState(false)
+
+// Loading state activated immediately on button click
+const handleGoogleSignIn = async () => {
+  try {
+    setGoogleLoading(true)
+    // ... OAuth logic
+  } catch (err) {
+    setGoogleLoading(false) // Reset only on error
+  }
+}
+```
+
+**Files Modified:**
+
+- `apps/web/src/app/auth/login/page.tsx` - Added loading states and visual feedback
+
+This enhancement makes the authentication flow feel significantly more responsive and professional, addressing a common UX pain point where users are unsure if their authentication request is processing.
+
+**Critical Memory Leak Fix: Supabase Auth Listener Cleanup**
+
+Fixed a potential memory leak in the `AuthClient` class where Supabase auth state change listeners were not being properly cleaned up:
+
+**The Issue:**
+
+- `AuthClient.destroy()` method only cleared local listeners but didn't unsubscribe from Supabase auth state changes
+- This could cause memory leaks in applications where auth clients are frequently created and destroyed
+- Especially problematic in React apps with hot reloading or component remounting
+
+**Fix Implemented:**
+
+1. **Added subscription tracking**: Added `authSubscription` property to store the Supabase auth listener subscription
+2. **Stored subscription reference**: Modified `init()` method to store the subscription returned by `onAuthStateChange`
+3. **Proper cleanup**: Enhanced `destroy()` method to unsubscribe from Supabase listener
+
+**Code Changes:**
+
+```typescript
+// Added property to track subscription
+private authSubscription?: { data: { subscription: any } }
+
+// Store subscription when setting up listener
+this.authSubscription = this.supabase.auth.onAuthStateChange(...)
+
+// Proper cleanup in destroy method
+public destroy(): void {
+  this.listeners.clear()
+  if (this.authSubscription) {
+    this.authSubscription.data.subscription.unsubscribe()
+  }
+}
+```
+
+This fix ensures that all auth listeners are properly cleaned up, preventing memory leaks and improving application performance, especially in development environments with hot reloading.
+
+**Critical Security Fix: Open Redirect Vulnerability Protection**
+
+Identified and fixed a critical security vulnerability in the OAuth authentication flow that could have been exploited for phishing attacks:
+
+**The Vulnerability:**
+
+- OAuth callback route (`/auth/callback`) was using the `next` parameter directly from URL without validation
+- This created an open redirect vulnerability where attackers could redirect users to malicious external sites after authentication
+- Error messages in production were exposing detailed technical information
+
+**Security Fixes Implemented:**
+
+1. **URL Validation Function**:
+
+   - Created `validateRedirectUrl()` function that validates all redirect URLs
+   - Only allows same-origin redirects by checking URL origin
+   - Safely handles malformed URLs with try-catch blocks
+   - Returns sanitized pathname + search parameters for valid URLs
+
+2. **Production Error Message Protection**:
+
+   - Added environment-based error message handling
+   - Development: Shows detailed error messages for debugging
+   - Production: Shows generic "Authentication failed" messages to prevent information disclosure
+
+3. **Enhanced OAuth Flow Security**:
+   - Updated login page to safely validate `redirectTo` parameter
+   - Implements same URL validation logic on client-side
+   - Securely passes redirect destination through OAuth callback URL
+   - Maintains intended post-login redirect functionality while preventing abuse
+
+**Files Modified:**
+
+- `apps/web/src/app/auth/callback/route.ts` - Core security fixes
+- `apps/web/src/app/auth/login/page.tsx` - Safe redirect parameter handling
+
+This fix prevents attackers from crafting malicious authentication URLs that could redirect users to phishing sites after successful login, significantly improving the security posture of the authentication system.
+
+**Updated Supabase Dependencies and Added Security Auditing**
+
+Successfully updated the `@repo/auth` package with the latest Supabase dependencies and improved security posture:
+
+1. **Supabase Core Library Update**:
+
+   - Updated `@supabase/supabase-js` from `^2.39.3` to `^2.49.8`
+   - This includes all interim fixes and improvements over ~10 minor versions
+
+2. **Added Missing SSR Dependency**:
+
+   - Added `@supabase/ssr` version `^0.6.1` to dependencies
+   - This dependency was being imported in the server.ts file but wasn't declared in package.json
+   - Essential for proper server-side rendering authentication functionality
+
+3. **Security Auditing Infrastructure**:
+
+   - Generated `package-lock.json` file in the auth package
+   - Enables proper npm audit functionality for vulnerability detection
+   - Ran security audit at moderate level - confirmed 0 vulnerabilities found
+
+4. **Monorepo Synchronization**:
+   - Updated all workspace dependencies to ensure consistency
+   - Verified no breaking changes or new security issues introduced
+
+These updates ensure the authentication system has the latest security patches and bug fixes while enabling ongoing vulnerability monitoring through npm audit.
+
 - Initialized project documentation based on user request.
 - Created `project.mdc` outlining the overall vibe-context.io application, its purpose, and high-level features based on the AI-powered app development assistant concept.
 - Created `tech-requirements.mdc` detailing functional and non-functional requirements for the MVP. This includes:

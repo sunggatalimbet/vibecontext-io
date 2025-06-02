@@ -29,6 +29,15 @@
   - [Completed] **[Medium]** Remove tsup bundling and build scripts.
   - [Completed] **[Medium]** Update exports to point directly to TypeScript source files.
   - [Completed] **[Medium]** Clean up build artifacts and unnecessary dependencies.
+- [Completed] **[Medium]** Security and dependency maintenance.
+  - [Completed] **[Medium]** Update @supabase/supabase-js to latest version (^2.49.8).
+  - [Completed] **[Medium]** Add missing @supabase/ssr dependency (^0.6.1).
+  - [Completed] **[Medium]** Generate package-lock.json for security auditing.
+  - [Completed] **[Medium]** Verify no security vulnerabilities (npm audit clean).
+  - [Completed] **[Critical]** Fix open redirect vulnerability in OAuth callback route.
+  - [Completed] **[High]** Implement URL validation for redirect parameters.
+  - [Completed] **[High]** Secure error message handling in production environment.
+  - [Completed] **[High]** Fix Supabase auth listener memory leak in AuthClient.destroy().
 
 ## 2. User Authentication (Supabase Auth with OAuth2, Next.js, TypeScript)
 
@@ -138,7 +147,8 @@
 - [To Do] **[Medium]** Performance: Optimize UI interaction responsiveness (NFR 3.1).
 - [To Do] **[Low]** Performance: Monitor and optimize LLM interaction & Supabase query times (NFR 3.1).
 - [To Do] **[High]** Security: Ensure all client-server communication is HTTPS (usually default with hosting). (NFR 3.2)
-- [To Do] **[High]** Security: Review and ensure correct usage of Supabase client/server SDKs. (NFR 3.2)
+- [Completed] **[High]** Security: Review and ensure correct usage of Supabase client/server SDKs. (NFR 3.2)
+- [Completed] **[Critical]** Security: Fix open redirect vulnerabilities in authentication flows. (NFR 3.2)
 - [To Do] **[Medium]** Security: Implement basic input sanitization for LLM prompts. (NFR 3.2)
 - [To Do] **[Medium]** Usability & UI/UX: Ensure clean, modern, minimalist UI with shadcn/ui. (NFR 3.3)
 - [To Do] **[Medium]** Usability & UI/UX: Ensure core actions are prominent and discoverable. (NFR 3.3)
