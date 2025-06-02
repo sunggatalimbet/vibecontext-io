@@ -4,7 +4,7 @@
  * @created: 2024-12-19
  */
 
-// Core types
+// Core types and configurations
 export * from './types'
 
 // Client-side auth
@@ -13,5 +13,8 @@ export { AuthClient, createAuthClient } from './client'
 // Server-side auth
 export { AuthServer, createAuthServer, createAuthConfig } from './server'
 
-// React integration (conditional export)
-export type { AuthProviderProps } from './react/AuthProvider'
+// React providers and hooks
+export * from './react'
+
+// Security utilities
+export { validateRedirectUrl, sanitizeErrorMessage } from './utils/security'

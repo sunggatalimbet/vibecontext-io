@@ -7,12 +7,18 @@
 
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
-import { createAuthServer, createAuthConfig } from '@repo/auth/server'
+import {
+  createAuthServer,
+  createAuthConfig,
+  validateRedirectUrl,
+  sanitizeErrorMessage,
+} from '@repo/auth'
+import { toast } from 'sonner'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/'
+  const next = validateRedirectUrl(searchParams.get('next'), origin) ?? '/'
 
   if (code) {
     const cookieStore = await cookies()
@@ -48,15 +54,24 @@ export async function GET(request: NextRequest) {
           return NextResponse.redirect(`${origin}${next}`)
         }
       } else {
-        console.error('Auth callback error:', error)
+        toast.error('Auth callback error:', error)
+        const errorMessage = sanitizeErrorMessage(
+          error.message,
+          'Authentication failed'
+        )
         return NextResponse.redirect(
-          `${origin}/auth/error?message=${encodeURIComponent(error.message)}`
+          `${origin}/auth/error?message=${encodeURIComponent(errorMessage)}`
         )
       }
     } catch (err) {
-      console.error('Unexpected auth callback error:', err)
+      console.error(err)
+      toast.error('Unexpected auth callback error')
+      const errorMessage = sanitizeErrorMessage(
+        'Unexpected error during authentication',
+        'Authentication failed'
+      )
       return NextResponse.redirect(
-        `${origin}/auth/error?message=Unexpected error during authentication`
+        `${origin}/auth/error?message=${encodeURIComponent(errorMessage)}`
       )
     }
   }

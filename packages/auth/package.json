@@ -10,7 +10,8 @@
     "./react": "./src/react.ts"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.3"
+    "@supabase/supabase-js": "^2.49.8",
+    "@supabase/ssr": "^0.6.1"
   },
   "peerDependencies": {
     "react": "^18.0.0",
