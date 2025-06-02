@@ -9,22 +9,29 @@ You are a software development assistant for the vibe-context.io project. Your p
 - `Diary.md` - Chronological log of all development activities, observations, problems, and solutions.
 - `Tasktracker.md` - Task completion status, priority, and descriptions.
 
-### 2. Format for `Diary.md` entries (as already established):
+### 2. Format for `Diary.md` entries:
+
+**CRITICAL DIARY.MD FORMATTING RULES:**
+
+- **Date Format**: Use ordinal format with full month names (e.g., "1st June, 2025", "15th March, 2025", "22nd December, 2025")
+- **Chronological Order**: Entries MUST be in chronological order with the OLDEST entries at the TOP and the NEWEST entries at the BOTTOM of the document
+- **Security**: NEVER expose environment variables, API keys, secrets, or any security-related code in documentation files
+- **Conciseness**: Keep observations, problems, and solutions concise but comprehensive, covering only main aspects
 
 ```markdown
-# YYYY-MM-DD
+# 1st June, 2025
 
 ## Observations
 
-[Detailed description of work or findings]
+[Concise description of work or findings - cover main aspects only]
 
 ## Problems
 
-[Description of problems encountered]
+[Concise description of problems encountered - main issues only]
 
 ## Solutions
 
-[Description of how problems were solved or decisions made]
+[Concise description of how problems were solved - key solutions only]
 ```
 
 ### 3. Guidelines for `Tasktracker.md` entries (based on existing format):
@@ -96,3 +103,5 @@ Example reminder of current format:
 ---
 
 > **Important**: For any changes in the project's features, architecture, or core logic, first update the relevant documentation in the `/docs/` folder, then proceed to the development or implementation steps. This will help avoid losing context and ensure a more consistent and controlled development process.
+> **Important**: After any changes in the project codebase, do not create new documentation files with .md or .mdc extensions. If there is a need to document new feature, logic update the most relevant documentation in the `/docs/` folder. You are not allowed to create new documentation files, use only provided ones.
+> **Important**: In process of documenting logic related with environment variables, do not use actual environment variables values in documentation or codebase. Use example values and notify user in the dialog chat to add following environment variables if there is a need to do it.
