@@ -31,6 +31,9 @@ function LoginContent() {
   const [googleLoading, setGoogleLoading] = useState(false)
   const [githubLoading, setGithubLoading] = useState(false)
 
+  // Add local error state for OAuth sign-in failures
+  const [oauthError, setOauthError] = useState<string | null>(null)
+
   // Safely validate and get redirect destination
   const getRedirectTo = () => {
     const redirectTo = searchParams.get('redirectTo')
@@ -59,6 +62,7 @@ function LoginContent() {
   const handleGoogleSignIn = async () => {
     try {
       setGoogleLoading(true)
+      setOauthError(null) // Clear any previous errors
       const redirectTo = getRedirectTo()
       const callbackUrl = new URL('/auth/callback', window.location.origin)
       if (redirectTo) {
@@ -71,12 +75,14 @@ function LoginContent() {
     } catch (err) {
       console.error('Google sign-in failed:', err)
       setGoogleLoading(false)
+      setOauthError('Failed to sign in with Google. Please try again.')
     }
   }
 
   const handleGithubSignIn = async () => {
     try {
       setGithubLoading(true)
+      setOauthError(null) // Clear any previous errors
       const redirectTo = getRedirectTo()
       const callbackUrl = new URL('/auth/callback', window.location.origin)
       if (redirectTo) {
@@ -89,6 +95,7 @@ function LoginContent() {
     } catch (err) {
       console.error('GitHub sign-in failed:', err)
       setGithubLoading(false)
+      setOauthError('Failed to sign in with GitHub. Please try again.')
     }
   }
 
@@ -132,6 +139,12 @@ function LoginContent() {
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error.message}</AlertDescription>
+            </Alert>
+          )}
+
+          {oauthError && (
+            <Alert variant="destructive">
+              <AlertDescription>{oauthError}</AlertDescription>
             </Alert>
           )}
 
