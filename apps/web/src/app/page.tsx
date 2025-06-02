@@ -2,6 +2,7 @@
 
 import { useState, SyntheticEvent } from 'react'
 import { ArrowUp } from 'lucide-react'
+import { AuthDebug } from '@/components/auth/AuthDebug'
 import {
   ChatBubble,
   ChatBubbleAvatar,
@@ -68,6 +69,11 @@ export default function Home() {
         <p className="text-lg text-muted-foreground font-satoshi italic">
           type idea → get your docs → start shipping
         </p>
+
+        {/* Auth Debug Info */}
+        <div className="mt-8 flex justify-center">
+          <AuthDebug />
+        </div>
       </div>
 
       {/* Chat Messages Area - Scrollable */}

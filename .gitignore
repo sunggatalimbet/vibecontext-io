@@ -38,3 +38,7 @@ next-env.d.ts
 # turbo cache (both root and local logs)
 /.turbo/
 **/.turbo
+
+# Package build outputs
+dist/
+*.tsbuildinfo

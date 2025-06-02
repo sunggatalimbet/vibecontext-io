@@ -9,20 +9,48 @@
 - [To Do] **[High]** Integrate Drizzle ORM into the Next.js project and configure it for Supabase.
 - [Completed] **[Medium]** Define basic project structure within `apps/web` (e.g., components, lib, app router structure).
 - [Completed] **[Medium]** Implement basic layout components (e.g., Navbar, Sidebar, Footer) using shadcn/ui.
-- [To Do] **[Low]** Set up environment variable management (e.g., for Supabase keys, LLM API keys).
+- [Completed] **[Low]** Set up environment variable management (e.g., for Supabase keys, LLM API keys).
+
+## 1.5. Reusable Authentication Package (`@repo/auth`)
+
+- [Completed] **[Critical]** Create reusable authentication package structure.
+  - [Completed] **[High]** Set up package.json, TypeScript config, and build system (tsup).
+  - [Completed] **[High]** Define core authentication types and interfaces.
+  - [Completed] **[High]** Implement platform-agnostic AuthClient for browser environments.
+  - [Completed] **[High]** Implement AuthServer for server-side authentication (SSR, API routes).
+  - [Completed] **[High]** Create React-specific hooks and providers.
+  - [Completed] **[Medium]** Set up proper package exports for different entry points.
+- [Completed] **[Critical]** Migrate web app to use the new auth package.
+  - [Completed] **[High]** Remove old authentication code from apps/web.
+  - [Completed] **[High]** Update all components to use @repo/auth imports.
+  - [Completed] **[High]** Update middleware and API routes to use auth package.
+  - [Completed] **[Medium]** Remove direct Supabase dependencies from web app.
+- [Completed] **[Medium]** Simplify auth package by removing unnecessary build complexity.
+  - [Completed] **[Medium]** Remove tsup bundling and build scripts.
+  - [Completed] **[Medium]** Update exports to point directly to TypeScript source files.
+  - [Completed] **[Medium]** Clean up build artifacts and unnecessary dependencies.
+- [Completed] **[Medium]** Security and dependency maintenance.
+  - [Completed] **[Medium]** Update @supabase/supabase-js to latest version (^2.49.8).
+  - [Completed] **[Medium]** Add missing @supabase/ssr dependency (^0.6.1).
+  - [Completed] **[Medium]** Generate package-lock.json for security auditing.
+  - [Completed] **[Medium]** Verify no security vulnerabilities (npm audit clean).
+  - [Completed] **[Critical]** Fix open redirect vulnerability in OAuth callback route.
+  - [Completed] **[High]** Implement URL validation for redirect parameters.
+  - [Completed] **[High]** Secure error message handling in production environment.
+  - [Completed] **[High]** Fix Supabase auth listener memory leak in AuthClient.destroy().
 
 ## 2. User Authentication (Supabase Auth with OAuth2, Next.js, TypeScript)
 
-- [To Do] **[Critical]** Implement OAuth2 sign-up/login flow with Supabase Auth (FR 2.1.1).
-  - [To Do] **[High]** Create UI buttons/links for OAuth providers in Next.js.
-  - [To Do] **[High]** Implement Supabase `signInWithOAuth()` client-side logic.
-  - [To Do] **[High]** Handle OAuth callback in Next.js and Supabase Auth.
-  - [To Do] **[High]** Manage user session establishment and redirection.
-  - [To Do] **[Medium]** Implement error handling and display for OAuth flow.
-- [To Do] **[Critical]** Implement user logout functionality (FR 2.1.2).
-  - [To Do] **[High]** Create "Logout" button/option in UI.
-  - [To Do] **[High]** Implement Supabase `signOut()` logic.
-  - [To Do] **[High]** Handle session invalidation and redirection.
+- [Completed] **[Critical]** Implement OAuth2 sign-up/login flow with Supabase Auth (FR 2.1.1).
+  - [Completed] **[High]** Create UI buttons/links for OAuth providers in Next.js.
+  - [Completed] **[High]** Implement Supabase `signInWithOAuth()` client-side logic.
+  - [Completed] **[High]** Handle OAuth callback in Next.js and Supabase Auth.
+  - [Completed] **[High]** Manage user session establishment and redirection.
+  - [Completed] **[Medium]** Implement error handling and display for OAuth flow.
+- [Completed] **[Critical]** Implement user logout functionality (FR 2.1.2).
+  - [Completed] **[High]** Create "Logout" button/option in UI.
+  - [Completed] **[High]** Implement Supabase `signOut()` logic.
+  - [Completed] **[High]** Handle session invalidation and redirection.
 - [To Do] **[High]** Set up Supabase Row Level Security (RLS) policies for user-specific data access for all relevant tables.
 
 ## 3. Project Management (Next.js, Supabase, Drizzle)
@@ -119,7 +147,8 @@
 - [To Do] **[Medium]** Performance: Optimize UI interaction responsiveness (NFR 3.1).
 - [To Do] **[Low]** Performance: Monitor and optimize LLM interaction & Supabase query times (NFR 3.1).
 - [To Do] **[High]** Security: Ensure all client-server communication is HTTPS (usually default with hosting). (NFR 3.2)
-- [To Do] **[High]** Security: Review and ensure correct usage of Supabase client/server SDKs. (NFR 3.2)
+- [Completed] **[High]** Security: Review and ensure correct usage of Supabase client/server SDKs. (NFR 3.2)
+- [Completed] **[Critical]** Security: Fix open redirect vulnerabilities in authentication flows. (NFR 3.2)
 - [To Do] **[Medium]** Security: Implement basic input sanitization for LLM prompts. (NFR 3.2)
 - [To Do] **[Medium]** Usability & UI/UX: Ensure clean, modern, minimalist UI with shadcn/ui. (NFR 3.3)
 - [To Do] **[Medium]** Usability & UI/UX: Ensure core actions are prominent and discoverable. (NFR 3.3)
