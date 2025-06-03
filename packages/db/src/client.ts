@@ -12,14 +12,6 @@ if (!supabaseUrl || !supabaseServiceKey) {
   )
 }
 
-// Extract the project reference from the Supabase URL
-const projectRef = supabaseUrl
-  .replace('https://', '')
-  .replace('.supabase.co', '')
-
-// Construct the direct PostgreSQL connection string for Supabase
-const connectionString = `postgresql://postgres:[YOUR-PASSWORD]@db.${projectRef}.supabase.co:5432/postgres`
-
 // For now, let's use a simpler approach with the pooler connection
 // You'll need to get the actual password from Supabase dashboard
 const poolerConnectionString = process.env.DATABASE_URL

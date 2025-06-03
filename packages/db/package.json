@@ -20,17 +20,19 @@
     "db:test": "tsx src/utils/test-connection.ts",
     "db:manual-migrate": "tsx src/utils/apply-manual-migration.ts",
     "db:apply-rls": "tsx src/utils/apply-rls.ts",
+    "db:remove-docs-id": "tsx src/utils/remove-docs-id-column.ts",
     "db:rls": "echo 'Please apply the RLS policies from src/utils/rls-policies.sql manually in Supabase SQL Editor'"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.8",
+    "dotenv": "^16.5.0",
     "drizzle-orm": "^0.36.4",
-    "postgres": "^3.4.5",
-    "@supabase/supabase-js": "^2.49.8"
+    "postgres": "^3.4.5"
   },
   "devDependencies": {
     "@types/pg": "^8.11.10",
     "drizzle-kit": "^0.31.1",
-    "typescript": "^5.7.2",
-    "tsx": "^4.19.4"
+    "tsx": "^4.19.4",
+    "typescript": "^5.7.2"
   }
 }

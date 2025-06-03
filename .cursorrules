@@ -51,6 +51,7 @@ Example reminder of current format:
 8.  **Recommend code review** for all significant changes or new features.
 9.  **Use consistent coding style.** Assume linters (ESLint) and formatters (Prettier) are configured as per `/apps/web/package.json` or root `package.json` and adhere to them.
 10. **Don't leave unused code** or overly verbose commented-out code blocks.
+11. **Avoid TypeScript non-null assertions (!).** Instead, use proper type guards, optional chaining, or nullish coalescing. This ensures better type safety and more explicit error handling.
 
 ## Code and Structure Documentation
 
