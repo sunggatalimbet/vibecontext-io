@@ -1,0 +1,36 @@
+{
+  "name": "@repo/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./schema": "./src/schema/index.ts",
+    "./migrations": "./src/migrations/index.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:check": "drizzle-kit check",
+    "db:test": "tsx src/utils/test-connection.ts",
+    "db:manual-migrate": "tsx src/utils/apply-manual-migration.ts",
+    "db:apply-rls": "tsx src/utils/apply-rls.ts",
+    "db:rls": "echo 'Please apply the RLS policies from src/utils/rls-policies.sql manually in Supabase SQL Editor'"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.36.4",
+    "postgres": "^3.4.5",
+    "@supabase/supabase-js": "^2.49.8"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.10",
+    "drizzle-kit": "^0.31.1",
+    "typescript": "^5.7.2",
+    "tsx": "^4.19.4"
+  }
+}
