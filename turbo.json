@@ -3,14 +3,38 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "out/**"]
+      "outputs": [".next/**", "!.next/cache/**", "out/**", "dist/**", "lib/**"],
+      "env": [
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "DATABASE_URL"
+      ]
     },
     "check-types": {
       "dependsOn": ["build"]
     },
     "dev": {
       "persistent": true,
-      "cache": false
+      "cache": false,
+      "env": [
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "DATABASE_URL"
+      ]
+    },
+    "db:generate": {
+      "env": ["DATABASE_URL"]
+    },
+    "db:migrate": {
+      "env": ["DATABASE_URL"]
+    },
+    "db:push": {
+      "env": ["DATABASE_URL"]
+    },
+    "db:studio": {
+      "env": ["DATABASE_URL"]
     },
     "lint": {
       "dependsOn": ["^lint"]
