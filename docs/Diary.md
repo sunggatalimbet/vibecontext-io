@@ -4,6 +4,285 @@
 
 ## Observations
 
+**Database Package Organization: Utility Files Restructure**
+
+Reorganized the `@repo/db` package structure by moving all utility files into a dedicated `utils` folder for better organization:
+
+**Files Moved to `src/utils/`:**
+
+- `test-connection.ts` - Database connectivity testing utility
+- `apply-manual-migration.ts` - Manual schema migration application script
+- `manual-migration.sql` - SQL statements for manual schema changes
+- `apply-rls.ts` - Row Level Security policy application script
+- `rls-policies.sql` - Complete RLS policy definitions
+
+**Updated Package Scripts:**
+
+- `db:test` → `tsx src/utils/test-connection.ts`
+- `db:manual-migrate` → `tsx src/utils/apply-manual-migration.ts`
+- `db:apply-rls` → `tsx src/utils/apply-rls.ts`
+- `db:rls` message updated to reference `src/utils/rls-policies.sql`
+
+**Import Path Updates:**
+
+- Updated `test-connection.ts` imports to use relative paths (`../client`, `../schema`)
+- Other utility files use `__dirname` for local file references, so they continue to work correctly
+
+**Final Package Structure:**
+
+```
+packages/db/src/
+├── client.ts           # Database connection client
+├── index.ts           # Package exports
+├── migrations/        # Drizzle migration files
+├── schema/           # Database table schemas
+└── utils/            # Utility scripts and SQL files
+    ├── apply-manual-migration.ts
+    ├── apply-rls.ts
+    ├── manual-migration.sql
+    ├── rls-policies.sql
+    └── test-connection.ts
+```
+
+This reorganization improves package maintainability by clearly separating utility scripts from core package functionality, making it easier for developers to locate and manage database administration tools.
+
+**Database Schema Enhancements: Prompt Tags, Document Management, and Security Improvements**
+
+Successfully implemented four critical database schema enhancements to improve prompt management, document organization, and security:
+
+**1. Prompt Tags System Implementation:**
+
+- Added `tags` column to `prompts` table as `text[]` array type
+- Enables categorization of prompts with multiple tags (e.g., `['Frontend', 'Authorization', 'Security', 'Supabase Auth']`)
+- Supports better prompt discovery and organization for users
+- Default value set to empty array `[]` with NOT NULL constraint
+
+**2. Document Management System:**
+
+Created comprehensive document management structure with bidirectional relationship:
+
+- **New `docs` table** with foreign key `projectId` linking to projects
+- **Added `docsId` field** to projects table for reverse relationship
+- **Document filename fields** for complete project documentation:
+  - `techRequirementsFilename` - Technical requirements document
+  - `prodRequirementsFilename` - Product requirements document
+  - `techStackFilename` - Technology stack documentation
+  - `prdFilename` - Product Requirements Document
+  - `qaFilename` - Quality assurance documentation
+  - `cursorRulesFilename` - Cursor IDE rules configuration
+
+**3. Prompt Security Policy Updates:**
+
+- **Removed DELETE permission** for prompts table to preserve reusability
+- Users can no longer delete prompts, ensuring prompt library integrity
+- **Clarified update behavior**: System creates new prompt entries on edits rather than modifying existing ones
+- This maintains prompt version history and supports reusability across projects
+
+**4. Enhanced RLS Policies:**
+
+Updated Row Level Security policies to include the new `docs` table:
+
+```sql
+-- Docs table policies - Users can only access docs for projects they own
+CREATE POLICY "Users can view docs for own projects" ON docs
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM projects
+      WHERE projects.docs_id = docs.id
+      AND projects.user_id = auth.uid()
+    )
+  );
+```
+
+**Technical Implementation Details:**
+
+```typescript
+// Enhanced prompts schema with tags
+export const prompts = pgTable('prompts', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  title: text('title'),
+  prompt_markdown_filename: text('prompt_markdown_filename').notNull(),
+  tags: text('tags').array().default([]).notNull(), // New tags field
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+})
+
+// New docs table for document management
+export const docs = pgTable('docs', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  projectId: uuid('project_id')
+    .notNull()
+    .references(() => projects.id, { onDelete: 'cascade' }),
+  techRequirementsFilename: text('tech_requirements_filename'),
+  prodRequirementsFilename: text('prod_requirements_filename'),
+  techStackFilename: text('tech_stack_filename'),
+  prdFilename: text('prd_filename'),
+  qaFilename: text('qa_filename'),
+  cursorRulesFilename: text('cursor_rules_filename'),
+  // ... timestamps
+})
+```
+
+**Migration Process:**
+
+- Generated Drizzle migration: `20250603033927_thankful_onslaught.sql`
+- Applied schema changes using direct SQL execution due to Drizzle Kit compatibility issues
+- Successfully verified all tables and columns exist with proper data types:
+  - ✅ `projects.docs_id` (uuid)
+  - ✅ `prompts.tags` (ARRAY)
+  - ✅ `docs` table with all 10 columns and foreign key constraint
+
+**Files Modified:**
+
+- `packages/db/src/schema/prompts.ts` - Added tags array field
+- `packages/db/src/schema/docs.ts` - Created new docs table schema
+- `packages/db/src/schema/projects.ts` - Added docsId foreign key field
+- `packages/db/src/schema/index.ts` - Exported docs table
+- `packages/db/src/rls-policies.sql` - Updated security policies
+- `packages/db/src/test-connection.ts` - Added docs table verification
+
+**Database Verification:**
+
+All requested changes successfully applied and verified:
+
+- ✅ Projects table: 9 columns including new `docs_id` field
+- ✅ Prompts table: 6 columns including new `tags` array field
+- ✅ Docs table: 10 columns with proper foreign key relationships
+- ✅ All tables accessible and ready for application use
+
+This enhancement provides a solid foundation for advanced prompt management with tagging, comprehensive document organization per project, and improved security through controlled prompt lifecycle management.
+
+**Successfully Integrated Supabase Database with Drizzle ORM**
+
+Completed the setup of the core database infrastructure for vibe-context.io, establishing the foundation for all data persistence and user-specific access control:
+
+**Database Package Architecture:**
+
+1. **Monorepo Package Structure**:
+
+   - Created `@repo/db` package in `packages/db/` directory
+   - Followed monorepo conventions with proper TypeScript exports
+   - Configured as workspace dependency for the web application
+
+2. **Drizzle ORM Integration**:
+
+   - Installed Drizzle ORM v0.36.4 with PostgreSQL support
+   - Configured `drizzle.config.ts` for Supabase PostgreSQL connection
+   - Set up migration system using `drizzle-kit` v0.31.1
+
+3. **Database Schema Implementation**:
+   - **`projects` table**: Stores user projects with app idea summaries, chat transcripts, and PRD file references
+   - **`prompts` table**: Stores reusable prompt content as Markdown files in Supabase Storage
+   - **`prompt_nodes` table**: Manages hierarchical prompt tree structure with foreign key relationships
+
+**Technical Implementation Details:**
+
+```typescript
+// Core schema structure
+export const projects = pgTable('projects', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').notNull(),
+  name: text('name').notNull(),
+  appIdeaSummary_text: text('app_idea_summary_text'),
+  chatTranscriptFilename: text('chat_transcript_filename'),
+  prdFilename: text('prd_filename'),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+})
+```
+
+4. **Database Connection Management**:
+
+   - Configured PostgreSQL connection pooling for Supabase
+   - Set up environment variable management for secure database access
+   - Implemented proper error handling and connection validation
+
+5. **Generated Migration Files**:
+   - Successfully created initial migration: `20250603030627_bitter_norrin_radd.sql`
+   - Tables created with proper UUID primary keys, foreign key constraints, and timestamp fields
+   - Verified all tables exist and are accessible through Drizzle client
+
+**Row Level Security (RLS) Policies Design:**
+
+Created comprehensive RLS policies for user data isolation:
+
+- **Projects**: Users can only access their own projects (`auth.uid() = user_id`)
+- **Prompts**: Authenticated users can manage prompts (shared resource model for MVP)
+- **Prompt Nodes**: Users can only access nodes for projects they own (verified through join)
+
+**Files Created/Modified:**
+
+- `packages/db/package.json` - Database package configuration
+- `packages/db/src/schema/` - Table schema definitions
+- `packages/db/src/client.ts` - Database connection and Drizzle client
+- `packages/db/src/rls-policies.sql` - Row Level Security policies
+- `packages/db/drizzle.config.ts` - Drizzle Kit configuration
+- `apps/web/package.json` - Added @repo/db workspace dependency
+
+**Database Verification:**
+
+Successfully tested database connectivity and table accessibility:
+
+- ✅ Projects table exists and is accessible
+- ✅ Prompts table exists and is accessible
+- ✅ Prompt nodes table exists and is accessible
+- 🎉 All tables are ready for application use
+
+This completes the foundational database layer required for implementing project management, AI chat functionality, PRD generation, and prompt tree features.
+
+## Problems
+
+**Drizzle Kit Migration Issues:**
+
+1. **Migration Command Failures**: Initial attempts to apply migrations using `drizzle-kit migrate` failed due to existing table conflicts
+2. **Push Command Compatibility**: `drizzle-kit push` encountered internal errors with check constraint parsing
+3. **Supabase RPC Limitations**: The `exec_sql` RPC function approach for applying migrations was not available in Supabase
+
+**Circular Dependency Challenge:**
+
+- Initial implementation created circular dependency between `projects` and `docs` tables due to bidirectional foreign key references
+- TypeScript compilation errors prevented proper schema generation
+
+## Solutions
+
+**Direct SQL Execution Approach:**
+
+- Created `apply-direct-sql.ts` script to execute SQL changes directly using the postgres client
+- Bypassed Drizzle Kit migration issues by applying schema changes through the established database connection
+- Successfully applied all four requested changes:
+  1. Added `tags` column to prompts table
+  2. Added `docs_id` column to projects table
+  3. Created complete `docs` table with all filename fields
+  4. Added proper foreign key constraints
+
+**Circular Dependency Resolution:**
+
+- Removed explicit foreign key reference from projects to docs in schema definition
+- Used simple `uuid` type for `docsId` field in projects table
+- Maintained foreign key constraint through SQL but avoided TypeScript circular import issues
+
+**Schema Verification Process:**
+
+- Created `check-schema.ts` utility to verify database schema changes
+- Confirmed all columns exist with correct data types
+- Validated table accessibility through test connection script
+
+**Migration File Management:**
+
+- Generated proper Drizzle migration file: `20250603033927_thankful_onslaught.sql`
+- Maintained migration history for future reference
+- Applied changes through alternative execution method while preserving migration tracking
+
+This approach successfully delivered all requested database enhancements while working around Drizzle Kit limitations and ensuring robust schema validation.
+
 **Enhanced OAuth Authentication UX: Added Loading States to Sign-in Buttons**
 
 Improved user experience on the login page by adding responsive loading states to OAuth authentication buttons:
