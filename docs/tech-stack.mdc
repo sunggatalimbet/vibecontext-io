@@ -76,7 +76,7 @@ Core entities will be defined using Drizzle ORM schemas, ensuring type safety ac
 **Core Entities (Managed with Drizzle):**
 
 1.  **`projects` Table**
-    -   **Purpose:** Stores information about each user-created project, including references to generated files.
+    -   **Purpose:** Stores information about each user-created project, including references to generated files and associated documentation.
     -   **Schema (Drizzle Definition Example):**
         ```typescript
         import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
@@ -89,6 +89,7 @@ Core entities will be defined using Drizzle ORM schemas, ensuring type safety ac
           appIdeaSummary_text: text('app_idea_summary_text'),
           chatTranscriptFilename: text('chat_transcript_filename'),   // e.g., "chat-transcript-<uuid>.md"
           prdFilename: text('prd_filename'),                         // e.g., "prd-<uuid>.md", nullable
+          docsId: uuid('docs_id').references(() => docs.id),        // FK to docs table for bidirectional relationship
           createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
           updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
         });
@@ -100,19 +101,61 @@ Core entities will be defined using Drizzle ORM schemas, ensuring type safety ac
         -   `appIdeaSummary_text`: The AI-generated app idea summary as plain text (TEXT)
         -   `chatTranscriptFilename`: Filename for the initial AI chat transcript (TEXT)
         -   `prdFilename`: Filename for the generated PRD (TEXT, Nullable)
+        -   `docsId`: Foreign Key to `docs.id` for comprehensive document management (UUID, Nullable)
         -   `createdAt`: Timestamp of creation
         -   `updatedAt`: Timestamp of last update
-    -   **Indexes:** `userId`.
+    -   **Indexes:** `userId`, `docsId`.
     -   **RLS Policies (Supabase):**
         -   Users can `SELECT`, `INSERT`, `UPDATE`, `DELETE` their own projects (`auth.uid() = user_id`).
     -   **Expected Query Patterns:**
         -   Fetch all projects for a user.
         -   Fetch a single project by ID (and user ID for security).
-        -   Create a new project.
+        -   Create a new project with associated docs entry.
         -   Update project name or linked filenames.
+        -   Join with docs table to retrieve comprehensive project documentation.
 
-2.  **`prompts` Table (New)**
-    -   **Purpose:** Stores reusable prompt content (text and code snippets).
+2.  **`docs` Table (New)**
+    -   **Purpose:** Stores comprehensive project documentation filenames and metadata, providing structured document management for each project.
+    -   **Schema (Drizzle Definition Example):**
+        ```typescript
+        import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
+        import { projects } from './projects';
+
+        export const docs = pgTable('docs', {
+          id: uuid('id').defaultRandom().primaryKey(),
+          projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+          techRequirementsFilename: text('tech_requirements_filename'),     // Technical requirements document
+          prodRequirementsFilename: text('prod_requirements_filename'),     // Product requirements document
+          techStackFilename: text('tech_stack_filename'),                   // Technology stack documentation
+          prdFilename: text('prd_filename'),                               // Product Requirements Document
+          qaFilename: text('qa_filename'),                                 // QA questions and test scenarios
+          cursorRulesFilename: text('cursor_rules_filename'),              // Cursor IDE rules and configurations
+          createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+          updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+        });
+        ```
+    -   **Fields:**
+        -   `id`: Primary Key (UUID)
+        -   `projectId`: Foreign Key to `projects.id` (UUID, indexed)
+        -   `techRequirementsFilename`: Technical requirements document filename (TEXT, Nullable)
+        -   `prodRequirementsFilename`: Product requirements document filename (TEXT, Nullable)
+        -   `techStackFilename`: Technology stack documentation filename (TEXT, Nullable)
+        -   `prdFilename`: Product Requirements Document filename (TEXT, Nullable)
+        -   `qaFilename`: QA questions and validation criteria filename (TEXT, Nullable)
+        -   `cursorRulesFilename`: Cursor IDE rules configuration filename (TEXT, Nullable)
+        -   `createdAt`: Timestamp of creation
+        -   `updatedAt`: Timestamp of last update
+    -   **Indexes:** `projectId`.
+    -   **RLS Policies (Supabase):**
+        -   Users can `SELECT`, `INSERT`, `UPDATE`, `DELETE` docs entries for projects they own (checked via join to `projects` table and `projects.user_id`).
+    -   **Expected Query Patterns:**
+        -   Fetch docs entry for a specific project.
+        -   Update document filenames when new documents are generated.
+        -   Join with projects table to retrieve complete project context.
+        -   Bulk operations for document generation workflows.
+
+3.  **`prompts` Table (New)**
+    -   **Purpose:** Stores reusable prompt content (text and code snippets) with categorization support.
     -   **Schema (Drizzle Definition Example):**
         ```typescript
         import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
@@ -125,6 +168,7 @@ Core entities will be defined using Drizzle ORM schemas, ensuring type safety ac
           // projectId: uuid('project_id').references(() => projects.id), // Optional
           title: text('title'), // Optional: for easier identification of reusable prompts
           prompt_markdown_filename: text('prompt_markdown_filename').notNull(), // Changed from promptText, stores filename of markdown file in Supabase Storage
+          tags: text('tags').array().default([]).notNull(), // Array of tags for categorization and discovery
           // promptText: text('prompt_text').notNull(), // REMOVED
           // codeSnippet: text('code_snippet'), // Nullable -- REMOVED
           createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -135,22 +179,25 @@ Core entities will be defined using Drizzle ORM schemas, ensuring type safety ac
         -   `id`: Primary Key (UUID)
         -   `title`: Optional title for the prompt (TEXT, Nullable)
         -   `prompt_markdown_filename`: Filename of the Markdown file in Supabase Storage containing the prompt content (TEXT, Not Null) // Changed from promptText
+        -   `tags`: Array of text tags for categorization and discovery (TEXT[], Not Null, defaults to empty array)
         // -   `promptText`: The main text content of the prompt (TEXT) -- REMOVED
         // -   `codeSnippet`: Optional code snippet associated with the prompt (TEXT, Nullable) -- REMOVED
         -   `createdAt`: Timestamp of creation
         -   `updatedAt`: Timestamp of last update
-    -   **Indexes:** Consider indexing `title` if prompts are frequently searched by title. // promptText indexing removed
+    -   **Indexes:** Consider indexing `title` and `tags` for search functionality. // promptText indexing removed
     -   **RLS Policies (Supabase):**
         -   If prompts are global/shared: Public read access might be okay, or controlled insert/update by specific roles.
         -   If prompts are user-specific (`userId` field added): Users can manage their own prompts.
         -   For MVP, assuming prompts could be generally reusable or managed at an application level initially. Detailed RLS depends on sharing model.
+        -   **Important:** DELETE permissions removed to preserve prompt reusability across projects.
     -   **Expected Query Patterns:**
         -   Fetch a prompt by ID.
-        -   Search for prompts (e.g., by title or keywords if implemented).
-        -   Create a new prompt.
-        -   Update an existing prompt (carefully, considering reuse - typically new prompt creation on edit is safer for node-specific changes).
+        -   Search for prompts by title, tags, or keywords.
+        -   Filter prompts by specific tags for categorization.
+        -   Create a new prompt (editing existing prompts creates new entries to preserve reusability).
+        -   Update existing prompt (carefully, considering reuse - typically new prompt creation on edit is safer for node-specific changes).
 
-3.  **`prompt_nodes` Table (Modified)**
+4.  **`prompt_nodes` Table (Modified)**
     -   **Purpose:** Stores each node within a project's hierarchical prompt tree, linking to a specific prompt.
     -   **Schema (Drizzle Definition Example):**
         ```typescript
