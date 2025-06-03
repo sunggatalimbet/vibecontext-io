@@ -7,7 +7,7 @@
 
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, Suspense, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useAuth } from '@repo/auth/react'
 import { Github, Loader2 } from 'lucide-react'
@@ -35,7 +35,7 @@ function LoginContent() {
   const [oauthError, setOauthError] = useState<string | null>(null)
 
   // Safely validate and get redirect destination
-  const getRedirectTo = () => {
+  const getRedirectTo = useCallback(() => {
     const redirectTo = searchParams.get('redirectTo')
     if (!redirectTo) return null
 
@@ -49,7 +49,7 @@ function LoginContent() {
       // Invalid URL, ignore
     }
     return null
-  }
+  }, [searchParams])
 
   // Redirect authenticated users
   useEffect(() => {
@@ -57,7 +57,7 @@ function LoginContent() {
       const redirectTo = getRedirectTo()
       router.push(redirectTo || '/')
     }
-  }, [user, loading, router])
+  }, [user, loading, router, getRedirectTo])
 
   const handleGoogleSignIn = async () => {
     try {

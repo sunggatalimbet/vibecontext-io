@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["dom", "dom.iterable", "ES6"],
@@ -13,8 +14,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
   },
-  "include": ["apps/**/*", "packages/**/*"],
-  "exclude": ["node_modules", ".next", "out", "dist", "build", "tooling"]
+  "exclude": ["node_modules", ".next", "out", "dist", "build", ".turbo"]
 }

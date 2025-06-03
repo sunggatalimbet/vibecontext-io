@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, SyntheticEvent } from 'react'
+import { useState, type SyntheticEvent } from 'react'
 import { ArrowUp } from 'lucide-react'
 import { AuthDebug } from '@/components/auth/AuthDebug'
 import {

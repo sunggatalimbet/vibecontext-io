@@ -7,8 +7,8 @@ import {
   LogOutIcon,
   MenuIcon,
   FolderIcon,
-  CodeIcon,
   FileIcon,
+  CodeIcon,
 } from 'lucide-react'
 import {
   Accordion,
@@ -42,7 +42,7 @@ interface Project {
   icon: React.ReactNode
 }
 
-const projects: Project[] = [
+const projects: Array<Project> = [
   {
     id: '1',
     name: 'AI Studio',
@@ -63,7 +63,7 @@ const projects: Project[] = [
   },
 ]
 
-const documents: Document[] = [
+const documents: Array<Document> = [
   {
     id: '1',
     name: 'Product Requirements',

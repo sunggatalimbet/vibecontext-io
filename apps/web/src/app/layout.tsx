@@ -49,12 +49,6 @@ export default function RootLayout({
       lang="en"
       className={`dark ${satoshi.variable} ${ibmPlexSans.variable}`}
     >
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body className={`antialiased ${ibmPlexSans.className}`}>
         <ThemeProvider
           attribute="class"

@@ -6,7 +6,12 @@
  */
 
 import { createServerClient } from '@supabase/ssr'
-import { SupabaseClient, User, Session } from '@supabase/supabase-js'
+import {
+  SupabaseClient,
+  User,
+  Session,
+  AuthTokenResponse,
+} from '@supabase/supabase-js'
 import { AuthConfig, ServerAuthOptions } from './types'
 
 export class AuthServer {
@@ -88,14 +93,15 @@ export class AuthServer {
     }
   }
 
-  public async exchangeCodeForSession(code: string): Promise<{ error: any }> {
+  public async exchangeCodeForSession(
+    code: string
+  ): Promise<AuthTokenResponse> {
     try {
       const supabase = this.createSupabaseClient()
-      const { error } = await supabase.auth.exchangeCodeForSession(code)
-      return { error }
+      return await supabase.auth.exchangeCodeForSession(code)
     } catch (error) {
       console.error('Error exchanging code for session:', error)
-      return { error }
+      throw error
     }
   }
 

@@ -5,6 +5,7 @@
  * @created: 2024-12-19
  */
 
+import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import { NextResponse, type NextRequest } from 'next/server'
 import { createAuthServer, createAuthConfig } from '@repo/auth/server'
 
@@ -21,7 +22,7 @@ export async function middleware(request: NextRequest) {
         getAll() {
           return request.cookies.getAll()
         },
-        set(name, value, options) {
+        set(name, value, options: ResponseCookie) {
           request.cookies.set(name, value)
           supabaseResponse = NextResponse.next({
             request,

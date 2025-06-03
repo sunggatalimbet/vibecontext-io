@@ -1,6 +1,7 @@
 'use client'
 
-import * as React from 'react'
+import type * as React from 'react'
+import { cva } from 'class-variance-authority'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { MessageLoading } from '@/components/ui/message-loading'
@@ -13,9 +14,30 @@ interface ChatBubbleProps {
   children: React.ReactNode
 }
 
+// ChatBubble
+const _chatBubbleVariant = cva(
+  'flex gap-2 max-w-[60%] items-end relative group',
+  {
+    variants: {
+      variant: {
+        received: 'self-start',
+        sent: 'self-end flex-row-reverse',
+      },
+      _layout: {
+        default: '',
+        ai: 'max-w-full w-full',
+      },
+    },
+    defaultVariants: {
+      variant: 'received',
+      _layout: 'default',
+    },
+  }
+)
+
 export function ChatBubble({
   variant = 'received',
-  layout = 'default',
+  layout: _layout = 'default',
   className,
   children,
 }: ChatBubbleProps) {
