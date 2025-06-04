@@ -23,9 +23,10 @@ The proposed architecture for vibe-context.io is a full-stack application levera
 **Backend Responsibilities (Next.js API Routes):**
 - Business logic for core features (project creation, PRD/prompt tree generation orchestration).
 - Securely interacting with the Supabase database via Drizzle ORM.
-- Handling communication with external LLM services via OpenRouter for AI-driven generation tasks.
+- Handling communication with multiple LLM services via OpenRouter and LangChain.js for AI-driven generation tasks, including dynamic model selection based on task requirements and cost optimization.
 - Managing file uploads/metadata for documents generated (e.g., app idea summaries, PRDs) to Supabase Storage.
 - Supabase Auth server-side validation if needed.
+- LLM orchestration including conversation memory management, prompt chaining, and intelligent model routing for different use cases.
 
 **Database (Supabase - PostgreSQL):**
 - Storing user data (via Supabase Auth).
@@ -58,11 +59,17 @@ This stack is well-suited for MVP development due to:
 - **ORM:** **Drizzle ORM**
     - *Justification:* A TypeScript-first, type-safe SQL query builder and ORM. It offers excellent static analysis, ensuring queries are correct at build time, and integrates seamlessly with modern TypeScript workflows. Its schema declaration and migration tools are well-suited for managing the Supabase PostgreSQL database structure.
 - **External LLM Access:** **OpenRouter**
-    - *Justification:* Provides a unified API to access a wide variety of LLMs from different providers (e.g., OpenAI, Anthropic, Google). This offers flexibility in model choice, potential cost savings, improved uptime via fallbacks, and simplifies integration by providing an OpenAI-compatible API. Allows VibeContext to adapt to new models and providers easily.
+    - *Justification:* Provides a unified API to access a wide variety of LLMs from different providers (e.g., OpenAI, Anthropic, Google, Cohere, Meta). This offers significant flexibility in model choice, potential cost savings through access to both paid premium models and free/cheaper alternatives, improved uptime via fallbacks, and simplifies integration by providing an OpenAI-compatible API. OpenRouter's model routing allows VibeContext to dynamically select the most appropriate model for different tasks (e.g., cheaper models for simple tasks, premium models for complex reasoning) and easily adapt to new models and providers as they become available. The platform supports both commercial models (GPT-4, Claude, Gemini) and open-source alternatives, enabling cost-effective scaling and experimentation.
 - **Payments & Monetization:** **Polar.sh**
     - *Justification:* A developer-focused Merchant of Record platform that simplifies selling SaaS and digital products. Handles tax compliance, subscription billing, and potentially usage-based billing. Offers Next.js adapters for quick integration and can manage entitlements. Suitable for monetizing VibeContext if it becomes a paid product.
-- **AI & LLM Orchestration:** **LangChain.js (TypeScript)**
-    - *Justification:* A powerful framework for developing applications powered by language models. LangChain.js (the TypeScript version) provides modules for prompt management, chaining calls to LLMs (via OpenRouter), managing memory for conversations (e.g., AI idea chat), and creating agents. This will be crucial for orchestrating complex LLM interactions like prompt tree generation, downstream regeneration, and the initial AI-driven idea formulation chat. Its composability with LCEL (LangChain Expression Language) will simplify building and maintaining these AI-driven workflows.
+- **AI & LLM Orchestration:** **LangChain.js (TypeScript) + OpenRouter Integration**
+    - *Justification:* A powerful framework for developing applications powered by language models, integrated with OpenRouter for multi-model support. LangChain.js (the TypeScript version) provides modules for prompt management, chaining calls to multiple LLMs (via OpenRouter), managing memory for conversations (e.g., AI idea chat), and creating intelligent agents. The integration with OpenRouter enables seamless switching between different models based on task requirements, cost considerations, and availability. This combination will be crucial for orchestrating complex LLM interactions like prompt tree generation, downstream regeneration, and the initial AI-driven idea formulation chat. Key benefits include:
+        - **Model Flexibility**: Ability to use different models for different tasks (e.g., GPT-4 for complex reasoning, cheaper models for simple text generation)
+        - **Cost Optimization**: Dynamic model selection based on budget constraints and task complexity
+        - **Reliability**: Automatic fallback to alternative models if primary model is unavailable
+        - **Future-Proofing**: Easy integration of new models as they become available through OpenRouter
+        - **Composability**: LCEL (LangChain Expression Language) simplifies building and maintaining complex AI-driven workflows
+        - **Memory Management**: Built-in conversation memory for multi-turn interactions and context preservation
 
 ---
 

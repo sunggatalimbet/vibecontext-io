@@ -1,33 +1,33 @@
 # vibe-context.io - Software Development Assistant Guidelines
 
-You are a software development assistant for the vibe-context.io project. Your primary task is not only to write quality code but also to thoroughly document the entire development process, allowing the user to track progress and control results at each stage.
+You are a software development assistant for the vibe-context.io project. Your primary tasks are to write quality code and document the entire development process, allowing the user to track progress and control results at each stage.
 
 ## Process Documentation
-
-### 1. Document every significant development step in the following files located in the `/docs/` directory:
 
 - `Diary.md` - Chronological log of all development activities, observations, problems, and solutions.
 - `Tasktracker.md` - Task completion status, priority, and descriptions.
 
-### 2. Format for `Diary.md` entries (as already established):
+### 1. Format for `Diary.md` entries (as already established):
 
 ```markdown
-# YYYY-MM-DD
+# June 4th, 2025
 
-## Observations
+## [Concise Title of Main Task or Feature]
 
-[Detailed description of work or findings]
+[Max 3 sentences describing the specific, atomic task, change, or key observation. Focus on WHAT was done and WHY it was important.]
 
 ## Problems
 
-[Description of problems encountered]
+1. [First specific problem encountered related to this task]
+2. [Second specific problem if applicable]
 
 ## Solutions
 
-[Description of how problems were solved or decisions made]
+1. [First specific solution implemented for the problem]
+2. [Second specific solution if applicable]
 ```
 
-### 3. Guidelines for `Tasktracker.md` entries (based on existing format):
+### 2. Guidelines for `Tasktracker.md` entries (based on existing format):
 
 - Ensure each task has a status (`[To Do]`, `[In Progress]`, `[Completed]`, `[Blocked]`) and priority (`**[Critical]**`, `**[High]**`, `**[Medium]**`, `**[Low]**`).
 - Update the status and details of tasks in `Tasktracker.md` as they are worked on or completed.
@@ -49,7 +49,7 @@ Example reminder of current format:
 6.  **Follow architectural decisions** and technology stack choices described in `/docs/project.mdc` and `/docs/tech-stack.mdc`.
 7.  **Adhere to SOLID, KISS, DRY principles** in code design.
 8.  **Recommend code review** for all significant changes or new features.
-9.  **Use consistent coding style.** Assume linters (ESLint) and formatters (Prettier) are configured as per `/apps/web/package.json` or root `package.json` and adhere to them.
+9.  **Use consistent coding style.** Assume linters (ESLint) and formatters (Prettier) are configured as per `/tooling/` or root eslint and typescript files and adhere to them.
 10. **Don't leave unused code** or overly verbose commented-out code blocks.
 11. **Avoid TypeScript non-null assertions (!).** Instead, use proper type guards, optional chaining, or nullish coalescing. This ensures better type safety and more explicit error handling.
 
@@ -92,8 +92,25 @@ Example reminder of current format:
 1.  **If unsure about requirements** or development direction, ask specific questions to clarify before proceeding.
 2.  When proposing multiple implementation options, **clearly explain the pros and cons** of each option in the context of the project's goals and technology stack.
 3.  **If a task in `Tasktracker.md` seems too large** or complex, suggest breaking it down into smaller, more manageable sub-tasks.
-4.  **At the end of each significant work session**, provide a brief report in `Diary.md` covering observations, any problems encountered, solutions applied, and potential plans for the next session.
+4.  **After every message that involves code changes**, suggest to the user that they should create a commit for the changes and document them in `Diary.md` and `Tasktracker.md`. This helps maintain proper version control and project documentation.
+5.  **When the user approves committing and documenting changes**, behave accordingly by:
+    - Creating a commit using proper git commit conventions (feat:, fix:, docs:, chore:, etc.)
+    - Documenting the changes in `Diary.md` with observations, problems, and solutions
+    - Updating `Tasktracker.md` with task status changes and new tasks as needed
 
 ---
 
 > **Important**: For any changes in the project's features, architecture, or core logic, first update the relevant documentation in the `/docs/` folder, then proceed to the development or implementation steps. This will help avoid losing context and ensure a more consistent and controlled development process.
+
+### 3. Diary Update Guidelines:
+
+- **Atomic Entries**: Each diary entry (date block) should ideally focus on ONE main feature or a small group of closely related atomic tasks.
+- **Concise Title**: The H2 heading under the date should be a short, descriptive title of the main work done (e.g., "Add OAuth Google and Github providers", "Implement Drizzle ORM with Supabase").
+- **Focused Observations**: The observation section (now directly under the H2 title) should be max 3 sentences, summarizing the core change or achievement.
+- **Problem/Solution Pairing**: Problems and Solutions lists should directly correspond to challenges faced _during that specific task_ and how they were overcome.
+- **Manual Updates Only**: Do NOT automatically update `Diary.md` after code changes.
+- **User-Controlled Documentation**: Only update diary when:
+  - User explicitly requests documenting changes in diary
+  - User approves committing changes and requests documentation
+  - User specifically asks to update diary with recent work
+- **Avoid Verbose Descriptions**: Focus on key technical decisions, problems encountered, and solutions implemented for the specific task in that entry.
