@@ -4,7 +4,12 @@
  * @created: 2024-12-19
  */
 
-import { User, Session, AuthError } from '@supabase/supabase-js'
+import {
+  User,
+  Session,
+  AuthError,
+  AuthChangeEvent,
+} from '@supabase/supabase-js'
 
 export interface AuthConfig {
   supabaseUrl: string
@@ -48,12 +53,7 @@ export interface OAuthOptions {
 }
 
 export interface AuthEvent {
-  type:
-    | 'SIGNED_IN'
-    | 'SIGNED_OUT'
-    | 'TOKEN_REFRESHED'
-    | 'USER_UPDATED'
-    | 'PASSWORD_RECOVERY'
+  type: AuthChangeEvent
   session: Session | null
   user: User | null
   error?: AuthError

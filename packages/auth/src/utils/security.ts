@@ -12,6 +12,7 @@
  * @param origin - The allowed origin (e.g., 'https://example.com')
  * @returns The validated path or null if invalid
  */
+
 export function validateRedirectUrl(
   url: string | null,
   origin: string

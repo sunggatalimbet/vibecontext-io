@@ -42,7 +42,6 @@ export async function GET(request: NextRequest) {
       const response = await authServer.exchangeCodeForSession(code)
 
       if (!response.error) {
-        // Successful authentication - redirect to the app
         const forwardedHost = request.headers.get('x-forwarded-host')
         const isLocalEnv = process.env.NODE_ENV === 'development'
 

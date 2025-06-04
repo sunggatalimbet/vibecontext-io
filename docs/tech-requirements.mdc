@@ -74,6 +74,7 @@ Users will typically use this app at the very beginning of an AI project lifecyc
         - The `appIdeaSummary_text` field stores the AI-generated app idea summary as plain text.
         - The `chat_transcript_filename` field stores the unique filename of the document containing the full chat history.
         - The new project is associated with the currently logged-in user's ID (from Supabase Auth).
+        - Upon project creation, a corresponding entry is also created in the `docs` table, establishing a bidirectional relationship for comprehensive document management.
         - User is redirected to the newly created project's workspace. The content of `appIdeaSummary_text` is displayed.
 - **FR 2.2.2: View Project List**
     - **Description:** Authenticated users can see a list of their projects.
@@ -187,6 +188,42 @@ Users will typically use this app at the very beginning of an AI project lifecyc
     - **Acceptance Criteria:**
         - Backend logic checks user's subscription status before allowing access to tier-specific features or exceeding usage limits.
         - UI clearly indicates features that require a higher tier or when usage limits are approached/exceeded.
+
+**2.7 Document Management Module (Next.js, Supabase, Drizzle)**
+
+- **FR 2.7.1: Comprehensive Project Document Management**
+    - **Description:** Each project maintains a comprehensive set of structured documents that capture different aspects of the project lifecycle, stored and managed through a dedicated docs table with bidirectional relationships to projects.
+    - **Acceptance Criteria:**
+        - A `docs` table in Supabase manages all project-related documentation with the following document types:
+            - **Product Requirements (`prodRequirementsFilename`)**: Comprehensive product requirements and feature specifications
+            - **Technical Requirements (`techRequirementsFilename`)**: Technical specifications, architecture decisions, and implementation requirements
+            - **Technology Stack (`techStackFilename`)**: Documentation of chosen technologies, libraries, frameworks, and technical decisions
+            - **Product Development Documentation (`prdFilename`)**: Generated PRD from AI chat (legacy field, maintained for backward compatibility)
+            - **QA Questions (`qaFilename`)**: Quality assurance questions, test scenarios, and validation criteria
+            - **Cursor Rules (`cursorRulesFilename`)**: IDE-specific rules and configurations for development environment consistency
+        - Each project has a corresponding `docs` entry created automatically upon project creation
+        - The `projects` table includes a `docsId` field linking to its associated docs record
+        - All document filenames are stored as references to files in Supabase Storage
+        - UI provides clear access to view, edit, and manage all document types for each project
+
+- **FR 2.7.2: Document Generation and Updates**
+    - **Description:** Users can generate, view, and update project documents through the application interface.
+    - **Acceptance Criteria:**
+        - Each document type can be generated using appropriate AI prompts and project context
+        - Generated documents are saved as Markdown files in Supabase Storage with unique filenames
+        - Document filenames are updated in the `docs` table upon successful generation/upload
+        - Users can view document content directly in the application interface
+        - Users can manually edit document content, creating new versions while preserving document history
+        - Document updates trigger appropriate downstream regenerations where applicable (e.g., tech requirements changes affecting prompt trees)
+
+- **FR 2.7.3: Document Workflow Integration**
+    - **Description:** Document management integrates seamlessly with existing project workflows and AI-powered features.
+    - **Acceptance Criteria:**
+        - PRD generation (FR 2.3.2) updates the appropriate document field in the `docs` table
+        - Chat transcript storage (FR 2.2.1) can optionally link to docs for enhanced organization
+        - Prompt tree generation can reference and utilize content from technical requirements and technology stack documents
+        - Document changes can trigger relevant prompt regenerations to maintain consistency
+        - Clear visual indicators show document completion status and last updated timestamps
 
 ---
 

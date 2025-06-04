@@ -5,8 +5,8 @@
 - [Completed] **[Critical]** Initialize Next.js project with TypeScript.
 - [Completed] **[Critical]** Set up pnpm workspaces and Turbo for monorepo management.
 - [Completed] **[High]** Configure ESLint and Prettier for code quality and formatting.
-- [To Do] **[High]** Set up Supabase project (Database, Auth, Storage).
-- [To Do] **[High]** Integrate Drizzle ORM into the Next.js project and configure it for Supabase.
+- [Completed] **[High]** Set up Supabase project (Database, Auth, Storage).
+- [Completed] **[High]** Integrate Drizzle ORM into the Next.js project and configure it for Supabase.
 - [Completed] **[Medium]** Define basic project structure within `apps/web` (e.g., components, lib, app router structure).
 - [Completed] **[Medium]** Implement basic layout components (e.g., Navbar, Sidebar, Footer) using shadcn/ui.
 - [Completed] **[Low]** Set up environment variable management (e.g., for Supabase keys, LLM API keys).
@@ -51,13 +51,19 @@
   - [Completed] **[High]** Create "Logout" button/option in UI.
   - [Completed] **[High]** Implement Supabase `signOut()` logic.
   - [Completed] **[High]** Handle session invalidation and redirection.
+- [Completed] **[Critical]** Fix OAuth profile creation with null values.
+  - [Completed] **[High]** Create programmatic profile creation API route (`/api/auth/profile`).
+  - [Completed] **[High]** Implement OAuth metadata extraction for Google, GitHub, and other providers.
+  - [Completed] **[High]** Integrate automatic profile creation into auth callback flow.
+  - [Completed] **[Medium]** Create React `useProfile()` hook for frontend profile management.
+  - [Completed] **[Medium]** Add TypeScript type safety and error handling for OAuth data.
 - [To Do] **[High]** Set up Supabase Row Level Security (RLS) policies for user-specific data access for all relevant tables.
 
 ## 3. Project Management (Next.js, Supabase, Drizzle)
 
 - [To Do] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Backend: API Route).
   - [To Do] **[High]** Create Next.js API route for project creation.
-  - [To Do] **[High]** Define `projects` table schema with Drizzle (including `appIdeaSummary_text`, `chat_transcript_filename`).
+  - [Completed] **[High]** Define `projects` table schema with Drizzle (including `appIdeaSummary_text`, `chat_transcript_filename`).
   - [To Do] **[High]** Implement Drizzle logic to insert new project record (with `appIdeaSummary_text`) into Supabase.
   - [To Do] **[Medium]** Logic for generating unique filenames for stored documents.
 - [To Do] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Frontend: UI).
@@ -106,10 +112,31 @@
   - [To Do] **[High]** Display content of newly generated PRD file.
   - [To Do] **[Medium]** Error handling from LLM/storage.
 
+## 5.5. Document Management System (Next.js, Supabase Storage, Drizzle)
+
+- [Completed] **[Critical]** Create docs table schema with comprehensive document filename fields.
+- [Completed] **[High]** Implement bidirectional relationship between projects and docs tables.
+- [To Do] **[High]** Implement document generation and management API routes.
+  - [To Do] **[High]** API route to create new document entries in docs table.
+  - [To Do] **[High]** API route to upload document files to Supabase Storage.
+  - [To Do] **[High]** API route to retrieve document content from Storage.
+  - [To Do] **[Medium]** API route to update document filenames and metadata.
+- [To Do] **[High]** Implement document management UI components.
+  - [To Do] **[High]** Document list view showing all project documents.
+  - [To Do] **[High]** Document viewer for displaying document content.
+  - [To Do] **[Medium]** Document upload and management interface.
+  - [To Do] **[Medium]** Document type categorization and organization.
+- [To Do] **[Medium]** Integrate document management with existing project workflows.
+  - [To Do] **[Medium]** Link PRD generation to docs table prdFilename field.
+  - [To Do] **[Medium]** Connect tech requirements generation to docs table.
+  - [To Do] **[Low]** Implement document versioning and history tracking.
+
 ## 6. Prompt Tree Generation & Management (LangChain.js, Next.js, Supabase, Drizzle, External LLM)
 
-- [To Do] **[Critical]** Define `prompt_nodes` table schema with Drizzle (linking to `prompts` table via `prompt_id`) (FR 2.4.1).
-- [To Do] **[Critical]** Define `prompts` table schema with Drizzle (to store reusable prompt content, using `prompt_markdown_filename`, no `codeSnippet`).
+- [Completed] **[Critical]** Define `prompt_nodes` table schema with Drizzle (linking to `prompts` table via `prompt_id`) (FR 2.4.1).
+- [Completed] **[Critical]** Define `prompts` table schema with Drizzle (to store reusable prompt content, using `prompt_markdown_filename`, no `codeSnippet`).
+- [Completed] **[High]** Add tags system to prompts table for better categorization and discovery.
+- [Completed] **[High]** Implement prompt security policies to prevent deletion and ensure reusability.
 - [To Do] **[High]** Implement "Generate Initial Prompt Tree" (FR 2.4.1 - Backend: API Route using LangChain.js).
   - [To Do] **[High]** API route to use LangChain.js to interact with LLM (via OpenRouter), providing project context (e.g., `appIdeaSummary_text`).
   - [To Do] **[High]** Use LangChain.js to manage LLM interaction for structured tree output, parse LLM response, save each prompt's Markdown content to a new file in Supabase Storage, create entries in `prompts` table (linking to the markdown file via `prompt_markdown_filename`), and save structured tree data to `prompt_nodes` table (linking to `prompts`) using Drizzle.
@@ -137,9 +164,16 @@
 
 ## 8. Database Setup & ORM (Drizzle & Supabase)
 
-- [To Do] **[High]** Finalize Drizzle schemas for all tables (`projects`, `prompt_nodes`, `prompts`). (Covered by other sections, but good to track overall schema readiness)
-- [To Do] **[High]** Implement Drizzle migrations strategy.
-- [To Do] **[Critical]** Implement and thoroughly test Supabase Row Level Security (RLS) policies for all tables and Supabase Storage.
+- [Completed] **[High]** Finalize Drizzle schemas for all tables (`projects`, `prompt_nodes`, `prompts`, `docs`). (Covered by other sections, but good to track overall schema readiness)
+- [Completed] **[High]** Implement Drizzle migrations strategy.
+- [Completed] **[High]** Add tags system to prompts table for categorization (text[] array).
+- [Completed] **[High]** Create comprehensive document management system with docs table.
+- [Completed] **[High]** Implement bidirectional relationship between projects and docs tables.
+- [In Progress] **[Critical]** Implement and thoroughly test Supabase Row Level Security (RLS) policies for all tables and Supabase Storage.
+  - [Completed] **[High]** Design comprehensive RLS policies for user data isolation.
+  - [Completed] **[High]** Update RLS policies to include docs table and remove prompt deletion permissions.
+  - [To Do] **[High]** Apply RLS policies to Supabase database (manual application via SQL Editor required).
+  - [To Do] **[Medium]** Test RLS policies with different user scenarios to ensure proper data isolation.
 
 ## 9. Non-Functional Requirements Implementation
 

@@ -80,6 +80,7 @@ export default TS_ESLint.config(
           fixStyle: 'inline-type-imports',
         },
       ],
+      '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/no-misused-promises': [
         'error',
         {

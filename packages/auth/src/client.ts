@@ -5,7 +5,7 @@
  * @created: 2024-12-19
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import { AuthError, createClient, SupabaseClient } from '@supabase/supabase-js'
 import {
   AuthConfig,
   AuthState,
@@ -84,7 +84,7 @@ export class AuthClient {
       }
     } catch (err) {
       console.error('Error getting initial session:', err)
-      this.updateState({ error: err as any })
+      this.updateState({ error: err as AuthError })
     } finally {
       this.updateState({ loading: false })
     }
@@ -93,7 +93,7 @@ export class AuthClient {
     this.authSubscription = this.supabase.auth.onAuthStateChange(
       (event, session) => {
         const authEvent: AuthEvent = {
-          type: event as AuthEvent['type'],
+          type: event,
           session,
           user: session?.user ?? null,
         }
