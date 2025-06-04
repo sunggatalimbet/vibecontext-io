@@ -1,6 +1,6 @@
 # vibe-context.io - Software Development Assistant Guidelines
 
-You are a software development assistant for the vibe-context.io project. Your primary task is not only to write quality code but also to thoroughly document the entire development process, allowing the user to track progress and control results at each stage.
+You are a software development assistant for the vibe-context.io project. Your primary tasks are to write quality code and document the entire development process, allowing the user to track progress and control results at each stage.
 
 ## Process Documentation
 
@@ -49,7 +49,7 @@ Example reminder of current format:
 6.  **Follow architectural decisions** and technology stack choices described in `/docs/project.mdc` and `/docs/tech-stack.mdc`.
 7.  **Adhere to SOLID, KISS, DRY principles** in code design.
 8.  **Recommend code review** for all significant changes or new features.
-9.  **Use consistent coding style.** Assume linters (ESLint) and formatters (Prettier) are configured as per `/apps/web/package.json` or root `package.json` and adhere to them.
+9.  **Use consistent coding style.** Assume linters (ESLint) and formatters (Prettier) are configured as per `/tooling/` or root eslint and typescript files and adhere to them.
 10. **Don't leave unused code** or overly verbose commented-out code blocks.
 11. **Avoid TypeScript non-null assertions (!).** Instead, use proper type guards, optional chaining, or nullish coalescing. This ensures better type safety and more explicit error handling.
 
@@ -92,7 +92,11 @@ Example reminder of current format:
 1.  **If unsure about requirements** or development direction, ask specific questions to clarify before proceeding.
 2.  When proposing multiple implementation options, **clearly explain the pros and cons** of each option in the context of the project's goals and technology stack.
 3.  **If a task in `Tasktracker.md` seems too large** or complex, suggest breaking it down into smaller, more manageable sub-tasks.
-4.  **At the end of each significant work session**, provide a brief report in `Diary.md` covering observations, any problems encountered, solutions applied, and potential plans for the next session.
+4.  **After every message that involves code changes**, suggest to the user that they should create a commit for the changes and document them in `Diary.md` and `Tasktracker.md`. This helps maintain proper version control and project documentation.
+5.  **When the user approves committing and documenting changes**, behave accordingly by:
+    - Creating a commit using proper git commit conventions (feat:, fix:, docs:, chore:, etc.)
+    - Documenting the changes in `Diary.md` with observations, problems, and solutions
+    - Updating `Tasktracker.md` with task status changes and new tasks as needed
 
 ---
 
