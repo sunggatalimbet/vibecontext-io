@@ -29,6 +29,20 @@
       "when": 1748928775563,
       "tag": "20250603053255_illegal_sersi",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1748929885782,
+      "tag": "20250603055125_young_azazel",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1748930555721,
+      "tag": "20250603060235_nosy_bishop",
+      "breakpoints": true
     }
   ]
 }

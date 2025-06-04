@@ -1,10 +1,26 @@
 import { relations } from 'drizzle-orm'
 import { pgTable, uuid, text, timestamp, integer } from 'drizzle-orm/pg-core'
 
+// Following Supabase best practice: https://supabase.com/docs/guides/auth/managing-user-data
+export const profiles = pgTable('profiles', {
+  id: uuid('id').primaryKey(), // This references auth.users.id via foreign key constraint
+  firstName: text('first_name'),
+  lastName: text('last_name'),
+  avatarUrl: text('avatar_url'),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+}).enableRLS()
+
 // Projects table
 export const projects = pgTable('projects', {
   id: uuid('id').defaultRandom().primaryKey(),
-  userId: uuid('user_id').notNull(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => profiles.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   appIdeaSummaryText: text('app_idea_summary_text'),
   chatTranscriptFilename: text('chat_transcript_filename'),
@@ -40,7 +56,7 @@ export const docs = pgTable('docs', {
 export const prompts = pgTable('prompts', {
   id: uuid('id').defaultRandom().primaryKey(),
   title: text('title'),
-  prompt_markdown_filename: text('prompt_markdown_filename').notNull(),
+  promptMarkdownFilename: text('prompt_markdown_filename').notNull(),
   tags: text('tags').array().default([]).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true })
     .defaultNow()
@@ -48,7 +64,7 @@ export const prompts = pgTable('prompts', {
   updatedAt: timestamp('updated_at', { withTimezone: true })
     .defaultNow()
     .notNull(),
-})
+}).enableRLS()
 
 // Prompt nodes table
 export const promptNodes = pgTable('prompt_nodes', {
@@ -70,7 +86,15 @@ export const promptNodes = pgTable('prompt_nodes', {
 }).enableRLS()
 
 // Relations
-export const projectsRelations = relations(projects, ({ many }) => ({
+export const profilesRelations = relations(profiles, ({ many }) => ({
+  projects: many(projects),
+}))
+
+export const projectsRelations = relations(projects, ({ one, many }) => ({
+  profile: one(profiles, {
+    fields: [projects.userId],
+    references: [profiles.id],
+  }),
   docs: many(docs),
   promptNodes: many(promptNodes),
 }))
@@ -82,7 +106,7 @@ export const docsRelations = relations(docs, ({ one }) => ({
   }),
 }))
 
-export const promptNodesRelations = relations(promptNodes, ({ one }) => ({
+export const promptNodesRelations = relations(promptNodes, ({ one, many }) => ({
   project: one(projects, {
     fields: [promptNodes.projectId],
     references: [projects.id],
@@ -91,6 +115,14 @@ export const promptNodesRelations = relations(promptNodes, ({ one }) => ({
     fields: [promptNodes.promptId],
     references: [prompts.id],
   }),
+  parent: one(promptNodes, {
+    fields: [promptNodes.parentNodeId],
+    references: [promptNodes.id],
+    relationName: 'promptNodeHierarchy',
+  }),
+  children: many(promptNodes, {
+    relationName: 'promptNodeHierarchy',
+  }),
 }))
 
 export const promptsRelations = relations(prompts, ({ many }) => ({
@@ -98,6 +130,9 @@ export const promptsRelations = relations(prompts, ({ many }) => ({
 }))
 
 // Type definitions
+export type Profile = typeof profiles.$inferSelect
+export type NewProfile = typeof profiles.$inferInsert
+
 export type Project = typeof projects.$inferSelect
 export type NewProject = typeof projects.$inferInsert
 
@@ -112,10 +147,12 @@ export type NewPromptNode = typeof promptNodes.$inferInsert
 
 // Schema export for Drizzle
 export const schema = {
+  profiles,
   projects,
   docs,
   prompts,
   promptNodes,
+  profilesRelations,
   projectsRelations,
   docsRelations,
   promptNodesRelations,

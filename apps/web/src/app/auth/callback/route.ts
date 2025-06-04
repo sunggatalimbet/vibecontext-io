@@ -42,7 +42,49 @@ export async function GET(request: NextRequest) {
       const response = await authServer.exchangeCodeForSession(code)
 
       if (!response.error) {
-        // Successful authentication - redirect to the app
+        // Successful authentication - try to create/update profile
+        try {
+          // Call our profile creation API to ensure profile is created with proper data
+          const profileResponse = await fetch(`${origin}/api/auth/profile`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Cookie: request.headers.get('cookie') || '',
+            },
+          })
+
+          if (!profileResponse.ok) {
+            console.warn(
+              'Profile creation/update failed:',
+              await profileResponse.text()
+            )
+            // Continue with redirect even if profile creation fails
+          } else {
+            try {
+              const profileData: { message?: string } =
+                (await profileResponse.json()) as { message?: string }
+              console.log(
+                'Profile created/updated successfully:',
+                profileData.message || 'Success'
+              )
+            } catch (jsonError) {
+              console.warn(
+                'Failed to parse profile response JSON:',
+                jsonError instanceof Error ? jsonError.message : 'Parse error'
+              )
+            }
+          }
+        } catch (profileError) {
+          console.warn(
+            'Error during profile creation:',
+            profileError instanceof Error
+              ? profileError.message
+              : 'Unknown error'
+          )
+          // Continue with redirect even if profile creation fails
+        }
+
+        // Redirect to the app
         const forwardedHost = request.headers.get('x-forwarded-host')
         const isLocalEnv = process.env.NODE_ENV === 'development'
 

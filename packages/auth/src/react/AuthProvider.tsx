@@ -29,12 +29,9 @@ export interface AuthProviderProps {
   config: AuthConfig
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({
-  children,
-  config,
-}) => {
+export const AuthProvider = ({ children, config }: AuthProviderProps) => {
   const [authClient, setAuthClient] = useState<AuthClient | null>(null)
-  const [state, setState] = useState<AuthState>({
+  const [authState, setAuthState] = useState<AuthState>({
     user: null,
     session: null,
     loading: true,
@@ -46,14 +43,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       config,
       onAuthStateChange: event => {
         console.log('Auth event:', event.type, event.user?.email)
-        setState(client.getState())
+        setAuthState(client.getState())
       },
     })
 
     setAuthClient(client)
 
     // Update state with initial client state
-    setState(client.getState())
+    setAuthState(client.getState())
 
     return () => {
       client.destroy()
@@ -89,11 +86,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       return
     }
     authClient.clearError()
-    setState(authClient.getState())
+    setAuthState(authClient.getState())
   }, [authClient])
 
   const contextValue: AuthContextType = {
-    ...state,
+    ...authState,
     signInWithOAuth,
     signOut,
     refreshSession,

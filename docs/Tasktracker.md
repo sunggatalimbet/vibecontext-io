@@ -51,6 +51,12 @@
   - [Completed] **[High]** Create "Logout" button/option in UI.
   - [Completed] **[High]** Implement Supabase `signOut()` logic.
   - [Completed] **[High]** Handle session invalidation and redirection.
+- [Completed] **[Critical]** Fix OAuth profile creation with null values.
+  - [Completed] **[High]** Create programmatic profile creation API route (`/api/auth/profile`).
+  - [Completed] **[High]** Implement OAuth metadata extraction for Google, GitHub, and other providers.
+  - [Completed] **[High]** Integrate automatic profile creation into auth callback flow.
+  - [Completed] **[Medium]** Create React `useProfile()` hook for frontend profile management.
+  - [Completed] **[Medium]** Add TypeScript type safety and error handling for OAuth data.
 - [To Do] **[High]** Set up Supabase Row Level Security (RLS) policies for user-specific data access for all relevant tables.
 
 ## 3. Project Management (Next.js, Supabase, Drizzle)

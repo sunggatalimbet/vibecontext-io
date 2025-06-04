@@ -16,12 +16,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:check": "drizzle-kit check",
-    "db:test": "tsx src/utils/test-connection.ts",
-    "db:manual-migrate": "tsx src/utils/apply-manual-migration.ts",
-    "db:apply-rls": "tsx src/utils/apply-rls.ts",
-    "db:remove-docs-id": "tsx src/utils/remove-docs-id-column.ts",
-    "db:rls": "echo 'Please apply the RLS policies from src/utils/rls-policies.sql manually in Supabase SQL Editor'"
+    "db:check": "drizzle-kit check"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.8",
