@@ -57,14 +57,14 @@
   - [Completed] **[High]** Integrate automatic profile creation into auth callback flow.
   - [Completed] **[Medium]** Create React `useProfile()` hook for frontend profile management.
   - [Completed] **[Medium]** Add TypeScript type safety and error handling for OAuth data.
-- [To Do] **[High]** Set up Supabase Row Level Security (RLS) policies for user-specific data access for all relevant tables.
+- [Completed] **[High]** Set up Supabase Row Level Security (RLS) policies for user-specific data access for all relevant tables.
 
 ## 3. Project Management (Next.js, Supabase, Drizzle)
 
 - [To Do] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Backend: API Route).
   - [To Do] **[High]** Create Next.js API route for project creation.
-  - [Completed] **[High]** Define `projects` table schema with Drizzle (including `appIdeaSummary_text`, `chat_transcript_filename`).
-  - [To Do] **[High]** Implement Drizzle logic to insert new project record (with `appIdeaSummary_text`) into Supabase.
+  - [Completed] **[High]** Define `projects` table schema with Drizzle (including `app_idea_summary_text`, `chat_transcript_filename`).
+  - [To Do] **[High]** Implement Drizzle logic to insert new project record (with `app_idea_summary_text`) into Supabase.
   - [To Do] **[Medium]** Logic for generating unique filenames for stored documents.
 - [To Do] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Frontend: UI).
   - [To Do] **[High]** Create "Start New Project" button and initial chat interface.
@@ -81,11 +81,11 @@
 ## 4. AI & LLM Orchestration (LangChain.js, OpenRouter, Next.js, Supabase Storage)
 
 - [To Do] **[Critical]** Set up LangChain.js core and relevant modules (Chains, Prompts, Memory, LLMs integration with OpenRouter).
-  - **Description:** Integrate LangChain.js into the Next.js backend for orchestrating all LLM interactions.
-  - **Tasks:** Install LangChain.js packages, configure it to use OpenRouter for LLM calls, create utility services for LangChain.js usage.
+  - **Description:** Integrate LangChain.js into the Next.js backend for orchestrating all LLM interactions with multi-model support via OpenRouter. This enables using both paid premium models (GPT-4, Claude) and free/cheaper alternatives for cost optimization.
+  - **Tasks:** Install LangChain.js packages, configure it to use OpenRouter for multi-model LLM calls, create utility services for LangChain.js usage, implement model selection logic for different task types.
 - [To Do] **[High]** Integrate OpenRouter for all LLM API calls (now via LangChain.js).
-  - **Description:** Abstract LLM interactions through OpenRouter, managed by LangChain.js, to support multiple models and providers.
-  - **Tasks:** Set up OpenRouter API key (if not done), ensure LangChain.js service correctly routes calls through OpenRouter.
+  - **Description:** Abstract LLM interactions through OpenRouter, managed by LangChain.js, to support multiple models and providers including both commercial and open-source options. Enable dynamic model selection based on task complexity, cost constraints, and availability.
+  - **Tasks:** Set up OpenRouter API key (if not done), ensure LangChain.js service correctly routes calls through OpenRouter, implement model fallback strategies, configure cost-based model selection.
 - [To Do] **[High]** Develop chat interface in Next.js (FR 2.2.1 related).
   - [To Do] **[High]** UI for displaying chat messages (user and AI).
   - [To Do] **[High]** Input field for user messages.
@@ -169,10 +169,10 @@
 - [Completed] **[High]** Add tags system to prompts table for categorization (text[] array).
 - [Completed] **[High]** Create comprehensive document management system with docs table.
 - [Completed] **[High]** Implement bidirectional relationship between projects and docs tables.
-- [In Progress] **[Critical]** Implement and thoroughly test Supabase Row Level Security (RLS) policies for all tables and Supabase Storage.
+- [Completed] **[Critical]** Implement and thoroughly test Supabase Row Level Security (RLS) policies for all tables and Supabase Storage.
   - [Completed] **[High]** Design comprehensive RLS policies for user data isolation.
   - [Completed] **[High]** Update RLS policies to include docs table and remove prompt deletion permissions.
-  - [To Do] **[High]** Apply RLS policies to Supabase database (manual application via SQL Editor required).
+  - [Completed] **[High]** Apply RLS policies to Supabase database (manual application via SQL Editor required).
   - [To Do] **[Medium]** Test RLS policies with different user scenarios to ensure proper data isolation.
 
 ## 9. Non-Functional Requirements Implementation
@@ -188,35 +188,14 @@
 - [To Do] **[Medium]** Usability & UI/UX: Ensure core actions are prominent and discoverable. (NFR 3.3)
 - [To Do] **[Medium]** Usability & UI/UX: Ensure responsive design for desktop/laptop. (NFR 3.3)
 
-## 10. Deployment & DevOps
-
-- [To Do] **[High]** Set up CI/CD pipeline (e.g., GitHub Actions to Vercel).
-- [To Do] **[Medium]** Configure production environment variables on Vercel/hosting platform.
-- [To Do] **[Medium]** Initial deployment to a staging/preview environment.
-- [To Do] **[High]** Production deployment strategy.
-
-## 11. Documentation
-
-- [To Do] **[Low]** Review and update `project.mdc`, `tech-requirements.mdc`, `tech-stack.mdc` as development progresses.
-- [To Do] **[Medium]** Create a basic README.md for the `apps/web` application.
-- [To Do] **[Low]** Document core Drizzle schemas and their relationships.
-- [To Do] **[Low]** Document environment variable setup for developers.
-- [To Do] **[Medium]** Review and address questions in `docs/quality-assurance-questions.md` to refine requirements and design before extensive development.
-
-## 12. Testing
+## 10. Testing
 
 - [To Do] **[Medium]** Set up unit testing framework (e.g., Vitest or Jest) for Next.js components and utility functions.
 - [To Do] **[Low]** Write unit tests for critical helper functions and API route logic.
 - [To Do] **[Medium]** Set up integration testing for API routes interacting with Supabase/Drizzle.
 - [To Do] **[Low]** (Post-MVP) Plan for E2E testing framework (e.g., Playwright or Cypress).
 
-## 13. Future Considerations & Research
-
-- [To Do] **[Low]** Research and define requirements for Model Context Protocol (MCP) server integration (FC 7.1 from `tech-requirements.mdc`).
-  - **Description:** Explore making VibeContext an MCP Host to connect with external tools (Windsurf, Cursor) and data sources via MCP Servers, enhancing context sharing.
-  - **Tasks:** Investigate MCP client implementation, assess existing MCP server ecosystem, define specific use cases for VibeContext.
-
-## 14. Monetization (Polar.sh Integration)
+## 11. Monetization (Polar.sh Integration)
 
 - [To Do] **[High]** Design and define subscription tiers and feature entitlements (FR 2.6.1).
 - [To Do] **[High]** Integrate Polar.sh SDK/API for checkout process (FR 2.6.2 - Backend & Frontend).

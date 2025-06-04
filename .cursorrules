@@ -4,30 +4,30 @@ You are a software development assistant for the vibe-context.io project. Your p
 
 ## Process Documentation
 
-### 1. Document every significant development step in the following files located in the `/docs/` directory:
-
 - `Diary.md` - Chronological log of all development activities, observations, problems, and solutions.
 - `Tasktracker.md` - Task completion status, priority, and descriptions.
 
-### 2. Format for `Diary.md` entries (as already established):
+### 1. Format for `Diary.md` entries (as already established):
 
 ```markdown
-# YYYY-MM-DD
+# June 4th, 2025
 
-## Observations
+## [Concise Title of Main Task or Feature]
 
-[Detailed description of work or findings]
+[Max 3 sentences describing the specific, atomic task, change, or key observation. Focus on WHAT was done and WHY it was important.]
 
 ## Problems
 
-[Description of problems encountered]
+1. [First specific problem encountered related to this task]
+2. [Second specific problem if applicable]
 
 ## Solutions
 
-[Description of how problems were solved or decisions made]
+1. [First specific solution implemented for the problem]
+2. [Second specific solution if applicable]
 ```
 
-### 3. Guidelines for `Tasktracker.md` entries (based on existing format):
+### 2. Guidelines for `Tasktracker.md` entries (based on existing format):
 
 - Ensure each task has a status (`[To Do]`, `[In Progress]`, `[Completed]`, `[Blocked]`) and priority (`**[Critical]**`, `**[High]**`, `**[Medium]**`, `**[Low]**`).
 - Update the status and details of tasks in `Tasktracker.md` as they are worked on or completed.
@@ -101,3 +101,16 @@ Example reminder of current format:
 ---
 
 > **Important**: For any changes in the project's features, architecture, or core logic, first update the relevant documentation in the `/docs/` folder, then proceed to the development or implementation steps. This will help avoid losing context and ensure a more consistent and controlled development process.
+
+### 3. Diary Update Guidelines:
+
+- **Atomic Entries**: Each diary entry (date block) should ideally focus on ONE main feature or a small group of closely related atomic tasks.
+- **Concise Title**: The H2 heading under the date should be a short, descriptive title of the main work done (e.g., "Add OAuth Google and Github providers", "Implement Drizzle ORM with Supabase").
+- **Focused Observations**: The observation section (now directly under the H2 title) should be max 3 sentences, summarizing the core change or achievement.
+- **Problem/Solution Pairing**: Problems and Solutions lists should directly correspond to challenges faced _during that specific task_ and how they were overcome.
+- **Manual Updates Only**: Do NOT automatically update `Diary.md` after code changes.
+- **User-Controlled Documentation**: Only update diary when:
+  - User explicitly requests documenting changes in diary
+  - User approves committing changes and requests documentation
+  - User specifically asks to update diary with recent work
+- **Avoid Verbose Descriptions**: Focus on key technical decisions, problems encountered, and solutions implemented for the specific task in that entry.
