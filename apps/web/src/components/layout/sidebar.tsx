@@ -9,6 +9,7 @@ import {
   FolderIcon,
   FileIcon,
   CodeIcon,
+  PlusIcon,
 } from 'lucide-react'
 import {
   Accordion,
@@ -148,6 +149,29 @@ const ProjectItem = ({ project }: { project: Project }) => {
   )
 }
 
+const StartNewProjectButton = () => {
+  const pathname = usePathname()
+  const isActive = pathname === '/projects/new'
+
+  return (
+    <Button
+      asChild
+      variant="ghost"
+      className={cn(
+        'w-full justify-start gap-2 px-2 h-9 opacity-70 hover:opacity-100 transition-opacity',
+        isActive
+          ? 'bg-sidebar-accent text-sidebar-primary font-medium opacity-100'
+          : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary'
+      )}
+    >
+      <Link href="/projects/new" className="flex items-center w-full">
+        <PlusIcon className="h-4 w-4" />
+        <span className="text-sm ml-2">Start New Project</span>
+      </Link>
+    </Button>
+  )
+}
+
 const DocumentSkeleton = () => (
   <div className="px-2 py-1">
     <div className="flex items-center gap-2 animate-pulse">
@@ -189,6 +213,7 @@ const SidebarContent = ({ className }: { className?: string }) => {
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col gap-1">
+                <StartNewProjectButton />
                 {projects.map(project => (
                   <ProjectItem key={project.id} project={project} />
                 ))}

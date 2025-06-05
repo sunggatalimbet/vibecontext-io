@@ -1,9 +1,11 @@
 interface GetUserInitialsParams {
-  fullName: string
-  email: string
+  fullName: string | undefined
+  email: string | undefined
 }
 
 export const getUserInitials = ({ fullName, email }: GetUserInitialsParams) => {
+  if (!fullName && !email) return 'U'
+
   if (fullName) {
     const nameParts = fullName.split(' ')
     const initials = nameParts
@@ -13,5 +15,7 @@ export const getUserInitials = ({ fullName, email }: GetUserInitialsParams) => {
     return initials
   }
 
-  return email.charAt(0).toUpperCase() || 'U'
+  if (email) {
+    return email.charAt(0).toUpperCase()
+  }
 }

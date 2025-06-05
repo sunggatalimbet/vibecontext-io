@@ -24,8 +24,8 @@ export const UserMenu = async () => {
 
   const fullName = user.user_metadata?.full_name as string | undefined
   const userInitials = getUserInitials({
-    fullName: fullName ?? '',
-    email: user.email ?? '',
+    fullName: fullName,
+    email: user.email,
   })
 
   return (
