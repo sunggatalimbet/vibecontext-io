@@ -46,3 +46,17 @@ Created schemas for following table entities: `profiles`, `projects`, `docs`, `p
 
 1. Asked open and closed questions to author that gave more context of schema and relations implementation.
 2. Helped author by providing instructions how to securely set up RLS and RLS Policies inside Supabase Dashboard.
+
+# June 5th
+
+## Fix Authentication Flow Redirect Loop
+
+Refactored authentication functionality by implementing server-side authentication and authorization using `@supabase/ssr`.
+
+## Problems
+
+1. Middleware and server-side redirects were conflicting, creating a loop between protected and auth routes
+
+## Solutions
+
+1. Hiding UserMenu component if there is no user

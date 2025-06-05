@@ -1,13 +1,11 @@
 {
   "name": "@repo/auth",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.11.0",
   "exports": {
-    ".": "./src/index.ts",
-    "./client": "./src/client.ts",
-    "./server": "./src/server.ts",
-    "./react": "./src/react.ts"
+    ".": "./src/index.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.8",
