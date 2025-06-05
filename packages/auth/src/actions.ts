@@ -2,6 +2,7 @@
 
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { type User } from '@supabase/supabase-js'
 import { createClient } from './server'
 
 export async function signInWithGoogleAction() {
@@ -69,7 +70,7 @@ export async function signOutAction() {
   redirect('/auth/login')
 }
 
-export async function getUserAction() {
+export async function getUserAction(): Promise<User | null> {
   const supabase = await createClient()
 
   const {
