@@ -19,34 +19,60 @@ export default function NewProjectPage() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
-    if (!input.trim()) return
+    if (!input.trim() || isLoading) return
 
-    setMessages(prev => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        content: input,
-        sender: 'user',
-      },
-    ])
+    // Add user message immediately
+    const userMessage = {
+      id: Date.now(),
+      content: input.trim(),
+      sender: 'user' as const,
+    }
+
+    setMessages(prev => [...prev, userMessage])
     setInput('')
     setIsLoading(true)
 
-    // TODO: Replace with actual LangChain.js integration
-    setTimeout(() => {
-      setMessages(prev => [
-        ...prev,
-        {
-          id: prev.length + 1,
-          content:
-            'Great! Let me help you develop your app idea. Could you tell me more about what problem your app will solve and who your target users are?',
-          sender: 'ai',
+    try {
+      // Call the LLM API
+      const response = await fetch('/api/chat/idea-generation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      ])
+        body: JSON.stringify({ message: userMessage.content }),
+      })
+
+      if (!response.ok) {
+        const errorData = (await response.json()) as { error?: string }
+        throw new Error(errorData.error || 'Failed to get AI response')
+      }
+
+      const data = (await response.json()) as { response: string }
+
+      // Add AI response
+      const aiMessage = {
+        id: Date.now() + 1,
+        content: data.response,
+        sender: 'ai' as const,
+      }
+
+      setMessages(prev => [...prev, aiMessage])
+    } catch (error) {
+      console.error('Error sending message:', error)
+
+      // Add error message to chat
+      const errorMessage = {
+        id: Date.now() + 1,
+        content: 'Sorry, I encountered an error. Please try again.',
+        sender: 'ai' as const,
+      }
+
+      setMessages(prev => [...prev, errorMessage])
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   return (
@@ -107,11 +133,12 @@ export default function NewProjectPage() {
               onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
-                  handleSubmit(e)
+                  void handleSubmit(e)
                 }
               }}
               placeholder="Describe your app idea..."
               className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 resize-none min-h-[auto]"
+              disabled={isLoading}
             />
             <Button
               type="submit"

@@ -1,0 +1,28 @@
+{
+  "name": "@repo/ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI and LangChain.js services for vibecontext.io",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "langchain": "^0.3.27",
+    "@langchain/openai": "^0.5.12",
+    "@langchain/core": "^0.3.27"
+  },
+  "devDependencies": {
+    "@types/node": "20.6.2",
+    "typescript": "5.2.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
