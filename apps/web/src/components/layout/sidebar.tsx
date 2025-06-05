@@ -27,7 +27,6 @@ import {
 } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import AnimatedBulbLogo from '../shared/animated-bulb-logo'
 
 interface Document {
   id: string
@@ -191,9 +190,6 @@ const SidebarContent = ({ className }: { className?: string }) => {
           href="/"
           className="flex items-center gap-2 font-semibold text-sidebar-primary transition-opacity hover:opacity-80"
         >
-          <div className="w-6 h-6">
-            <AnimatedBulbLogo size={24} />
-          </div>
           <span className="font-bold italic font-satoshi">vibecontext.io</span>
         </Link>
       </div>
