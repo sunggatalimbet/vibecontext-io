@@ -15,7 +15,6 @@ export async function POST(request: NextRequest) {
 
     const llmService = getLLMService()
     const response = await llmService.sendMessage(message)
-
     return NextResponse.json({
       success: true,
       response,

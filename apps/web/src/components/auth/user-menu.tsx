@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { getUserInitials } from '@/lib'
+import { getUserInitials } from '@/lib/utils'
 import { LogoutButton } from './logout-button'
 
 export const UserMenu = async () => {

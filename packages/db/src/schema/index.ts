@@ -1,5 +1,12 @@
 import { relations } from 'drizzle-orm'
-import { pgTable, uuid, text, timestamp, integer } from 'drizzle-orm/pg-core'
+import {
+  pgTable,
+  uuid,
+  text,
+  timestamp,
+  integer,
+  json,
+} from 'drizzle-orm/pg-core'
 
 // Following Supabase best practice: https://supabase.com/docs/guides/auth/managing-user-data
 export const profiles = pgTable('profiles', {
@@ -22,8 +29,7 @@ export const projects = pgTable('projects', {
     .notNull()
     .references(() => profiles.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
-  appIdeaSummaryText: text('app_idea_summary_text'),
-  chatTranscriptFilename: text('chat_transcript_filename'),
+  appIdeaSummaryJson: json('app_idea_summary_json'),
   createdAt: timestamp('created_at', { withTimezone: true })
     .defaultNow()
     .notNull(),

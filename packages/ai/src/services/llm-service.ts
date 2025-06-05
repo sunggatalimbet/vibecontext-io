@@ -1,4 +1,4 @@
-import { BaseMessage } from '@langchain/core/messages'
+import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages'
 import {
   ChatPromptTemplate,
   MessagesPlaceholder,
@@ -14,8 +14,7 @@ import { chatBotPrompt, chatBotSummaryPrompt } from '../prompts/chatbot-prompts'
  */
 export class LLMService {
   private llm: ChatOpenAI
-  private memory: BufferMemory
-  private chain: ConversationChain
+  private conversationHistory: Array<BaseMessage> = []
   private summaryTemplate: ChatPromptTemplate
 
   constructor() {
@@ -37,36 +36,38 @@ export class LLMService {
       },
     })
 
-    // Initialize BufferMemory with 10 message limit
-    this.memory = new BufferMemory({
-      returnMessages: true,
-      memoryKey: 'history',
-    })
-
-    // Create conversation chain with custom prompt template
-    const prompt = ChatPromptTemplate.fromMessages([
-      ['system', chatBotPrompt],
-      new MessagesPlaceholder('history'),
-      ['human', '{input}'],
-    ])
-
-    this.chain = new ConversationChain({
-      llm: this.llm,
-      memory: this.memory,
-      prompt,
-    })
-
     // Initialize summary template
     this.summaryTemplate = ChatPromptTemplate.fromTemplate(chatBotSummaryPrompt)
   }
 
   async sendMessage(message: string): Promise<string> {
     try {
-      const response = await this.chain.invoke({
+      const userMessage = new HumanMessage(message)
+      this.conversationHistory.push(userMessage)
+
+      if (this.conversationHistory.length > 20) {
+        this.conversationHistory = this.conversationHistory.slice(-20)
+      }
+
+      const prompt = ChatPromptTemplate.fromMessages([
+        ['system', chatBotPrompt],
+        new MessagesPlaceholder('history'),
+        ['human', '{input}'],
+      ])
+
+      const formattedPrompt = await prompt.formatMessages({
+        history: this.conversationHistory.slice(0, -1), // Exclude the current message from history
         input: message,
       })
 
-      return response.response as string
+      const response = await this.llm.invoke(formattedPrompt)
+      const aiResponseContent = response.content as string
+
+      // Add AI response to history
+      const aiMessage = new AIMessage(aiResponseContent)
+      this.conversationHistory.push(aiMessage)
+
+      return aiResponseContent
     } catch (error) {
       console.error('Error in LLM service:', error)
       throw new Error('Failed to get AI response. Please try again.')
@@ -74,24 +75,21 @@ export class LLMService {
   }
 
   async getConversationHistory(): Promise<BaseMessage[]> {
-    const messages = await this.memory.chatHistory.getMessages()
-    return messages
+    return [...this.conversationHistory]
   }
 
   async clearMemory(): Promise<void> {
-    await this.memory.clear()
+    this.conversationHistory = []
   }
 
   async generateAppIdeaSummary(): Promise<string> {
     try {
-      const history = await this.getConversationHistory()
-
-      if (history.length === 0) {
+      if (this.conversationHistory.length === 0) {
         throw new Error('No conversation history to summarize')
       }
 
       // Format conversation history
-      const conversationText = history
+      const conversationText = this.conversationHistory
         .map((msg: BaseMessage) => {
           const messageType = msg._getType()
           const messageContent =
