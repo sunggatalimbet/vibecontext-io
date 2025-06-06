@@ -1,8 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import { PlusIcon, FolderIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { createChat } from '@/lib/actions'
 
 export default function ProjectsPage() {
   return (
@@ -17,12 +17,12 @@ export default function ProjectsPage() {
             Manage and explore your AI-assisted development projects
           </p>
         </div>
-        <Button asChild>
-          <Link href="/projects/new" className="flex items-center gap-2">
+        <form action={createChat}>
+          <Button>
             <PlusIcon className="h-4 w-4" />
-            New Project
-          </Link>
-        </Button>
+            <span>New Project</span>
+          </Button>
+        </form>
       </div>
 
       {/* Empty State */}
@@ -35,12 +35,12 @@ export default function ProjectsPage() {
             structured development plans.
           </p>
         </div>
-        <Button asChild size="lg">
-          <Link href="/projects/new" className="flex items-center gap-2">
+        <form action={createChat}>
+          <Button size="lg">
             <PlusIcon className="h-5 w-5" />
-            Create Your First Project
-          </Link>
-        </Button>
+            <span>Create Your First Project</span>
+          </Button>
+        </form>
       </div>
     </div>
   )

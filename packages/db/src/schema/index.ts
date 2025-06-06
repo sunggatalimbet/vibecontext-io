@@ -8,6 +8,15 @@ import {
   json,
 } from 'drizzle-orm/pg-core'
 
+export {
+  conversations,
+  messages,
+  type Conversation,
+  type NewConversation,
+  type Message,
+  type NewMessage,
+} from './chat'
+
 // Following Supabase best practice: https://supabase.com/docs/guides/auth/managing-user-data
 export const profiles = pgTable('profiles', {
   id: uuid('id').primaryKey(), // This references auth.users.id via foreign key constraint

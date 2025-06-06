@@ -61,14 +61,14 @@
 
 ## 3. Project Management (Next.js, Supabase, Drizzle)
 
-- [To Do] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Backend: API Route).
-  - [To Do] **[High]** Create Next.js API route for project creation.
-  - [Completed] **[High]** Define `projects` table schema with Drizzle (including `app_idea_summary_text`, `chat_transcript_filename`).
+- [In Progress] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Backend: API Route).
+  - [Completed] **[High]** Create Next.js API route for project creation.
+  - [Completed] **[High]** Define `projects` table schema with Drizzle
   - [To Do] **[High]** Implement Drizzle logic to insert new project record (with `app_idea_summary_text`) into Supabase.
   - [To Do] **[Medium]** Logic for generating unique filenames for stored documents.
-- [To Do] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Frontend: UI).
-  - [To Do] **[High]** Create "Start New Project" button and initial chat interface.
-  - [To Do] **[High]** Handle project naming and confirmation.
+- [In Progress] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Frontend: UI).
+  - [Completed] **[High]** Create "Start New Project" button and initial chat interface.
+  - [Completed] **[High]** Handle project naming and confirmation.
   - [To Do] **[High]** Redirect to project workspace and display `appIdeaSummary_text` from project record.
 - [To Do] **[Medium]** Implement "View Project List" (FR 2.2.2 - Backend: API Route).
   - [To Do] **[Medium]** Create Next.js API route to fetch projects for a user.
@@ -78,19 +78,19 @@
   - [To Do] **[Medium]** Handle navigation to selected project workspace.
 - [To Do] **[Low]** Implement "(Stretch Goal) Update Project Name" (FR 2.2.3 - Backend & Frontend).
 
-## 4. AI & LLM Orchestration (LangChain.js, OpenRouter, Next.js, Supabase Storage)
+## 4. AI & LLM Orchestration (AI SDK, OpenRouter, Next.js, Supabase Storage)
 
-- [To Do] **[Critical]** Set up LangChain.js core and relevant modules (Chains, Prompts, Memory, LLMs integration with OpenRouter).
-  - **Description:** Integrate LangChain.js into the Next.js backend for orchestrating all LLM interactions with multi-model support via OpenRouter. This enables using both paid premium models (GPT-4, Claude) and free/cheaper alternatives for cost optimization.
-  - **Tasks:** Install LangChain.js packages, configure it to use OpenRouter for multi-model LLM calls, create utility services for LangChain.js usage, implement model selection logic for different task types.
-- [To Do] **[High]** Integrate OpenRouter for all LLM API calls (now via LangChain.js).
+- [Completed] **[Critical]** Set up AI SDK core and relevant modules (System and user prompts, integration with OpenRouter, stream text).
+  - **Description:** Integrate AI SDK into the Next.js backend for orchestrating all LLM interactions with multi-model support via OpenRouter. This enables using both paid premium models (GPT-4, Claude) and free/cheaper alternatives for cost optimization.
+  - **Tasks:** Install AI SDK packages, configure it to use OpenRouter for multi-model LLM calls, create utility services for defining provider, implement model selection logic for different task types.
+- [Completed] **[High]** Integrate OpenRouter for all LLM API calls (now via LangChain.js).
   - **Description:** Abstract LLM interactions through OpenRouter, managed by LangChain.js, to support multiple models and providers including both commercial and open-source options. Enable dynamic model selection based on task complexity, cost constraints, and availability.
   - **Tasks:** Set up OpenRouter API key (if not done), ensure LangChain.js service correctly routes calls through OpenRouter, implement model fallback strategies, configure cost-based model selection.
-- [To Do] **[High]** Develop chat interface in Next.js (FR 2.2.1 related).
-  - [To Do] **[High]** UI for displaying chat messages (user and AI).
-  - [To Do] **[High]** Input field for user messages.
-- [To Do] **[High]** Implement Next.js API route to handle chat interactions using LangChain.js for conversation management (memory) and LLM calls (via OpenRouter).
-  - [To Do] **[High]** Use LangChain.js to send user messages to LLM and get responses.
+- [Completed] **[High]** Develop chat interface in Next.js (FR 2.2.1 related).
+  - [Completed] **[High]** UI for displaying chat messages (user and AI).
+  - [Completed] **[High]** Input field for user messages.
+- [In Progress] **[High]** Implement Next.js API route to handle chat interactions using AI SDK for conversation management (memory) and LLM calls (via OpenRouter).
+  - [Completed] **[High]** Use OpenRouter to send user messages to LLM and get responses.
   - [To Do] **[High]** Implement LangChain.js conversational memory for the idea generation chat.
 - [To Do] **[High]** Implement logic to save chat transcript to Supabase Storage and AI-summarized app idea as text in `projects` table (FR 2.2.1 related, chat part managed by LangChain.js).
   - [To Do] **[Medium]** API route logic to upload chat transcript file to Supabase Storage.
@@ -173,7 +173,7 @@
   - [Completed] **[High]** Design comprehensive RLS policies for user data isolation.
   - [Completed] **[High]** Update RLS policies to include docs table and remove prompt deletion permissions.
   - [Completed] **[High]** Apply RLS policies to Supabase database (manual application via SQL Editor required).
-  - [To Do] **[Medium]** Test RLS policies with different user scenarios to ensure proper data isolation.
+- [To Do] **[Medium]** Test RLS policies with different user scenarios to ensure proper data isolation.
 
 ## 9. Non-Functional Requirements Implementation
 

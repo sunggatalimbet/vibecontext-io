@@ -60,3 +60,19 @@ Refactored authentication functionality by implementing server-side authenticati
 ## Solutions
 
 1. Hiding UserMenu component if there is no user
+
+# June 6th, 2025
+
+## Feature Implementation: AI Integration and Project Creation UI
+
+Integrated the OpenRouter AI provider, developing a full suite of UI components for project creation, and refactoring the backend chat API into a single, unified endpoint.
+
+## Problems
+
+1. The workspace contained numerous uncommitted changes across multiple features, making it difficult to track progress and isolate features for review.
+2. Data validation using Zod schema for sending chat messages using Next JS API Routes created problems.
+
+## Solutions
+
+1. Created a series of atomic, feature-based commits (e.g., AI provider, UI components, API refactoring) to logically separate the work.
+2. Created zod `chatMessageSchema` and `chatSchema` objects and used for request parsing.

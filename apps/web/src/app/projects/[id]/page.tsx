@@ -3,8 +3,8 @@ import {
   MessagesProject,
   ProgressProject,
   WelcomeProject,
+  ProjectContainer,
 } from '@/components/project'
-import { ProjectContainer } from '../../../components/project/project-container'
 
 export default function NewProjectPage() {
   return (

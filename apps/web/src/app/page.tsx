@@ -1,8 +1,7 @@
-'use client'
-
 import Link from 'next/link'
 import { PlusIcon, ArrowRightIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { createChat } from '@/lib/actions'
 
 export default function Home() {
   return (
@@ -46,15 +45,15 @@ export default function Home() {
 
         {/* Call to Action */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">
-          <Button asChild size="lg" className="px-8 py-3">
-            <Link href="/projects/new" className="flex items-center gap-2">
+          <form action={createChat}>
+            <Button size="lg" className="px-8 py-3 flex items-center gap-2">
               <PlusIcon className="h-5 w-5" />
-              Start New Project
-            </Link>
-          </Button>
+              <span>Start New Project</span>
+            </Button>
+          </form>
           <Button asChild variant="outline" size="lg" className="px-8 py-3">
             <Link href="/projects" className="flex items-center gap-2">
-              View Projects
+              <span>View Projects</span>
               <ArrowRightIcon className="h-4 w-4" />
             </Link>
           </Button>

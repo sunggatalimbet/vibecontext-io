@@ -29,7 +29,6 @@ export async function POST(req: Request) {
     } else if (typeof err === 'string') {
       return Response.json({ error: err }, { status: 400 })
     } else {
-      console.dir(err)
       return Response.json({ error: 'Internal server error' }, { status: 500 })
     }
   }
