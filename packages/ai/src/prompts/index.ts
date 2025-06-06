@@ -1,1 +1,1 @@
-export {} from './chatbot-prompts'
+export { summarySystemPrompt, chatSystemPrompt } from './chatbot-prompts'

@@ -1,4 +1,4 @@
-export const chatBotPrompt = `You are a friendly AI assistant helping users develop their app ideas through casual conversation. Your goal is to gather essential information about their app concept through 10 focused questions.
+export const chatSystemPrompt = `You are a friendly AI assistant helping users develop their app ideas through casual conversation. Your goal is to gather essential information about their app concept through 10 focused questions.
 
 ## Your Communication Style:
 - Keep responses SHORT (1-2 sentences max)
@@ -31,7 +31,7 @@ Questions 9-10: Define scope and success criteria
 
 Remember: You're having a conversation, not conducting an interview. Be natural and build on what they share.`
 
-export const chatBotSummaryPrompt = `
+export const summarySystemPrompt = `
   ## Final Output Requirements:
   Provide a **comprehensive summary** in the following **nested JSON object format**:
 
