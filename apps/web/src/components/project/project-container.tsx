@@ -7,20 +7,29 @@ import {
   useState,
   useEffect,
 } from 'react'
-import { useChat } from '@ai-sdk/react'
-import type { Conversation, Message } from '@repo/db'
-import { type UIMessage } from 'ai'
+import { useChat, experimental_useObject as useObject } from '@ai-sdk/react'
+import type { Conversation, Message, Project } from '@repo/db'
+import { type DeepPartial, type UIMessage } from 'ai'
+import { type z } from 'zod'
+import { summarySchema } from '@/lib/schemas'
 
 interface ProjectContextValue {
+  chat: Conversation
+  summary: DeepPartial<z.infer<typeof summarySchema>>
   messages: Array<UIMessage>
   input: string
   status: 'ready' | 'error' | 'submitted' | 'streaming'
   isProjectCompleted: boolean
-  isProjectGenerating: boolean
+  project: Project | null
+  isSummaryGenerating: boolean
+  isOverlayOpen: boolean
   handleInputChange: (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
   ) => void
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+  generateSummary: (input: { chatId: string }) => void
+  openOverlay: () => void
+  closeOverlay: () => void
   userMessageCount: number
   remainingMessages: number
 }
@@ -30,12 +39,14 @@ const ProjectContext = createContext<ProjectContextValue | undefined>(undefined)
 interface ProjectContainerProps {
   chat: Conversation
   chatMessages: Array<Message>
+  project: Project | null
   children: React.ReactNode
 }
 
 export const ProjectContainer = ({
   chat,
   chatMessages,
+  project,
   children,
 }: ProjectContainerProps) => {
   const { messages, input, status, handleInputChange, handleSubmit } = useChat({
@@ -49,33 +60,59 @@ export const ProjectContainer = ({
     },
   })
 
+  // useObject hook for summary generation
+  const {
+    object: summary,
+    submit: generateSummary,
+    isLoading: isSummaryGenerating,
+  } = useObject({
+    api: '/api/summary',
+    schema: summarySchema,
+  })
+
   const userMessageCount = messages.filter(m => m.role === 'user').length
   const maxQuestions = 10
 
   const [isProjectCompleted, setIsProjectCompleted] = useState(
     userMessageCount >= maxQuestions
   )
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false)
 
   const remainingMessages = Math.max(0, maxQuestions - userMessageCount)
-  const isProjectGenerating = false
+
+  const openOverlay = () => setIsOverlayOpen(true)
+  const closeOverlay = () => setIsOverlayOpen(false)
 
   const value: ProjectContextValue = {
+    chat,
+    summary: summary ?? {},
     messages,
     input,
     status,
+    project,
     isProjectCompleted,
-    isProjectGenerating,
+    isSummaryGenerating,
+    isOverlayOpen,
     handleInputChange,
     handleSubmit,
+    generateSummary,
+    openOverlay,
+    closeOverlay,
     userMessageCount,
     remainingMessages,
   }
 
   useEffect(() => {
-    if (userMessageCount >= maxQuestions && !isProjectCompleted) {
+    if (userMessageCount >= maxQuestions) {
       setIsProjectCompleted(true)
     }
-  }, [userMessageCount, isProjectCompleted, setIsProjectCompleted])
+  }, [userMessageCount, maxQuestions])
+
+  useEffect(() => {
+    if (project) {
+      openOverlay()
+    }
+  }, [project])
 
   return (
     <ProjectContext.Provider value={value}>
