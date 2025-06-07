@@ -1,10 +1,10 @@
 import { pgTable, text, uuid, timestamp, jsonb } from 'drizzle-orm/pg-core'
-import { profiles } from '.'
+import { profiles } from './index'
 
 export const conversations = pgTable('conversations', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id').references(() => profiles.id),
-  title: text('title'),
+  title: text('title').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 }).enableRLS()

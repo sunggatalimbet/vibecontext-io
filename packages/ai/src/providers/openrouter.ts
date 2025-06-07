@@ -2,22 +2,37 @@ import {
   createOpenRouter,
   type OpenRouterProvider,
 } from '@openrouter/ai-sdk-provider'
-import { db, initDatabaseConnection, messages } from '@repo/db'
-import { Message, smoothStream, streamText } from 'ai'
-import { chatSystemPrompt } from '../prompts'
+import { db, initDatabaseConnection, messages, projects } from '@repo/db'
+import { summarySchema } from '@repo/web/src/lib/schemas'
+import {
+  CoreMessage,
+  Message,
+  smoothStream,
+  streamObject,
+  streamText,
+} from 'ai'
+import { chatSystemPrompt, summarySystemPrompt } from '../prompts'
 
 interface StreamMessageParams {
   chatId: string
   allMessages: Array<Message>
 }
+
+interface StreamSummaryParams {
+  chatId: string
+  chatMessages: Array<CoreMessage>
+}
+
 class OpenRouter {
   private apiKey: string | undefined
-  private systemPrompt: string
+  private chatSystemPrompt: string
+  private summarySystemPrompt: string
   private provider: OpenRouterProvider
 
   constructor() {
     this.apiKey = process.env.OPEN_ROUTER_PROJECT_IDEA_CHAT_KEY
-    this.systemPrompt = chatSystemPrompt
+    this.chatSystemPrompt = chatSystemPrompt
+    this.summarySystemPrompt = summarySystemPrompt
     this.provider = createOpenRouter({
       baseURL: 'https://openrouter.ai/api/v1',
       apiKey: this.apiKey,
@@ -27,9 +42,9 @@ class OpenRouter {
   streamMessage({ allMessages, chatId }: StreamMessageParams) {
     const message = streamText({
       model: this.provider.chat('anthropic/claude-3.5-haiku'),
-      system: this.systemPrompt,
+      system: this.chatSystemPrompt,
       messages: allMessages,
-      //   experimental_transform: smoothStream(),
+      experimental_transform: smoothStream(),
       onError: ({ error }) => {
         console.error(error)
       },
@@ -48,6 +63,31 @@ class OpenRouter {
     })
 
     return message
+  }
+
+  streamSummary({ chatMessages, chatId }: StreamSummaryParams) {
+    const summary = streamObject({
+      model: this.provider.chat('anthropic/claude-3.5-sonnet'),
+      schema: summarySchema,
+      system: this.summarySystemPrompt,
+      messages: chatMessages,
+      async onFinish({ object }) {
+        if (!object) {
+          throw Error('Object is not defined')
+        }
+
+        const projectName = object.appOverview.projectName
+        const user = await initDatabaseConnection()
+        await db.insert(projects).values({
+          name: projectName,
+          appIdeaSummaryJson: object,
+          conversationId: chatId,
+          userId: user.id,
+        })
+      },
+    })
+
+    return summary
   }
 }
 

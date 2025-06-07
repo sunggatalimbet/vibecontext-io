@@ -3,19 +3,9 @@ import { db, initDatabaseConnection, messages } from '@repo/db'
 import { appendClientMessage } from 'ai'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
+import { chatSchema } from '@/lib/schemas'
 
 export const maxDuration = 30
-
-const chatMessageSchema = z.object({
-  role: z.string(),
-  content: z.string(),
-  parts: z.array(z.object({ type: z.string() })),
-})
-
-const chatSchema = z.object({
-  id: z.string(),
-  message: chatMessageSchema,
-})
 
 export async function POST(req: Request) {
   try {
@@ -49,6 +39,8 @@ export async function POST(req: Request) {
       chatId,
       allMessages: allMessages,
     })
+
+    void message.consumeStream()
 
     return message.toDataStreamResponse()
   } catch (err) {
