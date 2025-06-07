@@ -7,3 +7,4 @@ export {
   ChatBubbleActionWrapper,
 } from './chat-bubble'
 export { ChatInput } from './chat-input'
+export { MemoizedChatBubble } from './memoized-chat-bubble'

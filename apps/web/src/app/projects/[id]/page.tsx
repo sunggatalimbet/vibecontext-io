@@ -5,7 +5,7 @@ import {
   WelcomeProject,
   ProjectContainer,
 } from '@/components/project'
-import { getChat, getChatMessages } from '@/lib/actions'
+import { getChat, getChatMessages, getProjectByChatId } from '@/lib/actions'
 
 interface NewProjectPageProps {
   params: { id: string }
@@ -14,9 +14,10 @@ interface NewProjectPageProps {
 export default async function NewProjectPage({ params }: NewProjectPageProps) {
   const chat = await getChat(params.id)
   const chatMessages = await getChatMessages(params.id)
+  const project = await getProjectByChatId(params.id)
 
   return (
-    <ProjectContainer chatMessages={chatMessages} chat={chat}>
+    <ProjectContainer chatMessages={chatMessages} chat={chat} project={project}>
       <ProgressProject />
       <WelcomeProject />
       <MessagesProject />

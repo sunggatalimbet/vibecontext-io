@@ -5,15 +5,14 @@ import {
   ChatBubbleAvatar,
   ChatBubbleMessage,
   ChatMessageList,
+  MemoizedChatBubble,
 } from '@/components/chat'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { CompleteProject } from './complete-project'
 import { useProject } from './project-container'
 
 export const MessagesProject = () => {
-  const { messages, status, isProjectCompleted, isProjectGenerating } =
-    useProject()
-
+  const { messages, isProjectCompleted } = useProject()
   if (messages.length === 0) return null
 
   return (
@@ -30,26 +29,12 @@ export const MessagesProject = () => {
             <ChatBubbleMessage
               variant={message.role === 'user' ? 'sent' : 'received'}
             >
-              {message.content}
+              <MemoizedChatBubble message={message} />
             </ChatBubbleMessage>
           </ChatBubble>
         ))}
 
-        {/* Completion Indicator */}
-        {isProjectCompleted && (
-          <CompleteProject
-            isProjectCreated={isProjectCompleted}
-            projectCreatedName="Sunggat"
-            isGeneratingProject={isProjectGenerating}
-          />
-        )}
-
-        {(status !== 'ready' || isProjectGenerating) && (
-          <ChatBubble variant="received">
-            <ChatBubbleAvatar className="shrink-0" fallback="AI" />
-            <ChatBubbleMessage isLoading />
-          </ChatBubble>
-        )}
+        {isProjectCompleted && <CompleteProject />}
       </ChatMessageList>
       <ScrollBar orientation="vertical" />
     </ScrollArea>
