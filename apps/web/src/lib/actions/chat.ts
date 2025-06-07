@@ -1,19 +1,11 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { createClientServer } from '@repo/auth'
-import { db, conversations } from '@repo/db'
+import { db, conversations, messages, initDatabaseConnection } from '@repo/db'
+import { and, eq } from 'drizzle-orm'
 
 export async function createChat() {
-  const supabase = await createClientServer()
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-
-  if (authError || !user) {
-    throw Error('Authentication required')
-  }
+  const user = await initDatabaseConnection()
 
   const [response] = await db
     .insert(conversations)
@@ -26,4 +18,27 @@ export async function createChat() {
     })
 
   redirect(`/projects/${response.id}`)
+}
+
+export async function getChat(chatId: string) {
+  const user = await initDatabaseConnection()
+
+  const [chat] = await db
+    .select()
+    .from(conversations)
+    .where(and(eq(conversations.id, chatId), eq(conversations.userId, user.id)))
+
+  return chat
+}
+
+export async function getChatMessages(chatId: string) {
+  await initDatabaseConnection()
+
+  const chatMessages = await db
+    .select()
+    .from(messages)
+    .where(eq(messages.conversationId, chatId))
+    .orderBy(messages.createdAt)
+
+  return chatMessages
 }

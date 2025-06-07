@@ -2,9 +2,14 @@ import {
   createOpenRouter,
   type OpenRouterProvider,
 } from '@openrouter/ai-sdk-provider'
-import { smoothStream, streamText } from 'ai'
+import { db, initDatabaseConnection, messages } from '@repo/db'
+import { Message, smoothStream, streamText } from 'ai'
 import { chatSystemPrompt } from '../prompts'
 
+interface StreamMessageParams {
+  chatId: string
+  allMessages: Array<Message>
+}
 class OpenRouter {
   private apiKey: string | undefined
   private systemPrompt: string
@@ -19,14 +24,26 @@ class OpenRouter {
     })
   }
 
-  streamMessage(userPrompt: string) {
+  streamMessage({ allMessages, chatId }: StreamMessageParams) {
     const message = streamText({
       model: this.provider.chat('anthropic/claude-3.5-haiku'),
-      prompt: userPrompt,
       system: this.systemPrompt,
+      messages: allMessages,
       //   experimental_transform: smoothStream(),
       onError: ({ error }) => {
         console.error(error)
+      },
+      async onFinish({ response }) {
+        await initDatabaseConnection()
+        const message = response.messages[0]
+        const role = 'assistant'
+        const content = (message.content[0] as { text: string }).text
+
+        await db.insert(messages).values({
+          conversationId: chatId,
+          role: role,
+          content: content,
+        })
       },
     })
 

@@ -8,7 +8,8 @@ import {
   useEffect,
 } from 'react'
 import { useChat } from '@ai-sdk/react'
-import type { UIMessage } from 'ai'
+import type { Conversation, Message } from '@repo/db'
+import { type UIMessage } from 'ai'
 
 interface ProjectContextValue {
   messages: Array<UIMessage>
@@ -27,13 +28,25 @@ interface ProjectContextValue {
 const ProjectContext = createContext<ProjectContextValue | undefined>(undefined)
 
 interface ProjectContainerProps {
+  chat: Conversation
+  chatMessages: Array<Message>
   children: React.ReactNode
 }
 
-export const ProjectContainer = ({ children }: ProjectContainerProps) => {
+export const ProjectContainer = ({
+  chat,
+  chatMessages,
+  children,
+}: ProjectContainerProps) => {
   const { messages, input, status, handleInputChange, handleSubmit } = useChat({
-    maxSteps: 1,
     api: '/api/chat',
+    id: chat.id,
+    maxSteps: 1,
+    initialMessages: chatMessages,
+    sendExtraMessageFields: true,
+    experimental_prepareRequestBody({ messages, id }) {
+      return { message: messages[messages.length - 1], id }
+    },
   })
 
   const userMessageCount = messages.filter(m => m.role === 'user').length

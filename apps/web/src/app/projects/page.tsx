@@ -1,5 +1,3 @@
-'use client'
-
 import { PlusIcon, FolderIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createChat } from '@/lib/actions'
