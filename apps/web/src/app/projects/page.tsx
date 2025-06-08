@@ -1,6 +1,5 @@
-import { PlusIcon, FolderIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { createChat } from '@/lib/actions'
+import { FolderIcon } from 'lucide-react'
+import { CreateProjectButton } from '@/shared/components/create-project-button'
 
 export default function ProjectsPage() {
   return (
@@ -15,12 +14,7 @@ export default function ProjectsPage() {
             Manage and explore your AI-assisted development projects
           </p>
         </div>
-        <form action={createChat}>
-          <Button>
-            <PlusIcon className="h-4 w-4" />
-            <span>New Project</span>
-          </Button>
-        </form>
+        <CreateProjectButton />
       </div>
 
       {/* Empty State */}
@@ -33,12 +27,7 @@ export default function ProjectsPage() {
             structured development plans.
           </p>
         </div>
-        <form action={createChat}>
-          <Button size="lg">
-            <PlusIcon className="h-5 w-5" />
-            <span>Create Your First Project</span>
-          </Button>
-        </form>
+        <CreateProjectButton />
       </div>
     </div>
   )

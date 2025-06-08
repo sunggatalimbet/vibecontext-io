@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import { PlusIcon, ArrowRightIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { createChat } from '@/lib/actions'
+import { ArrowRightIcon } from 'lucide-react'
+import { CreateProjectButton } from '@/shared/components/create-project-button'
+import { Button } from '@/shared/components/ui/button'
 
 export default function Home() {
   return (
@@ -45,12 +45,7 @@ export default function Home() {
 
         {/* Call to Action */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">
-          <form action={createChat}>
-            <Button size="lg" className="px-8 py-3 flex items-center gap-2">
-              <PlusIcon className="h-5 w-5" />
-              <span>Start New Project</span>
-            </Button>
-          </form>
+          <CreateProjectButton />
           <Button asChild variant="outline" size="lg" className="px-8 py-3">
             <Link href="/projects" className="flex items-center gap-2">
               <span>View Projects</span>
