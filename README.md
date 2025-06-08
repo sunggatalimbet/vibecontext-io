@@ -110,7 +110,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 # OpenRouter AI
-OPENROUTER_API_KEY=your_openrouter_api_key
+OPEN_ROUTER_PROJECT_IDEA_CHAT_KEY=your_openrouter_api_key
 ```
 
 ### Development
