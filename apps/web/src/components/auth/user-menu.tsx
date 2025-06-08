@@ -6,7 +6,11 @@
 import Link from 'next/link'
 import { getUserAction, signOutAction } from '@repo/auth'
 import { UserIcon, Settings } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/shared/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,8 +18,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { getUserInitials } from '@/lib'
+} from '@/shared/components/ui/dropdown-menu'
+import { getUserInitials } from '@/shared/lib/utils'
 import { LogoutButton } from './logout-button'
 
 export const UserMenu = async () => {
@@ -24,8 +28,8 @@ export const UserMenu = async () => {
 
   const fullName = user.user_metadata?.full_name as string | undefined
   const userInitials = getUserInitials({
-    fullName: fullName ?? '',
-    email: user.email ?? '',
+    fullName: fullName,
+    email: user.email,
   })
 
   return (

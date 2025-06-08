@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { CreateProjectButton } from '@repo/web/src/shared/components/create-project-button'
 import {
   LogOutIcon,
   MenuIcon,
@@ -15,18 +16,17 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
+} from '@/shared/components/ui/accordion'
+import { Button } from '@/shared/components/ui/button'
+import { ScrollArea } from '@/shared/components/ui/scroll-area'
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
   SheetTitle,
-} from '@/components/ui/sheet'
-import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
-import AnimatedBulbLogo from '../shared/animated-bulb-logo'
+} from '@/shared/components/ui/sheet'
+import { Skeleton } from '@/shared/components/ui/skeleton'
+import { cn } from '@/shared/lib/utils'
 
 interface Document {
   id: string
@@ -167,9 +167,6 @@ const SidebarContent = ({ className }: { className?: string }) => {
           href="/"
           className="flex items-center gap-2 font-semibold text-sidebar-primary transition-opacity hover:opacity-80"
         >
-          <div className="w-6 h-6">
-            <AnimatedBulbLogo size={24} />
-          </div>
           <span className="font-bold italic font-satoshi">vibecontext.io</span>
         </Link>
       </div>
@@ -189,6 +186,7 @@ const SidebarContent = ({ className }: { className?: string }) => {
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col gap-1">
+                <CreateProjectButton />
                 {projects.map(project => (
                   <ProjectItem key={project.id} project={project} />
                 ))}

@@ -1,0 +1,27 @@
+{
+  "name": "@repo/ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI SDK services for vibecontext.io with OpenRouter integration",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ai": "^4.0.50",
+    "@openrouter/ai-sdk-provider": "^0.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.6.2",
+    "typescript": "5.2.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

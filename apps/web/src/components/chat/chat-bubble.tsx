@@ -2,10 +2,14 @@
 
 import type * as React from 'react'
 import { cva } from 'class-variance-authority'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { MessageLoading } from '@/components/ui/message-loading'
-import { cn } from '@/lib/utils'
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/shared/components/ui/avatar'
+import { Button } from '@/shared/components/ui/button'
+import { MessageLoading } from '@/shared/components/ui/message-loading'
+import { cn } from '@/shared/lib/utils'
 
 interface ChatBubbleProps {
   variant?: 'sent' | 'received'

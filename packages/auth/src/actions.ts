@@ -6,54 +6,32 @@ import { type User } from '@supabase/supabase-js'
 import { createClient } from './server'
 
 export async function signInWithGoogleAction() {
-  const supabase = await createClient()
-  const headersList = await headers()
-  const origin = headersList.get('origin') || 'http://localhost:3000'
-
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${origin}/auth/callback`,
-      queryParams: {
-        access_type: 'offline',
-        prompt: 'consent',
-      },
-    },
-  })
-
-  if (error) {
-    console.error('OAuth error:', error)
-    redirect('/auth/error?message=' + encodeURIComponent(error.message))
-  }
-
-  if (data.url) {
-    redirect(data.url)
-  }
+  return signInWithAction('google')
 }
 
 export async function signInWithGithubAction() {
+  return signInWithAction('github')
+}
+
+export async function signInWithAction(provider: 'google' | 'github') {
   const supabase = await createClient()
   const headersList = await headers()
   const origin = headersList.get('origin') || 'http://localhost:3000'
 
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'github',
+    provider,
     options: {
       redirectTo: `${origin}/auth/callback`,
-      queryParams: {
-        access_type: 'offline',
-        prompt: 'consent',
-      },
     },
   })
 
   if (error) {
     console.error('OAuth error:', error)
-    redirect('/auth/error?message=' + encodeURIComponent(error.message))
+    return redirect('/auth/error?message=' + encodeURIComponent(error.message))
   }
 
   if (data.url) {
-    redirect(data.url)
+    return redirect(data.url)
   }
 }
 
@@ -64,10 +42,10 @@ export async function signOutAction() {
 
   if (error) {
     console.error('Sign out error:', error)
-    redirect('/auth/error?message=' + encodeURIComponent(error.message))
+    return redirect('/auth/error?message=' + encodeURIComponent(error.message))
   }
 
-  redirect('/auth/login')
+  return redirect('/auth/login')
 }
 
 export async function getUserAction(): Promise<User | null> {

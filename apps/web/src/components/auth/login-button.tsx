@@ -16,7 +16,14 @@ export function LoginButton({ signInAction }: LoginButtonProps) {
       try {
         await signInAction()
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Authentication failed')
+        if (err instanceof Error) {
+          setError(err.message)
+        } else if (typeof err === 'string') {
+          setError(err)
+        } else {
+          console.error('Authentication error:', err)
+          setError('Authentication failed. Please try again.')
+        }
       }
     })
   }
