@@ -73,12 +73,10 @@ export const ProjectProvider = ({
   const userMessageCount = messages.filter(m => m.role === 'user').length
   const maxQuestions = 10
 
-  const [isProjectCompleted, setIsProjectCompleted] = useState(
-    userMessageCount >= maxQuestions
-  )
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
 
   const remainingMessages = Math.max(0, maxQuestions - userMessageCount)
+  const isProjectCompleted = userMessageCount >= maxQuestions
 
   const openOverlay = () => setIsOverlayOpen(true)
   const closeOverlay = () => setIsOverlayOpen(false)
@@ -101,12 +99,6 @@ export const ProjectProvider = ({
     userMessageCount,
     remainingMessages,
   }
-
-  useEffect(() => {
-    if (userMessageCount >= maxQuestions) {
-      setIsProjectCompleted(true)
-    }
-  }, [userMessageCount, maxQuestions])
 
   useEffect(() => {
     if (project) {

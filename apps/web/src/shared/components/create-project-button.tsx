@@ -16,7 +16,7 @@ export const CreateProjectButton = () => {
     <Button
       onClick={handleCreateProject}
       variant="ghost"
-      type="submit"
+      type="button"
       className="w-full justify-start gap-2 px-2 h-9 opacity-70 hover:opacity-100 transition-opacity text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
     >
       <PlusIcon className="h-4 w-4" />

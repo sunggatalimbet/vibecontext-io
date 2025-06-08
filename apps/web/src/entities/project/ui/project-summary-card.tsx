@@ -226,7 +226,7 @@ export const ProjectSummaryCard = ({ summary }: ProjectSummaryCardProps) => {
               <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
                 {feature.description}
               </p>
-              {feature.userStories && feature.userStories[0] && (
+              {feature.userStories?.[0] && (
                 <div className="bg-secondary rounded-lg p-3 border border-border">
                   <p className="text-secondary-foreground text-sm font-medium italic">
                     {feature.userStories[0]}

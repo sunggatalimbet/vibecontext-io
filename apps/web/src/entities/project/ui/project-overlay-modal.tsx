@@ -35,7 +35,7 @@ export default function ProjectOverlayModal({
     if (isOpen) {
       document.addEventListener('keydown', handleEscapeKey)
       // Prevent body scroll when modal is open
-      document.body.style.overflow = 'hidden'
+      document.body.classList.add('overflow-hidden')
 
       // Focus the close button for accessibility
       const closeButton = document.querySelector(
@@ -48,7 +48,7 @@ export default function ProjectOverlayModal({
 
     return () => {
       document.removeEventListener('keydown', handleEscapeKey)
-      document.body.style.overflow = 'unset'
+      document.body.classList.remove('overflow-hidden')
     }
   }, [isOpen, onClose])
 

@@ -38,6 +38,9 @@ export const ProjectInput = () => {
     )
   }
 
+  const isInputDisabled = status !== 'ready' || isProjectCompleted
+  const isSubmitDisabled = !input.trim() || isInputDisabled
+
   return (
     <div className="flex-shrink-0 border-t bg-background/80 backdrop-blur-sm">
       <div className="max-w-4xl mx-auto p-4">
@@ -51,12 +54,12 @@ export const ProjectInput = () => {
             onChange={handleInputChange}
             placeholder={chatInputPlaceholder}
             className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 resize-none min-h-[auto]"
-            disabled={status !== 'ready' || isProjectCompleted}
+            disabled={isInputDisabled}
           />
           <Button
             type="submit"
             size="icon"
-            disabled={!input.trim() || status !== 'ready' || isProjectCompleted}
+            disabled={isSubmitDisabled}
             className="rounded-md flex-shrink-0 w-10 h-10"
           >
             <ArrowUpIcon className="w-5 h-5" />

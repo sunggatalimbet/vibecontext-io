@@ -5,11 +5,10 @@ import { CheckCircleIcon, MessageCircleIcon, ExpandIcon } from 'lucide-react'
 import { Badge } from '@/shared/components/ui/badge'
 import { Button } from '@/shared/components/ui/button'
 import { Progress } from '@/shared/components/ui/progress'
+import { MAX_USER_MESSAGES } from '@/shared/lib/constants'
 import { useProject } from './project-provider'
 
 const ProjectOverlayModal = lazy(() => import('./project-overlay-modal'))
-
-const MAX_USER_MESSAGES = 10
 
 export const ProjectProgress = () => {
   const {
@@ -21,8 +20,10 @@ export const ProjectProgress = () => {
     openOverlay,
     closeOverlay,
   } = useProject()
+
+  const clampedCount = Math.min(userMessageCount, MAX_USER_MESSAGES)
   const remainingMessages = MAX_USER_MESSAGES - userMessageCount
-  const progressPercentage = (userMessageCount / MAX_USER_MESSAGES) * 100
+  const progressPercentage = (clampedCount / MAX_USER_MESSAGES) * 100
 
   // Show Full View button if we have project data or summary
   const hasProjectData = project || (summary && Object.keys(summary).length > 0)

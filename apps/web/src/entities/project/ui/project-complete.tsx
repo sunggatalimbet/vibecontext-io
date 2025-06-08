@@ -15,6 +15,23 @@ export const ProjectComplete = () => {
     }
   }
 
+  const getButtonContent = () => {
+    if (isSummaryGenerating) {
+      return (
+        <div>
+          <Loader2Icon className="h-4 w-4 mr-2 animate-spin" />
+          <span>Creating Project...</span>
+        </div>
+      )
+    }
+
+    return project ? (
+      <p>View Project Overview</p>
+    ) : (
+      <p>Generate Project Summary</p>
+    )
+  }
+
   return (
     <>
       <section className="p-4 mx-4 my-2 bg-muted/50 rounded-lg border">
@@ -29,17 +46,7 @@ export const ProjectComplete = () => {
         </p>
 
         <Button size="sm" className="mt-3" onClick={handleGenerateProject}>
-          {/* TODO: work on this */}
-          {isSummaryGenerating ? (
-            <div>
-              <Loader2Icon className="h-4 w-4 mr-2 animate-spin" />
-              <span>Creating Project...</span>
-            </div>
-          ) : project ? (
-            <p>View Project Overview</p>
-          ) : (
-            <p>Generate Project Summary</p>
-          )}
+          {getButtonContent()}
         </Button>
       </section>
     </>

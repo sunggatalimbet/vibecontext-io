@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const chatMessageSchema = z.object({
-  role: z.string(),
+  role: z.enum(['user', 'assistant']),
   content: z.string(),
   parts: z.array(z.object({ type: z.string() })),
 })
