@@ -1,5 +1,5 @@
 import { UserMenu } from '@/components/auth'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/tabs'
 
 export function Topbar() {
   return (

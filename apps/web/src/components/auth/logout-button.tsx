@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react'
 import { LogOutIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/shared/components/ui/button'
 
 interface LogoutButtonProps {
   logoutAction: () => Promise<void>

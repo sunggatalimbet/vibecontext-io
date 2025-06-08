@@ -2,9 +2,9 @@
 
 import type * as React from 'react'
 import { ArrowDown } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { useAutoScroll } from '@/lib/hooks/use-auto-scroll'
-import { cn } from '@/lib/utils'
+import { Button } from '@/shared/components/ui/button'
+import { cn } from '@/shared/lib/utils'
 
 interface ChatMessageListProps {
   className?: string

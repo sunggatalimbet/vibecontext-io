@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["apps/**/*", "packages/**/*"],
+  "include": ["apps/**/*", "packages/**/*", "tooling/**/*"],
   "exclude": ["node_modules", ".next", "out", "dist", "build", "tooling"]
 }
