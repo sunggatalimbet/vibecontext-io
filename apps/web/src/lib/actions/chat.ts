@@ -1,6 +1,5 @@
 'use server'
 
-import { redirect } from 'next/navigation'
 import { db, conversations, messages, initDatabaseConnection } from '@repo/db'
 import { and, eq } from 'drizzle-orm'
 
@@ -17,7 +16,7 @@ export async function createChat() {
       id: conversations.id,
     })
 
-  redirect(`/projects/${response.id}`)
+  return response.id
 }
 
 export async function getChat(chatId: string) {
@@ -27,6 +26,16 @@ export async function getChat(chatId: string) {
     .select()
     .from(conversations)
     .where(and(eq(conversations.id, chatId), eq(conversations.userId, user.id)))
+
+  if (!chat) {
+    return {
+      id: chatId,
+      userId: user.id,
+      title: 'New Project',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+  }
 
   return chat
 }

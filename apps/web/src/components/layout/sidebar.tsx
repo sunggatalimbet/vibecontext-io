@@ -3,31 +3,30 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { CreateProjectButton } from '@repo/web/src/shared/components/create-project-button'
 import {
   LogOutIcon,
   MenuIcon,
   FolderIcon,
   FileIcon,
   CodeIcon,
-  PlusIcon,
 } from 'lucide-react'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
+} from '@/shared/components/ui/accordion'
+import { Button } from '@/shared/components/ui/button'
+import { ScrollArea } from '@/shared/components/ui/scroll-area'
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
   SheetTitle,
-} from '@/components/ui/sheet'
-import { Skeleton } from '@/components/ui/skeleton'
-import { createChat } from '@/lib/actions'
-import { cn } from '@/lib/utils'
+} from '@/shared/components/ui/sheet'
+import { Skeleton } from '@/shared/components/ui/skeleton'
+import { cn } from '@/shared/lib/utils'
 
 interface Document {
   id: string
@@ -149,21 +148,6 @@ const ProjectItem = ({ project }: { project: Project }) => {
   )
 }
 
-const StartNewProjectButton = () => {
-  return (
-    <form action={createChat}>
-      <Button
-        variant="ghost"
-        type="submit"
-        className="w-full justify-start gap-2 px-2 h-9 opacity-70 hover:opacity-100 transition-opacity text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
-      >
-        <PlusIcon className="h-4 w-4" />
-        <span className="text-sm ml-2">Start New Project</span>
-      </Button>
-    </form>
-  )
-}
-
 const DocumentSkeleton = () => (
   <div className="px-2 py-1">
     <div className="flex items-center gap-2 animate-pulse">
@@ -202,7 +186,7 @@ const SidebarContent = ({ className }: { className?: string }) => {
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col gap-1">
-                <StartNewProjectButton />
+                <CreateProjectButton />
                 {projects.map(project => (
                   <ProjectItem key={project.id} project={project} />
                 ))}
