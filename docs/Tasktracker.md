@@ -61,15 +61,18 @@
 
 ## 3. Project Management (Next.js, Supabase, Drizzle)
 
-- [In Progress] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Backend: API Route).
+- [Completed] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Backend: API Route).
   - [Completed] **[High]** Create Next.js API route for project creation.
   - [Completed] **[High]** Define `projects` table schema with Drizzle
-  - [To Do] **[High]** Implement Drizzle logic to insert new project record (with `app_idea_summary_text`) into Supabase.
+  - [Completed] **[High]** Implement lazy conversation creation with instant UUID generation for optimal UX.
+  - [Completed] **[High]** Implement Drizzle logic to insert new project record only when first message is sent.
   - [To Do] **[Medium]** Logic for generating unique filenames for stored documents.
-- [In Progress] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Frontend: UI).
-  - [Completed] **[High]** Create "Start New Project" button and initial chat interface.
+- [Completed] **[High]** Implement "Create New Project & Initiate Idea Generation Chat" (FR 2.2.1 - Frontend: UI).
+  - [Completed] **[High]** Create "Start New Project" button with instant navigation using frontend UUID generation.
+  - [Completed] **[High]** Implement comprehensive skeleton loading states matching exact UI layout.
+  - [Completed] **[High]** Create project entities with complete UI component suite.
   - [Completed] **[High]** Handle project naming and confirmation.
-  - [To Do] **[High]** Redirect to project workspace and display `appIdeaSummary_text` from project record.
+  - [Completed] **[High]** Redirect to project workspace and display `appIdeaSummary_text` from project record.
 - [To Do] **[Medium]** Implement "View Project List" (FR 2.2.2 - Backend: API Route).
   - [To Do] **[Medium]** Create Next.js API route to fetch projects for a user.
   - [To Do] **[Medium]** Implement Drizzle logic to query `projects` table.
@@ -195,7 +198,29 @@
 - [To Do] **[Medium]** Set up integration testing for API routes interacting with Supabase/Drizzle.
 - [To Do] **[Low]** (Post-MVP) Plan for E2E testing framework (e.g., Playwright or Cypress).
 
-## 11. Monetization (Polar.sh Integration)
+## 11. Architecture & Performance Optimization
+
+- [Completed] **[Critical]** Implement Domain-Driven Design (DDD) architecture patterns.
+  - [Completed] **[High]** Restructure codebase with `/entities/project/ui` for domain-specific components.
+  - [Completed] **[High]** Create `/features/project/create` for complete feature implementations.
+  - [Completed] **[High]** Move shared components to `/shared/components/ui` for reusability.
+  - [Completed] **[Medium]** Migrate utilities to `/shared/lib/utils` for consistency.
+- [Completed] **[Critical]** Implement instant project creation with lazy database operations.
+  - [Completed] **[High]** Replace synchronous server actions with frontend UUID generation.
+  - [Completed] **[High]** Implement lazy conversation creation (database ops only when needed).
+  - [Completed] **[High]** Create optimistic UI patterns for immediate user feedback.
+  - [Completed] **[Medium]** Update chat API to handle first-time conversation creation.
+- [Completed] **[High]** Create comprehensive skeleton loading system.
+  - [Completed] **[High]** Design skeleton components matching exact final UI layout.
+  - [Completed] **[High]** Implement realistic message patterns (user/AI conversation flow).
+  - [Completed] **[Medium]** Add proper spacing and styling to match ChatBubble components.
+  - [Completed] **[Medium]** Create skeleton variants for different loading states.
+- [Completed] **[Medium]** Improve development workflow and code organization.
+  - [Completed] **[Medium]** Break down monolithic commits into focused, atomic commits.
+  - [Completed] **[Medium]** Implement consistent TypeScript patterns across codebase.
+  - [Completed] **[Low]** Update import paths to reflect new architecture.
+
+## 12. Monetization (Polar.sh Integration)
 
 - [To Do] **[High]** Design and define subscription tiers and feature entitlements (FR 2.6.1).
 - [To Do] **[High]** Integrate Polar.sh SDK/API for checkout process (FR 2.6.2 - Backend & Frontend).

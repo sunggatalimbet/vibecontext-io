@@ -76,3 +76,25 @@ Integrated the OpenRouter AI provider, developing a full suite of UI components 
 
 1. Created a series of atomic, feature-based commits (e.g., AI provider, UI components, API refactoring) to logically separate the work.
 2. Created zod `chatMessageSchema` and `chatSchema` objects and used for request parsing.
+
+# June 8th, 2025
+
+## Architecture Refactoring and Performance Optimization
+
+Implemented major architectural improvements including Domain-Driven Design patterns, instant project creation with lazy database operations, and comprehensive skeleton loading states.
+
+Restructured the entire codebase using DDD principles with entities, features, and shared components. Created instant navigation using frontend UUID generation and lazy conversation creation only when users send their first message. Added comprehensive skeleton components that exactly match the final UI layout.
+
+## Problems
+
+1. Slow project creation taking 2+ seconds due to synchronous database operations during button clicks
+2. Large monolithic commit containing multiple unrelated features making it difficult to track changes
+3. Poor loading experience with basic "Loading..." text instead of meaningful skeleton states
+4. Inconsistent project structure making it hard to locate and maintain components
+
+## Solutions
+
+1. Implemented lazy conversation creation pattern - generate UUID instantly on frontend, create database records only when first message is sent
+2. Reorganized single large commit into 6 focused commits: shared components move, entities creation, features implementation, lazy creation, page updates, and cleanup
+3. Created comprehensive skeleton components that match exact ChatBubble structure with realistic user/AI message patterns and proper spacing
+4. Refactored to Domain-Driven Design with clear separation: `/entities/project/ui` for domain components, `/features/project/create` for feature implementations, `/shared/components/ui` for reusable components
