@@ -98,3 +98,23 @@ Restructured the entire codebase using DDD principles with entities, features, a
 2. Reorganized single large commit into 6 focused commits: shared components move, entities creation, features implementation, lazy creation, page updates, and cleanup
 3. Created comprehensive skeleton components that match exact ChatBubble structure with realistic user/AI message patterns and proper spacing
 4. Refactored to Domain-Driven Design with clear separation: `/entities/project/ui` for domain components, `/features/project/create` for feature implementations, `/shared/components/ui` for reusable components
+
+# June 10th, 2025
+
+## Sidebar Projects Skeleton and Theme Hydration Fix
+
+Created skeleton loading component for sidebar projects section and resolved React hydration mismatch error related to theme provider configuration.
+
+Built `SidebarProjectsSkeleton` component that renders three skeleton items matching the exact structure and styling of the real project buttons, ensuring consistent loading experience. Fixed theme-related hydration mismatch by addressing conflicts between hardcoded theme classes and next-themes dynamic theme management.
+
+## Problems
+
+1. Missing skeleton component for sidebar projects causing poor loading experience during data fetching
+2. React hydration mismatch error due to conflicting theme class management between server and client rendering
+3. Different HTML attributes between server-rendered and client-rendered content causing console warnings
+
+## Solutions
+
+1. Created skeleton component with proper dimensions (`h-4 w-full`) and layout (`h-9 flex items-center`) matching real project buttons
+2. Initially attempted to remove hardcoded `dark` class to let next-themes handle theme management, but ultimately used `suppressHydrationWarning` on html element to handle expected theme-related hydration differences
+3. Used `Array.from({ length: 3 })` to render three skeleton items simulating realistic loading state for projects list
