@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowUpIcon } from 'lucide-react'
+import { ArrowUpIcon, Sparkles } from 'lucide-react'
 import { ChatInput } from '@/components/chat'
 import { Button } from '@/shared/components/ui/button'
 import { useProject } from './project-provider'
@@ -10,19 +10,33 @@ export const ProjectInput = () => {
     input,
     status,
     isProjectCompleted,
+    canGenerateProject,
     userMessageCount,
     remainingMessages,
     handleInputChange,
     handleSubmit,
+    generateSummary,
+    chat,
+    project,
+    isSummaryGenerating,
+    openOverlay,
   } = useProject()
 
-  // TODO
   const chatInputPlaceholder =
     userMessageCount === 0
       ? 'Describe your app idea...'
       : remainingMessages > 1
         ? `Continue describing your idea... (${remainingMessages} questions remaining)`
         : "Final question - let's wrap up your idea!"
+
+  const handleGenerateProject = () => {
+    if (project) {
+      openOverlay()
+    } else {
+      generateSummary({ chatId: chat.id })
+      setTimeout(() => openOverlay(), 2000)
+    }
+  }
 
   if (isProjectCompleted) {
     return (
@@ -44,6 +58,33 @@ export const ProjectInput = () => {
   return (
     <div className="flex-shrink-0 border-t bg-background/80 backdrop-blur-sm">
       <div className="max-w-4xl mx-auto p-4">
+        {/* Show generate project option after first message */}
+        {canGenerateProject && (
+          <div className="mb-4 p-3 bg-muted/50 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <p className="text-sm font-medium mb-1">
+                  Ready to generate your project?
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  You can create your project now, or continue answering
+                  questions for better results. More context leads to more
+                  detailed and accurate project documentation.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                onClick={handleGenerateProject}
+                disabled={isSummaryGenerating}
+                className="ml-3 flex items-center gap-1.5"
+              >
+                <Sparkles className="h-3 w-3" />
+                {project ? 'View Project' : 'Generate Project'}
+              </Button>
+            </div>
+          </div>
+        )}
+
         <form
           className="flex items-center pl-2 pr-4 border rounded-lg shadow-lg bg-background"
           onSubmit={handleSubmit}
@@ -53,7 +94,7 @@ export const ProjectInput = () => {
             value={input}
             onChange={handleInputChange}
             placeholder={chatInputPlaceholder}
-            className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 resize-none min-h-[auto]"
+            className=" border-0 bg-transparent shadow-none focus-visible:ring-0"
             disabled={isInputDisabled}
           />
           <Button

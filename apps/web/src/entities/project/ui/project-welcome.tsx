@@ -13,7 +13,7 @@ export const ProjectWelcome = () => {
       <div className="mt-6 text-sm text-muted-foreground">
         <div className="flex items-center justify-center gap-2">
           <MessageCircleIcon className="h-4 w-4" />
-          <span>10 focused questions to capture your vision</span>
+          <span>6 focused questions to capture your vision</span>
         </div>
       </div>
     </>
