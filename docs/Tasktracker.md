@@ -182,6 +182,7 @@
 
 - [To Do] **[Medium]** Performance: Implement optimizations for Next.js page loads (NFR 3.1).
 - [To Do] **[Medium]** Performance: Optimize UI interaction responsiveness (NFR 3.1).
+- [Completed] **[Medium]** Performance: Fix React hydration mismatch error related to theme provider configuration.
 - [To Do] **[Low]** Performance: Monitor and optimize LLM interaction & Supabase query times (NFR 3.1).
 - [To Do] **[High]** Security: Ensure all client-server communication is HTTPS (usually default with hosting). (NFR 3.2)
 - [Completed] **[High]** Security: Review and ensure correct usage of Supabase client/server SDKs. (NFR 3.2)
@@ -215,6 +216,7 @@
   - [Completed] **[High]** Implement realistic message patterns (user/AI conversation flow).
   - [Completed] **[Medium]** Add proper spacing and styling to match ChatBubble components.
   - [Completed] **[Medium]** Create skeleton variants for different loading states.
+  - [Completed] **[Medium]** Implement sidebar projects skeleton loading component with proper dimensions and styling.
 - [Completed] **[Medium]** Improve development workflow and code organization.
   - [Completed] **[Medium]** Break down monolithic commits into focused, atomic commits.
   - [Completed] **[Medium]** Implement consistent TypeScript patterns across codebase.

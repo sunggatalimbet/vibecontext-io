@@ -34,7 +34,7 @@ interface ProjectContextValue {
   remainingMessages: number
 }
 
-const ProjectContext = createContext<ProjectContextValue | undefined>(undefined)
+const ProjectContext = createContext<ProjectContextValue | null>(null)
 
 interface ProjectProviderProps {
   chat: Conversation
@@ -117,7 +117,7 @@ export const ProjectProvider = ({
 
 export const useProject = (): ProjectContextValue => {
   const context = useContext(ProjectContext)
-  if (context === undefined) {
+  if (context === null) {
     throw new Error('useProject must be used within a ProjectProvider')
   }
   return context

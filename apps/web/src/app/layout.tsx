@@ -44,6 +44,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`dark ${satoshi.variable} ${ibmPlexSans.variable}`}
+      suppressHydrationWarning
     >
       <body className={`antialiased ${ibmPlexSans.className}`}>
         <ThemeProvider
