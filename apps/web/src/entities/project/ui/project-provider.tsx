@@ -49,6 +49,7 @@ export const ProjectProvider = ({
   project,
   children,
 }: ProjectProviderProps) => {
+  console.log({ chat, chatMessages, project })
   const { messages, input, status, handleInputChange, handleSubmit } = useChat({
     api: '/api/chat',
     id: chat.id,

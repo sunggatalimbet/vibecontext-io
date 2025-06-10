@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowRightIcon } from 'lucide-react'
-import { CreateProjectButton } from '@/shared/components/create-project-button'
+import { CreateProjectButton } from '@/features/project/create'
 import { Button } from '@/shared/components/ui/button'
 
 export default function Home() {
@@ -45,7 +45,6 @@ export default function Home() {
       {/* Call to Action */}
       <div className="w-full flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">
         <CreateProjectButton
-          asChild
           variant={'outline'}
           size="lg"
           className="px-8 py-3"

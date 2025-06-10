@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { getUserProjects } from '@repo/db'
 import { FolderIcon, LogOutIcon } from 'lucide-react'
 import { SidebarProjectsAccordionContent } from '@/entities/sidebar/ui/sidebar-projects-accordion-content'
+import { CreateProjectButton } from '@/features/project/create'
 import {
   Accordion,
   AccordionContent,
@@ -49,6 +50,7 @@ export const SidebarContent = () => {
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col gap-1">
+                <CreateProjectButton isSidebar />
                 <Suspense fallback={<SidebarProjectsSkeleton />}>
                   <SidebarProjectsAccordionContent
                     projectsPromise={projectsPromise}

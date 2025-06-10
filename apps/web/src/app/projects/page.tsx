@@ -1,5 +1,5 @@
 import { FolderIcon } from 'lucide-react'
-import { CreateProjectButton } from '@/shared/components/create-project-button'
+import { CreateProjectButton } from '@/features/project/create'
 
 export default function ProjectsPage() {
   return (

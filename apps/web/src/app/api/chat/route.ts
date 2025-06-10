@@ -1,7 +1,7 @@
 import { openRouter } from '@repo/ai'
 import { db, initDatabaseConnection, messages, conversations } from '@repo/db'
 import { appendClientMessage } from 'ai'
-import { eq, and } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { chatSchema } from '@/lib/schemas'
 
@@ -15,6 +15,7 @@ export async function POST(req: Request) {
     const messageContent = data.message.content
     const chatId = data.id
 
+    // If there is not previous messages create new conversation
     const prevMessages = await db
       .select()
       .from(messages)
@@ -22,23 +23,14 @@ export async function POST(req: Request) {
       .orderBy(messages.createdAt)
 
     if (prevMessages.length === 0) {
-      const existingConversation = await db
-        .select()
-        .from(conversations)
-        .where(
-          and(eq(conversations.id, chatId), eq(conversations.userId, user.id))
-        )
-        .limit(1)
-
-      if (existingConversation.length === 0) {
-        await db.insert(conversations).values({
-          id: chatId,
-          userId: user.id,
-          title: 'New Project',
-        })
-      }
+      await db.insert(conversations).values({
+        id: chatId,
+        userId: user.id,
+        title: 'New Project',
+      })
     }
 
+    // Add new message to the  conversation
     const [newMessage] = await db
       .insert(messages)
       .values({
