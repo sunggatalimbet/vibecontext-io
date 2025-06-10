@@ -2,9 +2,9 @@
 
 import { useRouter } from 'next/navigation'
 import { PlusIcon } from 'lucide-react'
-import { Button } from './ui/button'
+import { Button, type ButtonProps } from './ui/button'
 
-export const CreateProjectButton = () => {
+export const CreateProjectButton = ({ variant }: ButtonProps) => {
   const router = useRouter()
 
   function handleCreateProject() {
@@ -13,12 +13,7 @@ export const CreateProjectButton = () => {
   }
 
   return (
-    <Button
-      onClick={handleCreateProject}
-      variant="ghost"
-      type="button"
-      className="w-full justify-start gap-2 px-2 h-9 opacity-70 hover:opacity-100 transition-opacity text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary"
-    >
+    <Button onClick={handleCreateProject} variant={variant}>
       <PlusIcon className="h-4 w-4" />
       <span className="text-sm ml-2">Start New Project</span>
     </Button>
