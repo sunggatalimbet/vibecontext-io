@@ -63,9 +63,17 @@ export const SidebarContent = () => {
           </AccordionItem>
           <AccordionItem value="projects" className="border-none">
             <AccordionTrigger className="py-2 hover:no-underline">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <FolderIcon className="h-4 w-4" />
-                <span>Projects</span>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <FolderIcon className="h-4 w-4" />
+                  <span>Projects</span>
+                </div>
+                <Link
+                  href="/projects"
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors mr-2"
+                >
+                  View all
+                </Link>
               </div>
             </AccordionTrigger>
             <AccordionContent>

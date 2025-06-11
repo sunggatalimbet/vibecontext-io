@@ -2,7 +2,7 @@
 
 import { eq } from 'drizzle-orm'
 import { db } from '../client'
-import { Project, projects } from '../schema'
+import { Project, ProjectWithDocs, projects } from '../schema'
 import { initDatabaseConnection } from '../utils'
 
 export async function getUserProjects(): Promise<Array<Project>> {
@@ -14,4 +14,19 @@ export async function getUserProjects(): Promise<Array<Project>> {
     .where(eq(projects.userId, user.id))
 
   return userProjects
+}
+
+export async function getUserProjectsWithDocs(): Promise<
+  Array<ProjectWithDocs>
+> {
+  const user = await initDatabaseConnection()
+
+  const userProjectsWithDocs = await db.query.projects.findMany({
+    where: eq(projects.userId, user.id),
+    with: {
+      docs: true,
+    },
+  })
+
+  return userProjectsWithDocs
 }
