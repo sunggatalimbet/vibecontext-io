@@ -19,9 +19,14 @@ export const ProjectSummaryHeader = ({
   const primaryUser = targetUsers?.[0]
 
   return (
-    <div className="col-span-1 md:col-span-4 lg:col-span-6 bg-gradient-to-br from-primary/90 via-primary/70 to-accent/50 rounded-2xl p-8 text-primary-foreground relative overflow-hidden border border-border/20">
-      {/* Subtle pattern overlay for texture */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-primary-foreground/5 via-transparent to-primary-foreground/10 rounded-2xl"></div>
+    <div
+      className="col-span-1 md:col-span-4 lg:col-span-6 rounded-2xl p-8 text-primary-foreground relative overflow-hidden border border-border/20"
+      style={{
+        background:
+          'conic-gradient(at bottom left, #c084fc, #f472b6, #fb923c, #c084fc)',
+      }}
+    >
+      {/* Subtle flickering overlay */}
       <div className="relative z-10">
         <div className="flex items-center justify-center mb-6">
           <div className="bg-primary-foreground/20 backdrop-blur-sm p-4 rounded-full">
