@@ -4,6 +4,7 @@ import { appendClientMessage } from 'ai'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { chatSchema } from '@/lib/schemas'
+import { MAX_USER_MESSAGES } from '@/shared/lib/constants'
 
 export const maxDuration = 30
 
@@ -39,6 +40,27 @@ export async function POST(req: Request) {
         content: messageContent,
       })
       .returning()
+
+    // Count user messages including the new one
+    const userMessageCount =
+      prevMessages.filter(m => m.role === 'user').length + 1
+
+    // If this is the 6th user message, don't generate AI response
+    if (userMessageCount >= MAX_USER_MESSAGES) {
+      // Return a simple response without streaming AI content
+      return new Response(
+        JSON.stringify({
+          message:
+            'Thank you for answering all questions! Discovery phase completed, now with extended context we can generate accurate project overview and project documentation',
+          userMessageCount,
+          isCompleted: true,
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
+    }
 
     const allMessages = appendClientMessage({
       messages: prevMessages,

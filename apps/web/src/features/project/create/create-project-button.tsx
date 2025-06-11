@@ -28,6 +28,7 @@ export const CreateProjectButton = ({
   }
 
   const buttonClassName = cn(
+    'cursor-pointer',
     isSidebar &&
       'w-full justify-start gap-2 px-2 h-9 text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary',
     className
@@ -41,7 +42,7 @@ export const CreateProjectButton = ({
       className={buttonClassName}
       {...props}
     >
-      <AsyncButtonContent isLoading={isPending} loadingText="Creating">
+      <AsyncButtonContent isLoading={isPending} loadingText="Creating...">
         <PlusIcon className="h-4 w-4" />
         <span className="ml-2">Start New Project</span>
       </AsyncButtonContent>

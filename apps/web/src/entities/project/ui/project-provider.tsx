@@ -51,7 +51,6 @@ export const ProjectProvider = ({
   project,
   children,
 }: ProjectProviderProps) => {
-  console.log({ chat, chatMessages, project })
   const { messages, input, status, handleInputChange, handleSubmit } = useChat({
     api: '/api/chat',
     id: chat.id,
@@ -112,7 +111,7 @@ export const ProjectProvider = ({
 
   return (
     <ProjectContext.Provider value={value}>
-      <div className="flex flex-col justify-between h-full w-full max-w-none mx-auto">
+      <div className="flex flex-col justify-between max-h-[calc(100vh-60px)] h-full w-full max-w-none mx-auto">
         {children}
       </div>
     </ProjectContext.Provider>
