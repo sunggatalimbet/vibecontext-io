@@ -126,7 +126,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
               })}
             </div>
           ) : (
-            <div className="flex items-center justify-center py-4">
+            <div className="py-4">
               <Button
                 variant="outline"
                 size="sm"
