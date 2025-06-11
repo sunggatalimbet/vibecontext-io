@@ -7,8 +7,8 @@
 
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { getUserProjects } from '@repo/db'
-import { FolderIcon, LogOutIcon } from 'lucide-react'
+import { getUserConversations, getUserProjects } from '@repo/db'
+import { FolderIcon, LogOutIcon, MessageCircleIcon } from 'lucide-react'
 import { SidebarProjectsAccordionContent } from '@/entities/sidebar/ui/sidebar-projects-accordion-content'
 import { CreateProjectButton } from '@/features/project/create'
 import {
@@ -19,10 +19,12 @@ import {
 } from '@/shared/components/ui/accordion'
 import { Button } from '@/shared/components/ui/button'
 import { ScrollArea } from '@/shared/components/ui/scroll-area'
+import { SidebarConversationsAccordionContent } from './sidebar-conversations-accordion-content'
 import { SidebarProjectsSkeleton } from './sidebar-projects-skeleton'
 
 export const SidebarContent = () => {
   const projectsPromise = getUserProjects()
+  const conversationsPromise = getUserConversations()
 
   return (
     <div className={'flex h-full w-full flex-col'}>
@@ -38,14 +40,32 @@ export const SidebarContent = () => {
       <ScrollArea className="flex-1 px-3">
         <Accordion
           type="multiple"
-          defaultValue={['projects', 'docs']}
+          defaultValue={['conversations', 'projects']}
           className="space-y-1"
         >
+          <AccordionItem value="conversations" className="border-none">
+            <AccordionTrigger className="py-2 hover:no-underline">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <MessageCircleIcon className="h-4 w-4" />
+                <span>Conversations</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-1">
+                <CreateProjectButton isSidebar />
+                <Suspense fallback={<SidebarProjectsSkeleton />}>
+                  <SidebarConversationsAccordionContent
+                    conversationsPromise={conversationsPromise}
+                  />
+                </Suspense>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
           <AccordionItem value="projects" className="border-none">
             <AccordionTrigger className="py-2 hover:no-underline">
               <div className="flex items-center gap-2 text-sm font-medium">
                 <FolderIcon className="h-4 w-4" />
-                Projects
+                <span>Projects</span>
               </div>
             </AccordionTrigger>
             <AccordionContent>

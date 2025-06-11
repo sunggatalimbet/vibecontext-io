@@ -8,5 +8,6 @@ export * from './schema'
 export { initDatabaseConnection } from './utils'
 
 // Export data access layer functions
-export { getUserProjects } from './dal/project'
+export { getUserProjects } from './dal/projects'
+export { getUserConversations } from './dal/conversations'
 export { getProjectDocuments } from './dal/docs'
