@@ -1,1 +1,1 @@
-export const MAX_USER_MESSAGES = 10
+export const MAX_USER_MESSAGES = 6

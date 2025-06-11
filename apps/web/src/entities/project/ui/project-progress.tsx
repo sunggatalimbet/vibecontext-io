@@ -1,7 +1,12 @@
 'use client'
 
 import { Suspense, lazy } from 'react'
-import { CheckCircleIcon, MessageCircleIcon, ExpandIcon } from 'lucide-react'
+import {
+  CheckCircleIcon,
+  MessageCircleIcon,
+  ExpandIcon,
+  InfoIcon,
+} from 'lucide-react'
 import { Badge } from '@/shared/components/ui/badge'
 import { Button } from '@/shared/components/ui/button'
 import { Progress } from '@/shared/components/ui/progress'
@@ -13,6 +18,7 @@ const ProjectOverlayModal = lazy(() => import('./project-overlay-modal'))
 export const ProjectProgress = () => {
   const {
     isProjectCompleted,
+    canGenerateProject,
     isOverlayOpen,
     project,
     summary,
@@ -42,6 +48,12 @@ export const ProjectProgress = () => {
                   Complete
                 </Badge>
               )}
+              {canGenerateProject && !isProjectCompleted && (
+                <Badge variant="outline" className="ml-2 text-xs">
+                  <InfoIcon className="h-3 w-3 mr-1" />
+                  Ready to generate
+                </Badge>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">
@@ -49,7 +61,7 @@ export const ProjectProgress = () => {
               </span>
               {!isProjectCompleted && (
                 <Badge variant="outline" className="text-xs">
-                  {remainingMessages} remaining
+                  {remainingMessages} optional
                 </Badge>
               )}
               {hasProjectData && (
@@ -66,6 +78,12 @@ export const ProjectProgress = () => {
             </div>
           </div>
           <Progress value={progressPercentage} className="h-2" />
+          {canGenerateProject && !isProjectCompleted && (
+            <p className="text-xs text-muted-foreground mt-2">
+              💡 You can generate your project anytime. More questions provide
+              richer context for better results.
+            </p>
+          )}
         </div>
       </div>
 

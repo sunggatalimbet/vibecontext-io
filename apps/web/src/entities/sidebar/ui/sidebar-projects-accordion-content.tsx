@@ -26,7 +26,8 @@ export const SidebarProjectsAccordionContent = ({
   return (
     <>
       {projects.map(project => {
-        const isActive = currentPath === project.id
+        const projectPath = `/projects/${project.id}`
+        const isActive = currentPath === projectPath
 
         return (
           <Button
@@ -40,7 +41,7 @@ export const SidebarProjectsAccordionContent = ({
                 : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary'
             )}
           >
-            <Link href={project.id} className="flex items-center w-full">
+            <Link href={projectPath} className="flex items-center w-full">
               <span className="text-sm ml-2">{project.name}</span>
             </Link>
           </Button>

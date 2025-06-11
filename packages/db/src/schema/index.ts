@@ -162,6 +162,15 @@ export type NewPrompt = typeof prompts.$inferInsert
 export type PromptNode = typeof promptNodes.$inferSelect
 export type NewPromptNode = typeof promptNodes.$inferInsert
 
+// Relational query types
+export type ProjectWithDocs = Project & { docs: Array<Doc> }
+
+export type ProjectWithRelations = Project & {
+  profile: Profile
+  docs: Doc[]
+  promptNodes: PromptNode[]
+}
+
 // Schema export for Drizzle
 export const schema = {
   profiles,

@@ -8,7 +8,11 @@ export const initDatabaseConnection = async (): Promise<User> => {
     error: authError,
   } = await supabase.auth.getUser()
 
-  if (authError || !user) {
+  if (authError) {
+    throw Error('Authentication required')
+  }
+
+  if (!user) {
     throw Error('Authentication required')
   }
 

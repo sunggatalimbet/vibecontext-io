@@ -12,6 +12,7 @@ import type { Conversation, Message, Project } from '@repo/db'
 import { type DeepPartial, type UIMessage } from 'ai'
 import { type z } from 'zod'
 import { summarySchema } from '@/lib/schemas'
+import { MAX_USER_MESSAGES } from '@/shared/lib/constants'
 
 interface ProjectContextValue {
   chat: Conversation
@@ -20,6 +21,7 @@ interface ProjectContextValue {
   input: string
   status: 'ready' | 'error' | 'submitted' | 'streaming'
   isProjectCompleted: boolean
+  canGenerateProject: boolean
   project: Project | null
   isSummaryGenerating: boolean
   isOverlayOpen: boolean
@@ -71,12 +73,12 @@ export const ProjectProvider = ({
   })
 
   const userMessageCount = messages.filter(m => m.role === 'user').length
-  const maxQuestions = 10
 
   const [isOverlayOpen, setIsOverlayOpen] = useState(false)
 
-  const remainingMessages = Math.max(0, maxQuestions - userMessageCount)
-  const isProjectCompleted = userMessageCount >= maxQuestions
+  const remainingMessages = Math.max(0, MAX_USER_MESSAGES - userMessageCount)
+  const isProjectCompleted = userMessageCount >= MAX_USER_MESSAGES
+  const canGenerateProject = userMessageCount >= 1 // Can generate after first message
 
   const openOverlay = () => setIsOverlayOpen(true)
   const closeOverlay = () => setIsOverlayOpen(false)
@@ -89,6 +91,7 @@ export const ProjectProvider = ({
     status,
     project,
     isProjectCompleted,
+    canGenerateProject,
     isSummaryGenerating,
     isOverlayOpen,
     handleInputChange,
@@ -108,7 +111,7 @@ export const ProjectProvider = ({
 
   return (
     <ProjectContext.Provider value={value}>
-      <div className="flex flex-col justify-between h-full w-full max-w-none mx-auto">
+      <div className="flex flex-col justify-between max-h-[calc(100vh-60px)] h-full w-full max-w-none mx-auto">
         {children}
       </div>
     </ProjectContext.Provider>
