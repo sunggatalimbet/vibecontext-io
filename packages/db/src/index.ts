@@ -8,6 +8,4 @@ export * from './schema'
 export * from './utils'
 
 // Export data access layer functions
-export { getUserProjects, getUserProjectsWithDocs } from './dal/projects'
-export { getUserConversations } from './dal/conversations'
-export { getProjectDocuments } from './dal/docs'
+export * from './dal'
