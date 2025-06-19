@@ -8,14 +8,19 @@ import {
   useEffect,
 } from 'react'
 import { useChat, experimental_useObject as useObject } from '@ai-sdk/react'
-import type { Conversation, Message, Project } from '@repo/db'
+import type {
+  ConversationOmitUserId,
+  DataResponse,
+  Message,
+  Project,
+} from '@repo/db'
 import { type DeepPartial, type UIMessage } from 'ai'
 import { type z } from 'zod'
 import { summarySchema } from '@/lib/schemas'
 import { MAX_USER_MESSAGES } from '@/shared/lib/constants'
 
 interface ProjectContextValue {
-  chat: Conversation
+  conversation: ConversationOmitUserId
   summary: DeepPartial<z.infer<typeof summarySchema>>
   messages: Array<UIMessage>
   input: string
@@ -39,23 +44,41 @@ interface ProjectContextValue {
 const ProjectContext = createContext<ProjectContextValue | null>(null)
 
 interface ProjectProviderProps {
-  chat: Conversation
-  chatMessages: Array<Message>
-  project: Project | null
+  conversationData: DataResponse<ConversationOmitUserId>
+  conversationMessagesData: DataResponse<Array<Message>>
+  projectData: DataResponse<Project>
   children: React.ReactNode
 }
 
 export const ProjectProvider = ({
-  chat,
-  chatMessages,
-  project,
+  conversationData,
+  conversationMessagesData,
+  projectData,
   children,
 }: ProjectProviderProps) => {
+  if (!conversationData.success) {
+    throw new Error(conversationData.error.message ?? 'Unknown error occurred')
+  }
+
+  if (!conversationMessagesData.success) {
+    throw new Error(
+      conversationMessagesData.error.message ?? 'Unknown error occured'
+    )
+  }
+
+  if (!projectData.success) {
+    throw new Error(projectData.error.message ?? 'Unknown error occured')
+  }
+
+  const conversation = conversationData.data
+  const conversationMessages = conversationMessagesData.data
+  const project = projectData.data
+
   const { messages, input, status, handleInputChange, handleSubmit } = useChat({
     api: '/api/chat',
-    id: chat.id,
+    id: conversation.id,
     maxSteps: 1,
-    initialMessages: chatMessages,
+    initialMessages: conversationMessages,
     sendExtraMessageFields: true,
     experimental_prepareRequestBody({ messages, id }) {
       return { message: messages[messages.length - 1], id }
@@ -84,7 +107,7 @@ export const ProjectProvider = ({
   const closeOverlay = () => setIsOverlayOpen(false)
 
   const value: ProjectContextValue = {
-    chat,
+    conversation,
     summary: summary ?? {},
     messages,
     input,

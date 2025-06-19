@@ -2,13 +2,13 @@
 
 import { use } from 'react'
 import Link from 'next/link'
-import { type Conversation } from '@repo/db'
+import { type ConversationOmitUserId } from '@repo/db'
 import { Button } from '@/shared/components/ui/button'
 import { cn } from '@/shared/lib/utils'
 import { useSidebar } from './sidebar-provider'
 
 interface SidebarConversationsAccordionContentProps {
-  conversationsPromise: Promise<Array<Conversation>>
+  conversationsPromise: Promise<Array<ConversationOmitUserId>>
 }
 
 export const SidebarConversationsAccordionContent = ({

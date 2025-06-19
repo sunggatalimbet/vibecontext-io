@@ -14,6 +14,7 @@ export {
   messages,
   type Conversation,
   type NewConversation,
+  type ConversationOmitUserId,
   type Message,
   type NewMessage,
 } from './chat'

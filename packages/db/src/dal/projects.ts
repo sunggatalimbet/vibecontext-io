@@ -1,13 +1,34 @@
 import 'server-only'
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import { db } from '../client'
-import { InvalidInputError } from '../errors'
+import { InvalidInputError, ResourceNotFoundError } from '../errors'
 import { Project, ProjectWithDocs, projects } from '../schema'
 import { withAuth } from '../utils'
 
 export async function getUserProjects(): Promise<Array<Project>> {
   return withAuth(async user => {
     return await db.select().from(projects).where(eq(projects.userId, user.id))
+  })
+}
+
+export async function getUserProjectById(projectId: string): Promise<Project> {
+  if (!projectId.trim()) {
+    throw new InvalidInputError('projectId', 'Project ID is requred')
+  }
+
+  return withAuth(async user => {
+    const result = await db
+      .select()
+      .from(projects)
+      .where(and(eq(projects.userId, user.id), eq(projects.id, projectId)))
+      .limit(1)
+
+    const project = result[0]
+    if (!project) {
+      throw new ResourceNotFoundError('Project', projectId)
+    }
+
+    return project
   })
 }
 

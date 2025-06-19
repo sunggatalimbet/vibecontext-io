@@ -2,8 +2,7 @@ import {
   createOpenRouter,
   type OpenRouterProvider,
 } from '@openrouter/ai-sdk-provider'
-import { db, initDatabaseConnection, messages, projects } from '@repo/db'
-import { summarySchema } from '@repo/web/src/lib/schemas'
+import { createConversationMessage, createProjectSummary } from '@repo/db'
 import {
   CoreMessage,
   Message,
@@ -12,6 +11,7 @@ import {
   streamText,
 } from 'ai'
 import { chatSystemPrompt, summarySystemPrompt } from '../prompts'
+import { summarySchema, type AppIdeaSummary } from '../schemas/summary.schema'
 
 interface StreamMessageParams {
   chatId: string
@@ -49,14 +49,12 @@ class OpenRouter {
         console.error(error)
       },
       async onFinish({ response }) {
-        await initDatabaseConnection()
         const message = response.messages[0]
-        const role = 'assistant'
         const content = (message.content[0] as { text: string }).text
 
-        await db.insert(messages).values({
-          conversationId: chatId,
-          role: role,
+        await createConversationMessage({
+          chatId: chatId,
+          role: 'assistant',
           content: content,
         })
       },
@@ -76,13 +74,12 @@ class OpenRouter {
           throw Error('Object is not defined')
         }
 
-        const projectName = object.appOverview.projectName
-        const user = await initDatabaseConnection()
-        await db.insert(projects).values({
-          name: projectName,
-          appIdeaSummaryJson: object,
+        const typedObject = object as AppIdeaSummary
+        const name = typedObject.appOverview.projectName
+        await createProjectSummary({
           conversationId: chatId,
-          userId: user.id,
+          name: name,
+          appIdeaSummaryJson: typedObject,
         })
       },
     })

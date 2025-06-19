@@ -24,6 +24,7 @@ export const messages = pgTable('messages', {
 // Type definitions
 export type Conversation = typeof conversations.$inferSelect
 export type NewConversation = typeof conversations.$inferInsert
+export type ConversationOmitUserId = Omit<Conversation, 'userId'>
 
 export type Message = typeof messages.$inferSelect
 export type NewMessage = typeof messages.$inferInsert
