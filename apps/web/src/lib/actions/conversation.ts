@@ -11,16 +11,18 @@ import {
   type Message,
 } from '@repo/db'
 
-export async function createUserConversationData() {
+export async function createUserConversationAction(): Promise<
+  DataResponse<{ id: string }>
+> {
   try {
     const conversationId = await createUserConversation()
-    return { success: true, data: { id: conversationId } }
+    return { success: true as const, data: { id: conversationId } }
   } catch (err) {
     const errorDetails = getErrorDetails(err)
-    console.error('createUserConversationData error:', errorDetails)
+    console.error('createUserConversationAction error:', errorDetails)
 
     return {
-      success: false,
+      success: false as const,
       error: {
         message: errorDetails.message,
         code: errorDetails.code,
