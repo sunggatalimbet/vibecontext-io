@@ -32,7 +32,7 @@ export const SidebarDocumentItem = ({
           : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary'
       )}
     >
-      <Link href={document.id} className="flex items-center">
+      <Link href={`/documents/${document.id}`} className="flex items-center">
         <span
           className={cn(
             'h-2 w-2 rounded-full mr-2',

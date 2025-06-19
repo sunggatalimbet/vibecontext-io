@@ -118,3 +118,25 @@ Built `SidebarProjectsSkeleton` component that renders three skeleton items matc
 1. Created skeleton component with proper dimensions (`h-4 w-full`) and layout (`h-9 flex items-center`) matching real project buttons
 2. Initially attempted to remove hardcoded `dark` class to let next-themes handle theme management, but ultimately used `suppressHydrationWarning` on html element to handle expected theme-related hydration differences
 3. Used `Array.from({ length: 3 })` to render three skeleton items simulating realistic loading state for projects list
+
+# June 11th, 2025
+
+## Drizzle Type Utilities and Project Card Enhancement
+
+Implemented comprehensive Drizzle type utilities for relational queries and enhanced the ProjectCard component with modern flat design and improved document management functionality.
+
+Created advanced TypeScript utilities for inferring types from Drizzle relations including `ProjectWithDocs` and `ProjectWithRelations` types. Updated the `getUserProjectsWithDocs()` function to use Drizzle's relational query API with proper `with` clause syntax. Redesigned ProjectCard component to be more compact and modern with the entire card clickable and documents displayed as individual clickable links at the bottom.
+
+## Problems
+
+1. Missing type utilities for Drizzle relational queries caused unsafe type assertions and poor developer experience
+2. ProjectCard component had cluttered design with unnecessary elements and poor user interaction patterns
+3. Type safety issues when accessing nested JSON properties in `appIdeaSummaryJson` field
+4. Inconsistent card heights and poor visual hierarchy in the project listing
+
+## Solutions
+
+1. Created comprehensive type utilities including `ProjectWithDocs`, `PartialSelect`, and `InferQueryResult` types for better type safety in relational queries
+2. Redesigned ProjectCard with clean flat design principles - removed unnecessary borders, simplified layout, made entire card clickable for better UX
+3. Implemented proper type guards and structured access to JSON data with fallback handling for missing properties
+4. Used CSS `h-full` class and consistent padding to ensure uniform card heights and improved visual consistency across the project grid

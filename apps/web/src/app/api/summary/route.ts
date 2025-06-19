@@ -1,50 +1,61 @@
 import { openRouter } from '@repo/ai'
-import { db, initDatabaseConnection, messages } from '@repo/db'
+import {
+  getConversationMessages,
+  getErrorDetails,
+  type DataResponse,
+} from '@repo/db'
 import { convertToCoreMessages } from 'ai'
-import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const maxDuration = 30
 
 const summaryRequestSchema = z.object({
-  chatId: z.string(),
+  conversationId: z.string(),
 })
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<Response> {
   try {
-    await initDatabaseConnection()
-
     const data = summaryRequestSchema.parse(await req.json())
-    const { chatId } = data
+    const { conversationId } = data
 
-    const chatMessages = await db
-      .select()
-      .from(messages)
-      .where(eq(messages.conversationId, chatId))
-      .orderBy(messages.createdAt)
+    const chatMessages = await getConversationMessages(conversationId)
 
     if (chatMessages.length === 0) {
-      return Response.json({ error: 'No messages found' }, { status: 400 })
+      const errorResponse: DataResponse<never> = {
+        success: false,
+        error: {
+          message: 'No messages found',
+          code: 'NO_MESSAGES',
+          statusCode: 400,
+        },
+      }
+      return Response.json(errorResponse, { status: 400 })
     }
 
     const coreMessages = convertToCoreMessages(chatMessages)
 
     const summary = openRouter.streamSummary({
-      chatId,
+      conversationId,
       chatMessages: coreMessages,
     })
 
     return summary.toTextStreamResponse()
   } catch (err) {
-    console.error(err)
+    console.error('Summary API error:', err)
 
-    if (err instanceof z.ZodError) {
-      return Response.json({ error: err.errors }, { status: 400 })
-    } else if (typeof err === 'string') {
-      return Response.json({ error: err }, { status: 400 })
-    } else {
-      console.error(err)
-      return Response.json({ error: 'Internal server error' }, { status: 500 })
+    const errorDetails = getErrorDetails(err)
+
+    const errorResponse: DataResponse<never> = {
+      success: false,
+      error: {
+        message: errorDetails.message,
+        code: errorDetails.code,
+        statusCode: errorDetails.statusCode,
+      },
     }
+
+    return Response.json(errorResponse, {
+      status: errorDetails.statusCode,
+    })
   }
 }

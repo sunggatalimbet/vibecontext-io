@@ -2,7 +2,6 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { IBM_Plex_Sans } from 'next/font/google'
 import localFont from 'next/font/local'
-import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { ThemeProvider } from '@/components/theme-provider'
 
 export const metadata: Metadata = {
@@ -53,7 +52,7 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <DashboardLayout>{children}</DashboardLayout>
+          {children}
         </ThemeProvider>
       </body>
     </html>

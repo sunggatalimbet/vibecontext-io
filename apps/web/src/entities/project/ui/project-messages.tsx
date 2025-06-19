@@ -16,27 +16,29 @@ export const ProjectMessages = () => {
   if (messages.length === 0) return null
 
   return (
-    <ScrollArea className="flex-1 overflow-hidden max-h-[72vh]">
-      <ChatMessageList smooth>
-        {messages.map(message => (
-          <ChatBubble
-            key={message.id}
-            variant={message.role === 'user' ? 'sent' : 'received'}
-          >
-            {message.role !== 'user' && (
-              <ChatBubbleAvatar className="shrink-0" fallback="AI" />
-            )}
-            <ChatBubbleMessage
+    <div className="flex-1 overflow-hidden">
+      <ScrollArea className="h-full overflow-hidden">
+        <ChatMessageList smooth>
+          {messages.map(message => (
+            <ChatBubble
+              key={message.id}
               variant={message.role === 'user' ? 'sent' : 'received'}
             >
-              <MemoizedChatBubble message={message} />
-            </ChatBubbleMessage>
-          </ChatBubble>
-        ))}
+              {message.role !== 'user' && (
+                <ChatBubbleAvatar className="shrink-0" fallback="AI" />
+              )}
+              <ChatBubbleMessage
+                variant={message.role === 'user' ? 'sent' : 'received'}
+              >
+                <MemoizedChatBubble message={message} />
+              </ChatBubbleMessage>
+            </ChatBubble>
+          ))}
 
-        {isProjectCompleted && <ProjectComplete />}
-      </ChatMessageList>
-      <ScrollBar orientation="vertical" />
-    </ScrollArea>
+          {isProjectCompleted && <ProjectComplete />}
+        </ChatMessageList>
+        <ScrollBar orientation="vertical" />
+      </ScrollArea>
+    </div>
   )
 }

@@ -119,16 +119,25 @@
 
 - [Completed] **[Critical]** Create docs table schema with comprehensive document filename fields.
 - [Completed] **[High]** Implement bidirectional relationship between projects and docs tables.
+- [Completed] **[High]** Implement Drizzle type utilities for relational queries.
+  - [Completed] **[High]** Create `ProjectWithDocs` and `ProjectWithRelations` type definitions.
+  - [Completed] **[High]** Implement advanced TypeScript utilities like `PartialSelect` and `InferQueryResult`.
+  - [Completed] **[High]** Add comprehensive type exports to schema index file.
+- [Completed] **[High]** Update project DAL functions to use relational queries.
+  - [Completed] **[High]** Implement `getUserProjectsWithDocs()` function using Drizzle's `with` clause.
+  - [Completed] **[High]** Add proper TypeScript typing for relational query results.
 - [To Do] **[High]** Implement document generation and management API routes.
   - [To Do] **[High]** API route to create new document entries in docs table.
   - [To Do] **[High]** API route to upload document files to Supabase Storage.
   - [To Do] **[High]** API route to retrieve document content from Storage.
   - [To Do] **[Medium]** API route to update document filenames and metadata.
-- [To Do] **[High]** Implement document management UI components.
-  - [To Do] **[High]** Document list view showing all project documents.
-  - [To Do] **[High]** Document viewer for displaying document content.
-  - [To Do] **[Medium]** Document upload and management interface.
-  - [To Do] **[Medium]** Document type categorization and organization.
+- [Completed] **[High]** Implement document management UI components.
+  - [Completed] **[High]** Enhanced ProjectCard component with modern flat design.
+  - [Completed] **[High]** Document display in 2-column grid at bottom of project cards.
+  - [Completed] **[High]** Individual clickable document links with proper event handling.
+  - [Completed] **[High]** "Generate docs" button for projects without documents.
+  - [Completed] **[Medium]** Clean and minimal card design with consistent heights.
+  - [Completed] **[Medium]** Whole card clickable navigation with proper link components.
 - [To Do] **[Medium]** Integrate document management with existing project workflows.
   - [To Do] **[Medium]** Link PRD generation to docs table prdFilename field.
   - [To Do] **[Medium]** Connect tech requirements generation to docs table.

@@ -2,7 +2,7 @@
  * @file: page.tsx
  * @description: Login page with OAuth authentication options
  * @dependencies: @repo/auth, shadcn/ui components
- * @created: 2024-12-19
+ * @created: 2025-06-01
  */
 
 import { signInWithGoogleAction, signInWithGithubAction } from '@repo/auth'
@@ -27,8 +27,8 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3">
-            <LoginButton signInAction={signInWithGoogleAction} />
-            <LoginButton signInAction={signInWithGithubAction} />
+            <LoginButton signInAction={signInWithGoogleAction} type="Google" />
+            <LoginButton signInAction={signInWithGithubAction} type="Github" />
           </div>
 
           <p className="text-xs text-muted-foreground text-center mt-4">

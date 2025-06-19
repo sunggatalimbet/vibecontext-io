@@ -6,21 +6,30 @@ import {
   ProjectWelcome,
   ProjectWelcomeContainer,
 } from '@repo/web/src/entities/project/ui'
-import { getChat, getChatMessages, getProjectByChatId } from '@/lib/actions'
+import {
+  getConversationDataById,
+  getConversationDataMessages,
+  getUserProjectDataById,
+} from '@/lib/actions'
 
 interface CreateProjectProps {
   id: string
 }
 
 export async function CreateProject({ id }: CreateProjectProps) {
-  const [chat, chatMessages, project] = await Promise.all([
-    getChat(id),
-    getChatMessages(id),
-    getProjectByChatId(id),
-  ])
+  const [conversationData, conversationMessagesData, projectData] =
+    await Promise.all([
+      getConversationDataById(id),
+      getConversationDataMessages(id),
+      getUserProjectDataById(id),
+    ])
 
   return (
-    <ProjectProvider chatMessages={chatMessages} chat={chat} project={project}>
+    <ProjectProvider
+      conversationData={conversationData}
+      conversationMessagesData={conversationMessagesData}
+      projectData={projectData}
+    >
       <ProjectProgress />
       <ProjectWelcomeContainer>
         <ProjectWelcome />
