@@ -93,14 +93,14 @@ export async function getConversationDataMessages(
   }
 }
 
-export async function createChatMessage(
-  chatId: string,
+export async function createConversationDataMessage(
+  conversationId: string,
   role: 'user' | 'assistant',
   content: string
 ) {
   try {
     // Validate input
-    if (!chatId || typeof chatId !== 'string') {
+    if (!conversationId || typeof conversationId !== 'string') {
       throw new Error('Invalid chat ID provided')
     }
 
@@ -113,7 +113,7 @@ export async function createChatMessage(
     }
 
     const result = await createConversationMessage({
-      chatId,
+      conversationId,
       role,
       content: content.trim(),
     })

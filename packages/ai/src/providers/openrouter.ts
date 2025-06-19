@@ -14,12 +14,12 @@ import { chatSystemPrompt, summarySystemPrompt } from '../prompts'
 import { summarySchema, type AppIdeaSummary } from '../schemas/summary.schema'
 
 interface StreamMessageParams {
-  chatId: string
+  conversationId: string
   allMessages: Array<Message>
 }
 
 interface StreamSummaryParams {
-  chatId: string
+  conversationId: string
   chatMessages: Array<CoreMessage>
 }
 
@@ -39,7 +39,7 @@ class OpenRouter {
     })
   }
 
-  streamMessage({ allMessages, chatId }: StreamMessageParams) {
+  streamMessage({ allMessages, conversationId }: StreamMessageParams) {
     const message = streamText({
       model: this.provider.chat('anthropic/claude-3.5-haiku'),
       system: this.chatSystemPrompt,
@@ -53,7 +53,7 @@ class OpenRouter {
         const content = (message.content[0] as { text: string }).text
 
         await createConversationMessage({
-          chatId: chatId,
+          conversationId: conversationId,
           role: 'assistant',
           content: content,
         })
@@ -63,7 +63,7 @@ class OpenRouter {
     return message
   }
 
-  streamSummary({ chatMessages, chatId }: StreamSummaryParams) {
+  streamSummary({ chatMessages, conversationId }: StreamSummaryParams) {
     const summary = streamObject({
       model: this.provider.chat('anthropic/claude-3.5-sonnet'),
       schema: summarySchema,
@@ -77,7 +77,7 @@ class OpenRouter {
         const typedObject = object as AppIdeaSummary
         const name = typedObject.appOverview.projectName
         await createProjectSummary({
-          conversationId: chatId,
+          conversationId,
           name: name,
           appIdeaSummaryJson: typedObject,
         })

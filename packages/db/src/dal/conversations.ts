@@ -80,19 +80,19 @@ export async function getConversationMessages(
 }
 
 export type CreateConversationMessageDTO = {
-  chatId: string
+  conversationId: string
   role: 'user' | 'assistant'
   content: string
 }
 
 export async function createConversationMessage({
-  chatId,
+  conversationId,
   role,
   content,
 }: CreateConversationMessageDTO) {
   return withAuth(async user => {
     // Validate input
-    if (!chatId.trim()) {
+    if (!conversationId.trim()) {
       throw new InvalidInputError('chatId', 'Conversation ID is required')
     }
 
@@ -105,18 +105,21 @@ export async function createConversationMessage({
       .select({ id: conversations.id })
       .from(conversations)
       .where(
-        and(eq(conversations.id, chatId), eq(conversations.userId, user.id))
+        and(
+          eq(conversations.id, conversationId),
+          eq(conversations.userId, user.id)
+        )
       )
 
     if (conversation.length === 0) {
-      throw new ResourceAccessDeniedError('Conversation', chatId)
+      throw new ResourceAccessDeniedError('Conversation', conversationId)
     }
 
     // Now safe to create the message
     const [message] = await db
       .insert(messages)
       .values({
-        conversationId: chatId,
+        conversationId,
         role: role,
         content: content.trim(),
       })

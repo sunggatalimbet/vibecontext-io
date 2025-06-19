@@ -34,7 +34,7 @@ interface ProjectContextValue {
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
   ) => void
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
-  generateSummary: (input: { chatId: string }) => void
+  generateSummary: (input: { conversationId: string }) => void
   openOverlay: () => void
   closeOverlay: () => void
   userMessageCount: number

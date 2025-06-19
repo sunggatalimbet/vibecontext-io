@@ -17,22 +17,22 @@ export async function POST(req: Request): Promise<Response> {
   try {
     const data = chatSchema.parse(await req.json())
     const messageContent = data.message.content
-    const chatId = data.id
+    const conversationId = data.id
 
     // Check if conversation exists, create if it doesn't
     try {
-      await getConversationById(chatId)
+      await getConversationById(conversationId)
     } catch {
       // Conversation doesn't exist, create it
       await createUserConversation()
     }
 
     // Get previous messages
-    const prevMessages = await getConversationMessages(chatId)
+    const prevMessages = await getConversationMessages(conversationId)
 
     // Create new user message
     const newMessage = await createConversationMessage({
-      chatId,
+      conversationId,
       role: 'user',
       content: messageContent,
     })
@@ -68,7 +68,7 @@ export async function POST(req: Request): Promise<Response> {
     })
 
     const message = openRouter.streamMessage({
-      chatId,
+      conversationId,
       allMessages: allMessages,
     })
 

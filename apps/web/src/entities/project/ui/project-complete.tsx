@@ -3,14 +3,19 @@ import { Button } from '@/shared/components/ui/button'
 import { useProject } from './project-provider'
 
 export const ProjectComplete = () => {
-  const { chat, generateSummary, isSummaryGenerating, project, openOverlay } =
-    useProject()
+  const {
+    conversation,
+    isSummaryGenerating,
+    project,
+    generateSummary,
+    openOverlay,
+  } = useProject()
 
   const handleGenerateProject = () => {
     if (project) {
       openOverlay()
     } else {
-      generateSummary({ chatId: chat.id })
+      generateSummary({ conversationId: conversation.id })
       setTimeout(() => openOverlay(), 2000)
     }
   }

@@ -16,7 +16,7 @@ export const ProjectInput = () => {
     handleInputChange,
     handleSubmit,
     generateSummary,
-    chat,
+    conversation,
     project,
     isSummaryGenerating,
     openOverlay,
@@ -33,7 +33,7 @@ export const ProjectInput = () => {
     if (project) {
       openOverlay()
     } else {
-      generateSummary({ chatId: chat.id })
+      generateSummary({ conversationId: conversation.id })
       setTimeout(() => openOverlay(), 2000)
     }
   }

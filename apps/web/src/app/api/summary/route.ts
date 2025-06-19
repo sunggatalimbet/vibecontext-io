@@ -10,15 +10,15 @@ import { z } from 'zod'
 export const maxDuration = 30
 
 const summaryRequestSchema = z.object({
-  chatId: z.string(),
+  conversationId: z.string(),
 })
 
 export async function POST(req: Request): Promise<Response> {
   try {
     const data = summaryRequestSchema.parse(await req.json())
-    const { chatId } = data
+    const { conversationId } = data
 
-    const chatMessages = await getConversationMessages(chatId)
+    const chatMessages = await getConversationMessages(conversationId)
 
     if (chatMessages.length === 0) {
       const errorResponse: DataResponse<never> = {
@@ -35,7 +35,7 @@ export async function POST(req: Request): Promise<Response> {
     const coreMessages = convertToCoreMessages(chatMessages)
 
     const summary = openRouter.streamSummary({
-      chatId,
+      conversationId,
       chatMessages: coreMessages,
     })
 
