@@ -9,8 +9,8 @@ import { AuthenticationError } from '../errors'
  *
  * @returns Promise<User> - The authenticated user
  * @throws {AuthenticationError} - When authentication fails
- * @throws {SessionExpiredError} - When user session is invalid/expired
  */
+
 export const getAuthUser = async (): Promise<User> => {
   try {
     const supabase = await createClientServer()
@@ -37,6 +37,8 @@ export const getAuthUser = async (): Promise<User> => {
       throw error
     }
 
-    throw new Error('')
+    throw new AuthenticationError(
+      'An unexpected error occurred during authentication'
+    )
   }
 }

@@ -20,10 +20,10 @@ export async function POST(req: Request): Promise<Response> {
     const conversationId = data.id
 
     // Check if conversation exists, create if it doesn't
-    try {
-      await getConversationById(conversationId)
-    } catch {
-      // Conversation doesn't exist, create it
+
+    const conversation = await getConversationById(conversationId)
+
+    if (!conversation) {
       await createUserConversation()
     }
 

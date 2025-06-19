@@ -11,13 +11,13 @@ import {
   type Message,
 } from '@repo/db'
 
-export async function createChat() {
+export async function createUserConversationData() {
   try {
     const conversationId = await createUserConversation()
     return { success: true, data: { id: conversationId } }
   } catch (err) {
     const errorDetails = getErrorDetails(err)
-    console.error('createChat error:', errorDetails)
+    console.error('createUserConversationData error:', errorDetails)
 
     return {
       success: false,
@@ -39,18 +39,6 @@ export async function getConversationDataById(
     }
 
     const conversationData = await getConversationById(conversationId)
-
-    if (!conversationData) {
-      return {
-        success: true,
-        data: {
-          id: conversationId,
-          title: 'New Project',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      }
-    }
 
     return { success: true, data: conversationData }
   } catch (err) {

@@ -1,7 +1,11 @@
 import 'server-only'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, desc } from 'drizzle-orm'
 import { db } from '../client'
-import { ResourceAccessDeniedError, InvalidInputError } from '../errors'
+import {
+  ResourceAccessDeniedError,
+  InvalidInputError,
+  ResourceNotFoundError,
+} from '../errors'
 import {
   ConversationOmitUserId,
   conversations,
@@ -14,7 +18,7 @@ export async function getUserConversations(): Promise<
   Array<ConversationOmitUserId>
 > {
   return withAuth(async user => {
-    const conversationsData = await db
+    const conversationsData: Array<ConversationOmitUserId> = await db
       .select({
         id: conversations.id,
         title: conversations.title,
@@ -23,6 +27,7 @@ export async function getUserConversations(): Promise<
       })
       .from(conversations)
       .where(eq(conversations.userId, user.id))
+      .orderBy(desc(conversations.updatedAt))
 
     return conversationsData
   })
@@ -65,6 +70,9 @@ export async function getConversationById(
   })
 
   const conversationData = response[0]
+  if (!conversationData) {
+    throw new ResourceNotFoundError('Conversation', conversationId)
+  }
   return conversationData
 }
 
@@ -72,10 +80,26 @@ export async function getConversationMessages(
   conversationId: string
 ): Promise<Array<Message>> {
   return await withAuth(async user => {
+    const result = await db
+      .select({ id: conversations.id })
+      .from(conversations)
+      .where(
+        and(
+          eq(conversations.id, conversationId),
+          eq(conversations.userId, user.id)
+        )
+      )
+
+    if (result.length === 0) {
+      throw new ResourceAccessDeniedError('Conversation', conversationId)
+    }
+
+    const conversation = result[0]
+
     return await db
       .select()
       .from(messages)
-      .where(and(eq(messages.conversationId, conversationId)))
+      .where(and(eq(messages.conversationId, conversation.id)))
   })
 }
 

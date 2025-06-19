@@ -13,7 +13,7 @@ export async function getUserProjects(): Promise<Array<Project>> {
 
 export async function getUserProjectById(projectId: string): Promise<Project> {
   if (!projectId.trim()) {
-    throw new InvalidInputError('projectId', 'Project ID is requred')
+    throw new InvalidInputError('projectId', 'Project ID is required')
   }
 
   return withAuth(async user => {
@@ -36,12 +36,15 @@ export async function getUserProjectsWithDocs(): Promise<
   Array<ProjectWithDocs>
 > {
   return withAuth(async user => {
-    return await db.query.projects.findMany({
+    const userProjectsWithDocs = await db.query.projects.findMany({
       where: eq(projects.userId, user.id),
       with: {
         docs: true,
       },
+      orderBy: (projects, { desc }) => [desc(projects.createdAt)],
     })
+
+    return userProjectsWithDocs
   })
 }
 
@@ -58,7 +61,7 @@ export async function createProjectSummary({
 }: CreateProjectSummaryDto) {
   // Validate input
   if (!conversationId.trim()) {
-    throw new InvalidInputError('conversationId', 'Conversation ID is requred')
+    throw new InvalidInputError('conversationId', 'Conversation ID is required')
   }
 
   if (!name.trim()) {
