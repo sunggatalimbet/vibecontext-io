@@ -22,8 +22,7 @@ export const CreateProjectButton = ({
 
   function handleCreateProject() {
     startTransition(() => {
-      const chatId = crypto.randomUUID()
-      router.push(`/projects/${chatId}`)
+      router.push('/conversations/new')
     })
   }
 

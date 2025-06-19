@@ -17,14 +17,12 @@ import { ProjectSummaryCard } from './project-summary-card'
 
 interface ProjectOverlayModalProps {
   isOpen: boolean
-  onClose: () => void
 }
 
 export default function ProjectOverlayModal({
   isOpen,
-  onClose,
 }: ProjectOverlayModalProps) {
-  const { project, summary } = useProject()
+  const { summary } = useProject()
 
   // Handle Escape key press and focus management
   useEffect(() => {

@@ -9,7 +9,6 @@ import {
 import {
   getConversationDataById,
   getConversationDataMessages,
-  getUserProjectDataById,
 } from '@/lib/actions'
 
 interface CreateProjectProps {
@@ -17,18 +16,15 @@ interface CreateProjectProps {
 }
 
 export async function CreateProject({ id }: CreateProjectProps) {
-  const [conversationData, conversationMessagesData, projectData] =
-    await Promise.all([
-      getConversationDataById(id),
-      getConversationDataMessages(id),
-      getUserProjectDataById(id),
-    ])
+  const [conversationData, conversationMessagesData] = await Promise.all([
+    getConversationDataById(id),
+    getConversationDataMessages(id),
+  ])
 
   return (
     <ProjectProvider
       conversationData={conversationData}
       conversationMessagesData={conversationMessagesData}
-      projectData={projectData}
     >
       <ProjectProgress />
       <ProjectWelcomeContainer>
