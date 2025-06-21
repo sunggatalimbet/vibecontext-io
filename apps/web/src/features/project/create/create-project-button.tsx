@@ -8,7 +8,7 @@
 'use client'
 
 import { useTransition } from 'react'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { PlusIcon } from 'lucide-react'
 import { createUserConversationAction } from '@/lib/actions'
 import { AsyncButtonContent } from '@/shared/components/async-button-content'
@@ -26,6 +26,7 @@ export const CreateProjectButton = ({
   ...props
 }: CreateProjectButtonProps) => {
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   function handleCreateProject() {
     startTransition(async () => {
@@ -33,7 +34,7 @@ export const CreateProjectButton = ({
       if (!result.success) {
         throw new Error(result.error.message ?? 'Unexpected error occurred')
       }
-      redirect(`/conversations/${result.data.id}`)
+      router.push(`/conversations/${result.data.id}`)
     })
   }
 

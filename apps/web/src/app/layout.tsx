@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { IBM_Plex_Sans } from 'next/font/google'
 import localFont from 'next/font/local'
 import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from '@/shared/components/ui/sonner'
 
 export const metadata: Metadata = {
   title: 'vibecontext.io',
@@ -53,6 +54,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
