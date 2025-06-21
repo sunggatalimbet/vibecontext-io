@@ -38,7 +38,7 @@ export const ViewProjectSummaryCardContainer = async ({
   }
 
   const project = projectData.data
-  const projectSummary = project.appIdeaSummaryJson as DeepPartial<
+  const projectSummary = project?.appIdeaSummaryJson as DeepPartial<
     z.infer<typeof summarySchema>
   >
 
