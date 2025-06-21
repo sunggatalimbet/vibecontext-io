@@ -1,6 +1,7 @@
 export { ProjectSummaryNoData } from './project-summary-no-data'
 export { ProjectSummaryHeader } from './project-summary-header'
 export { ProjectSummaryCoreValue } from './project-summary-core-value'
+export { ProjectSummaryConstraints } from './project-summary-constraints'
 export { ProjectSummaryTechApproach } from './project-summary-tech-approach'
 export { ProjectSummaryFeatureCards } from './project-summary-feature-cards'
 export { ProjectSummaryMvpScope } from './project-summary-mvp-scope'

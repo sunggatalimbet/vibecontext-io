@@ -1,7 +1,7 @@
 import 'server-only'
 import { eq, and } from 'drizzle-orm'
 import { db } from '../client'
-import { ProjectWithDocs, docs, projects } from '../schema'
+import { docs, projects } from '../schema'
 import { withAuth } from '../utils'
 
 export async function getUserProjectDocuments(projectId: string | null) {

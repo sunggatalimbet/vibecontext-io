@@ -3,24 +3,25 @@
 import {
   getConversationById,
   getConversationMessages,
-  createUserConversation,
-  createConversationMessage,
   getErrorDetails,
+  createUserConversation,
   type DataResponse,
   type ConversationOmitUserId,
   type Message,
 } from '@repo/db'
 
-export async function createUserConversationData() {
+export async function createUserConversationAction(): Promise<
+  DataResponse<{ id: string }>
+> {
   try {
     const conversationId = await createUserConversation()
-    return { success: true, data: { id: conversationId } }
+    return { success: true as const, data: { id: conversationId } }
   } catch (err) {
     const errorDetails = getErrorDetails(err)
-    console.error('createUserConversationData error:', errorDetails)
+    console.error('createUserConversationAction error:', errorDetails)
 
     return {
-      success: false,
+      success: false as const,
       error: {
         message: errorDetails.message,
         code: errorDetails.code,
@@ -30,7 +31,7 @@ export async function createUserConversationData() {
   }
 }
 
-export async function getConversationDataById(
+export async function getConversationByIdAction(
   conversationId: string
 ): Promise<DataResponse<ConversationOmitUserId>> {
   try {
@@ -56,7 +57,7 @@ export async function getConversationDataById(
   }
 }
 
-export async function getConversationDataMessages(
+export async function getConversationMessagesAction(
   conversationId: string
 ): Promise<DataResponse<Array<Message>>> {
   try {
@@ -69,47 +70,6 @@ export async function getConversationDataMessages(
   } catch (err) {
     const errorDetails = getErrorDetails(err)
     console.error('getConversationDataMessages error:', errorDetails)
-
-    return {
-      success: false,
-      error: {
-        message: errorDetails.message,
-        code: errorDetails.code,
-        statusCode: errorDetails.statusCode,
-      },
-    }
-  }
-}
-
-export async function createConversationDataMessage(
-  conversationId: string,
-  role: 'user' | 'assistant',
-  content: string
-) {
-  try {
-    // Validate input
-    if (!conversationId || typeof conversationId !== 'string') {
-      throw new Error('Invalid chat ID provided')
-    }
-
-    if (!content || typeof content !== 'string' || !content.trim()) {
-      throw new Error('Message content is required')
-    }
-
-    if (!['user', 'assistant'].includes(role)) {
-      throw new Error('Invalid message role')
-    }
-
-    const result = await createConversationMessage({
-      conversationId,
-      role,
-      content: content.trim(),
-    })
-
-    return { success: true, data: result }
-  } catch (err) {
-    const errorDetails = getErrorDetails(err)
-    console.error('createChatMessage error:', errorDetails)
 
     return {
       success: false,

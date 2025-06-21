@@ -65,7 +65,7 @@ const DOC_TYPE_CONFIG = {
   },
 } as const
 
-export const ProjectCard = ({ project }: ProjectCardProps) => {
+export function ProjectCard({ project }: ProjectCardProps) {
   const ideaSummary = project.appIdeaSummaryJson as IAppIdeaSummary
   const availableDocs = project.docs
     ? Object.entries(project.docs).filter(([, filename]) => filename)
@@ -78,14 +78,8 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
   })
 
   return (
-    <Link
-      href={`/projects/${project.id}`}
-      className="block"
-      onClick={e => {
-        e.stopPropagation()
-      }}
-    >
-      <Card className="h-full hover:shadow-md transition-all duration-200 border-border/40 bg-card">
+    <Link href={`/projects/${project.id}`}>
+      <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer">
         <CardHeader className="pb-3 space-y-2">
           <CardTitle className="text-base font-semibold line-clamp-1">
             {project.name}

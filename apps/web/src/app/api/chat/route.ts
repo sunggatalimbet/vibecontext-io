@@ -1,7 +1,6 @@
 import { openRouter } from '@repo/ai'
 import {
   getConversationById,
-  createUserConversation,
   createConversationMessage,
   getConversationMessages,
   getErrorDetails,
@@ -20,12 +19,7 @@ export async function POST(req: Request): Promise<Response> {
     const conversationId = data.id
 
     // Check if conversation exists, create if it doesn't
-
-    const conversation = await getConversationById(conversationId)
-
-    if (!conversation) {
-      await createUserConversation()
-    }
+    await getConversationById(conversationId)
 
     // Get previous messages
     const prevMessages = await getConversationMessages(conversationId)

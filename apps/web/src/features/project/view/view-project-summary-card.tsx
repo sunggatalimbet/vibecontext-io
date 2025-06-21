@@ -1,5 +1,5 @@
 /**
- * @file: project-summary-card.tsx
+ * @file: view-project-summary-card.tsx
  * @description: Bento Grid Project Summary Card component for displaying comprehensive project analysis
  * @dependencies: summarySchema types, Lucide React icons, skeleton components
  * @created: 2025-01-07
@@ -8,7 +8,6 @@
 import { type DeepPartial } from 'ai'
 import { type z } from 'zod'
 import { type MockDataState } from '@/entities/project/lib/mock/project-summary'
-import { type summarySchema } from '@/lib/schemas'
 import {
   ProjectSummaryHeader,
   ProjectSummaryNoData,
@@ -20,8 +19,9 @@ import {
   ProjectSummaryVision,
   ProjectSummaryDetails,
   ProjectSummaryFooter,
-} from './summary'
-import { ProjectSummaryConstraints } from './summary/project-summary-constraints'
+  ProjectSummaryConstraints,
+} from '@/entities/project/ui/summary'
+import { type summarySchema } from '@/lib/schemas'
 
 interface ProjectSummaryCardProps {
   summary: DeepPartial<z.infer<typeof summarySchema>>
@@ -29,7 +29,9 @@ interface ProjectSummaryCardProps {
   testingMode?: MockDataState
 }
 
-export const ProjectSummaryCard = ({ summary }: ProjectSummaryCardProps) => {
+export const ViewProjectSummaryCard = ({
+  summary,
+}: ProjectSummaryCardProps) => {
   const {
     appOverview,
     targetUsers,
@@ -40,6 +42,7 @@ export const ProjectSummaryCard = ({ summary }: ProjectSummaryCardProps) => {
   } = summary
 
   // Complete skeleton when no project name exists
+
   if (!appOverview?.projectName) {
     return <ProjectSummaryNoData />
   }

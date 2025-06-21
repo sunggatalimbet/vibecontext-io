@@ -32,6 +32,30 @@ export async function getUserProjectById(projectId: string): Promise<Project> {
   })
 }
 
+export async function getUserProjectByConversationId(
+  conversationId: string
+): Promise<Project> {
+  if (!conversationId.trim()) {
+    throw new InvalidInputError('projectId', 'Project ID is required')
+  }
+
+  return withAuth(async user => {
+    const result = await db
+      .select()
+      .from(projects)
+      .where(
+        and(
+          eq(projects.userId, user.id),
+          eq(projects.conversationId, conversationId)
+        )
+      )
+      .limit(1)
+
+    const project = result[0]
+    return project
+  })
+}
+
 export async function getUserProjectsWithDocs(): Promise<
   Array<ProjectWithDocs>
 > {
