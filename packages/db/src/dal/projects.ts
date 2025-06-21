@@ -11,7 +11,9 @@ export async function getUserProjects(): Promise<Array<Project>> {
   })
 }
 
-export async function getUserProjectById(projectId: string): Promise<Project> {
+export async function getUserProjectById(
+  projectId: string
+): Promise<Project | undefined> {
   if (!projectId.trim()) {
     throw new InvalidInputError('projectId', 'Project ID is required')
   }
@@ -34,9 +36,9 @@ export async function getUserProjectById(projectId: string): Promise<Project> {
 
 export async function getUserProjectByConversationId(
   conversationId: string
-): Promise<Project> {
+): Promise<Project | undefined> {
   if (!conversationId.trim()) {
-    throw new InvalidInputError('projectId', 'Project ID is required')
+    throw new InvalidInputError('conversationId', 'Conversation ID is required')
   }
 
   return withAuth(async user => {
@@ -82,7 +84,7 @@ export async function createProjectSummary({
   conversationId,
   name,
   appIdeaSummaryJson,
-}: CreateProjectSummaryDto) {
+}: CreateProjectSummaryDto): Promise<Array<Project | undefined>> {
   // Validate input
   if (!conversationId.trim()) {
     throw new InvalidInputError('conversationId', 'Conversation ID is required')
@@ -93,11 +95,14 @@ export async function createProjectSummary({
   }
 
   return withAuth(async user => {
-    return await db.insert(projects).values({
-      name,
-      appIdeaSummaryJson,
-      conversationId,
-      userId: user.id,
-    })
+    return await db
+      .insert(projects)
+      .values({
+        name,
+        appIdeaSummaryJson,
+        conversationId,
+        userId: user.id,
+      })
+      .returning()
   })
 }
