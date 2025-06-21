@@ -152,3 +152,39 @@ export async function createConversationMessage({
     return message
   })
 }
+
+export async function deleteConversation(
+  conversationId: string
+): Promise<{ id: string; title: string }> {
+  return withAuth(async user => {
+    if (!conversationId.trim()) {
+      throw new InvalidInputError('chatId', 'Conversation ID is required')
+    }
+
+    const conversation = await db
+      .select({ id: conversations.id, title: conversations.title })
+      .from(conversations)
+      .where(
+        and(
+          eq(conversations.id, conversationId),
+          eq(conversations.userId, user.id)
+        )
+      )
+
+    if (conversation.length === 0) {
+      throw new ResourceAccessDeniedError('Conversation', conversationId)
+    }
+
+    // Now safe to delete the conversation
+    await db
+      .delete(conversations)
+      .where(
+        and(
+          eq(conversations.id, conversationId),
+          eq(conversations.userId, user.id)
+        )
+      )
+
+    return conversation[0]
+  })
+}

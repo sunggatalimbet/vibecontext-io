@@ -4,7 +4,9 @@ export {
   getConversationMessages,
   createUserConversation,
   createConversationMessage,
+  deleteConversation,
 } from './conversations'
+
 export { getUserProjectDocuments } from './docs'
 
 export {
