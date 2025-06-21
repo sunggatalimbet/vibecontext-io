@@ -7,8 +7,8 @@ import {
   ProjectWelcomeContainer,
 } from '@repo/web/src/entities/project/ui'
 import {
-  getConversationDataById,
-  getConversationDataMessages,
+  getConversationByIdAction,
+  getConversationMessagesAction,
 } from '@/lib/actions'
 
 interface CreateProjectProps {
@@ -17,8 +17,8 @@ interface CreateProjectProps {
 
 export async function CreateProject({ id }: CreateProjectProps) {
   const [conversationData, conversationMessagesData] = await Promise.all([
-    getConversationDataById(id),
-    getConversationDataMessages(id),
+    getConversationByIdAction(id),
+    getConversationMessagesAction(id),
   ])
 
   return (

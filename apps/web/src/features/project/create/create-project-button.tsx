@@ -1,8 +1,16 @@
+/**
+ * @file: create-project-button.tsx
+ * @description: Client-side create project button that navigates to conversation page
+ * @dependencies: React useTransition, Next.js redirect, shadcn/ui components
+ * @created: 2025-01-22
+ */
+
 'use client'
 
 import { useTransition } from 'react'
-import { useRouter } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { PlusIcon } from 'lucide-react'
+import { createUserConversationAction } from '@/lib/actions'
 import { AsyncButtonContent } from '@/shared/components/async-button-content'
 import { Button, type ButtonProps } from '@/shared/components/ui/button'
 import { cn } from '@/shared/lib/utils'
@@ -17,12 +25,15 @@ export const CreateProjectButton = ({
   isSidebar = false,
   ...props
 }: CreateProjectButtonProps) => {
-  const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
   function handleCreateProject() {
-    startTransition(() => {
-      router.push('/conversations/new')
+    startTransition(async () => {
+      const result = await createUserConversationAction()
+      if (!result.success) {
+        throw new Error(result.error.message ?? 'Unexpected error occurred')
+      }
+      redirect(`/conversations/${result.data.id}`)
     })
   }
 
