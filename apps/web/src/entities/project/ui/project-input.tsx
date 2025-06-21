@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { ArrowUpIcon, Sparkles } from 'lucide-react'
 import { ChatInput } from '@/components/chat'
 import { Button } from '@/shared/components/ui/button'
@@ -9,17 +10,13 @@ export const ProjectInput = () => {
   const {
     input,
     status,
+    conversation,
     isProjectCompleted,
     canGenerateProject,
     userMessageCount,
     remainingMessages,
     handleInputChange,
     handleSubmit,
-    generateSummary,
-    conversation,
-    project,
-    isSummaryGenerating,
-    openOverlay,
   } = useProject()
 
   const chatInputPlaceholder =
@@ -28,15 +25,6 @@ export const ProjectInput = () => {
       : remainingMessages > 1
         ? `Continue describing your idea... (${remainingMessages} questions remaining)`
         : "Final question - let's wrap up your idea!"
-
-  const handleGenerateProject = () => {
-    if (project) {
-      openOverlay()
-    } else {
-      generateSummary({ conversationId: conversation.id })
-      setTimeout(() => openOverlay(), 2000)
-    }
-  }
 
   if (isProjectCompleted) {
     return (
@@ -72,15 +60,14 @@ export const ProjectInput = () => {
                   detailed and accurate project documentation.
                 </p>
               </div>
-              <Button
-                size="sm"
-                onClick={handleGenerateProject}
-                disabled={isSummaryGenerating}
-                className="ml-3 flex items-center gap-1.5"
+              <Link
+                href={`/projects/generate?conversationId=${conversation.id}`}
               >
-                <Sparkles className="h-3 w-3" />
-                {project ? 'View Project' : 'Generate Project'}
-              </Button>
+                <Button size="sm" className="ml-3 flex items-center gap-1.5">
+                  <Sparkles className="h-3 w-3" />
+                  Generate Project
+                </Button>
+              </Link>
             </div>
           </div>
         )}

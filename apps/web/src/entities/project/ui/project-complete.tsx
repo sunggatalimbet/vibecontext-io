@@ -1,41 +1,10 @@
-import { CheckCircleIcon, Loader2Icon } from 'lucide-react'
+import Link from 'next/link'
+import { CheckCircleIcon } from 'lucide-react'
 import { Button } from '@/shared/components/ui/button'
 import { useProject } from './project-provider'
 
 export const ProjectComplete = () => {
-  const {
-    conversation,
-    isSummaryGenerating,
-    project,
-    generateSummary,
-    openOverlay,
-  } = useProject()
-
-  const handleGenerateProject = () => {
-    if (project) {
-      openOverlay()
-    } else {
-      generateSummary({ conversationId: conversation.id })
-      setTimeout(() => openOverlay(), 2000)
-    }
-  }
-
-  const getButtonContent = () => {
-    if (isSummaryGenerating) {
-      return (
-        <div>
-          <Loader2Icon className="h-4 w-4 mr-2 animate-spin" />
-          <span>Creating Project...</span>
-        </div>
-      )
-    }
-
-    return project ? (
-      <p>View Project Overview</p>
-    ) : (
-      <p>Generate Project Summary</p>
-    )
-  }
+  const { conversation } = useProject()
 
   return (
     <>
@@ -50,9 +19,11 @@ export const ProjectComplete = () => {
           documentation.
         </p>
 
-        <Button size="sm" className="mt-3" onClick={handleGenerateProject}>
-          {getButtonContent()}
-        </Button>
+        <Link href={`/projects/generate?conversationId=${conversation.id}`}>
+          <Button size="sm" className="mt-3">
+            Generate Project Summary
+          </Button>
+        </Link>
       </section>
     </>
   )

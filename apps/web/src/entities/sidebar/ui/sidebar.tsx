@@ -12,7 +12,7 @@ import { SidebarProvider } from './sidebar-provider'
 export function Sidebar() {
   return (
     <SidebarProvider>
-      <div className="hidden md:flex relative h-screen w-[240px] flex-col border-r border-border bg-background">
+      <div className="hidden md:flex h-screen w-[240px] flex-col border-r border-border bg-background">
         <SidebarContent />
       </div>
 

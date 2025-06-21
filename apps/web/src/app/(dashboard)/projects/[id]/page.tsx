@@ -1,19 +1,15 @@
 import { Suspense } from 'react'
-import {
-  CreateProject,
-  CreateProjectSkeleton,
-} from '@repo/web/src/features/project/create'
+import { ProjectSummaryNoData } from '@/entities/project/ui/summary'
+import { ViewProjectSummaryCardContainer } from '@/features/project/view'
 
-interface NewProjectPageProps {
+interface ProjectPageProps {
   params: Promise<{ id: string }>
 }
 
-export default async function NewProjectPage({ params }: NewProjectPageProps) {
-  const { id } = await params
-
+export default function ProjectPage({ params }: ProjectPageProps) {
   return (
-    <Suspense fallback={<CreateProjectSkeleton />}>
-      <CreateProject id={id} />
+    <Suspense fallback={<ProjectSummaryNoData />}>
+      <ViewProjectSummaryCardContainer params={params} />
     </Suspense>
   )
 }
