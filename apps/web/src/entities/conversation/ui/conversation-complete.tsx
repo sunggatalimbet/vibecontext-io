@@ -1,10 +1,9 @@
-import Link from 'next/link'
 import { CheckCircleIcon } from 'lucide-react'
-import { Button } from '@/shared/components/ui/button'
-import { useProject } from './project-provider'
+import { CreateProjectButton } from '@/features/project/create'
+import { useConversation } from './conversation-provider'
 
-export const ProjectComplete = () => {
-  const { conversation } = useProject()
+export const ConversationComplete = () => {
+  const { conversation } = useConversation()
 
   return (
     <>
@@ -19,11 +18,7 @@ export const ProjectComplete = () => {
           documentation.
         </p>
 
-        <Link href={`/projects/generate?conversationId=${conversation.id}`}>
-          <Button size="sm" className="mt-3">
-            Generate Project Summary
-          </Button>
-        </Link>
+        <CreateProjectButton conversationId={conversation.id} />
       </section>
     </>
   )

@@ -1,7 +1,7 @@
 import { getUserProjectsWithDocs } from '@repo/db'
 import { FolderIcon } from 'lucide-react'
 import { ProjectCard } from '@/features/project'
-import { CreateProjectButton } from '@/features/project/create'
+import { CreateConversationButton } from '../../../features/conversation/create'
 
 export default async function ProjectsPage() {
   const projects = await getUserProjectsWithDocs()
@@ -19,7 +19,7 @@ export default async function ProjectsPage() {
             Manage and explore your AI-assisted development projects
           </p>
         </div>
-        <CreateProjectButton />
+        <CreateConversationButton />
       </div>
 
       {hasProjects ? (
@@ -40,7 +40,7 @@ export default async function ProjectsPage() {
               structured development plans.
             </p>
           </div>
-          <CreateProjectButton />
+          <CreateConversationButton />
         </div>
       )}
     </div>

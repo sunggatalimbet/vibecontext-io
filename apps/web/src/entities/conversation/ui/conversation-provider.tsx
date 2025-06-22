@@ -1,44 +1,39 @@
 'use client'
 
 import { type ChangeEvent, createContext, useContext } from 'react'
-import { useChat, experimental_useObject as useObject } from '@ai-sdk/react'
+import { useChat } from '@ai-sdk/react'
 import type { ConversationOmitUserId, DataResponse, Message } from '@repo/db'
-import { type DeepPartial, type UIMessage } from 'ai'
-import { type z } from 'zod'
-import { summarySchema } from '@/lib/schemas'
+import { type UIMessage } from 'ai'
 import { MAX_USER_MESSAGES } from '@/shared/lib/constants'
 
-interface ProjectContextValue {
+interface ConversationContextValue {
   conversation: ConversationOmitUserId
-  summary: DeepPartial<z.infer<typeof summarySchema>>
   messages: Array<UIMessage>
   input: string
   status: 'ready' | 'error' | 'submitted' | 'streaming'
-  isProjectCompleted: boolean
+  isConversationCompleted: boolean
   canGenerateProject: boolean
-  isSummaryGenerating: boolean
+  userMessageCount: number
+  remainingMessages: number
   handleInputChange: (
     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
   ) => void
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
-  generateSummary: (input: { chatId: string }) => void
-  userMessageCount: number
-  remainingMessages: number
 }
 
-const ProjectContext = createContext<ProjectContextValue | null>(null)
+const ConversationContext = createContext<ConversationContextValue | null>(null)
 
-interface ProjectProviderProps {
+interface ConversationProviderProps {
   conversationData: DataResponse<ConversationOmitUserId>
   conversationMessagesData: DataResponse<Array<Message>>
   children: React.ReactNode
 }
 
-export const ProjectProvider = ({
+export const ConversationProvider = ({
   conversationData,
   conversationMessagesData,
   children,
-}: ProjectProviderProps) => {
+}: ConversationProviderProps) => {
   if (!conversationData.success) {
     throw new Error(conversationData.error.message ?? 'Unknown error occurred')
   }
@@ -58,50 +53,39 @@ export const ProjectProvider = ({
     },
   })
 
-  // useObject hook for summary generation
-  const {
-    object: summary,
-    submit: generateSummary,
-    isLoading: isSummaryGenerating,
-  } = useObject({
-    api: '/api/summary',
-    schema: summarySchema,
-  })
-
   const userMessageCount = messages.filter(m => m.role === 'user').length
   const remainingMessages = Math.max(0, MAX_USER_MESSAGES - userMessageCount)
-  const isProjectCompleted = userMessageCount >= MAX_USER_MESSAGES
+  const isConversationCompleted = userMessageCount >= MAX_USER_MESSAGES
   const canGenerateProject = userMessageCount >= 1 // Can generate after first message
 
-  const value: ProjectContextValue = {
+  const value: ConversationContextValue = {
     conversation,
-    summary: summary ?? {},
     messages,
     input,
     status,
-    isProjectCompleted,
+    isConversationCompleted,
     canGenerateProject,
-    isSummaryGenerating,
     handleInputChange,
     handleSubmit,
-    generateSummary,
     userMessageCount,
     remainingMessages,
   }
 
   return (
-    <ProjectContext.Provider value={value}>
+    <ConversationContext.Provider value={value}>
       <div className="flex flex-col justify-between h-full w-full max-w-none mx-auto">
         {children}
       </div>
-    </ProjectContext.Provider>
+    </ConversationContext.Provider>
   )
 }
 
-export const useProject = (): ProjectContextValue => {
-  const context = useContext(ProjectContext)
+export const useConversation = (): ConversationContextValue => {
+  const context = useContext(ConversationContext)
   if (context === null) {
-    throw new Error('useProject must be used within a ProjectProvider')
+    throw new Error(
+      'useConversation must be used within a ConversationProvider'
+    )
   }
   return context
 }

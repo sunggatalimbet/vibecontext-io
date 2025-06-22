@@ -1,31 +1,14 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import {
-  CheckCircleIcon,
-  MessageCircleIcon,
-  InfoIcon,
-  SparklesIcon,
-} from 'lucide-react'
+import { CheckCircleIcon, MessageCircleIcon, InfoIcon } from 'lucide-react'
 import { Badge } from '@/shared/components/ui/badge'
-import { Button } from '@/shared/components/ui/button'
 import { Progress } from '@/shared/components/ui/progress'
 import { MAX_USER_MESSAGES } from '@/shared/lib/constants'
-import { useProject } from './project-provider'
+import { useConversation } from './conversation-provider'
 
-export const ProjectProgress = () => {
-  const router = useRouter()
-  const {
-    isProjectCompleted,
-    canGenerateProject,
-    userMessageCount,
-    conversation,
-  } = useProject()
-
-  const handleGenerateProject = () => {
-    // send request to create a project
-    router.push(`/projects/generate?conversationId=${conversation.id}`)
-  }
+export const ConversationProgress = () => {
+  const { isConversationCompleted, canGenerateProject, userMessageCount } =
+    useConversation()
 
   const clampedCount = Math.min(userMessageCount, MAX_USER_MESSAGES)
   const remainingMessages = MAX_USER_MESSAGES - userMessageCount
@@ -38,13 +21,13 @@ export const ProjectProgress = () => {
           <div className="flex items-center gap-2">
             <MessageCircleIcon className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">Project Discovery</span>
-            {isProjectCompleted && (
+            {isConversationCompleted && (
               <Badge variant="secondary" className="ml-2">
                 <CheckCircleIcon className="h-3 w-3 mr-1" />
                 Complete
               </Badge>
             )}
-            {canGenerateProject && !isProjectCompleted && (
+            {canGenerateProject && !isConversationCompleted && (
               <Badge variant="outline" className="ml-2 text-xs">
                 <InfoIcon className="h-3 w-3 mr-1" />
                 Ready to generate
@@ -55,26 +38,15 @@ export const ProjectProgress = () => {
             <span className="text-sm text-muted-foreground">
               {userMessageCount}/{MAX_USER_MESSAGES} questions
             </span>
-            {!isProjectCompleted && (
+            {!isConversationCompleted && (
               <Badge variant="outline" className="text-xs">
                 {remainingMessages} optional
               </Badge>
             )}
-            {canGenerateProject && (
-              <Button
-                variant="default"
-                size="sm"
-                onClick={handleGenerateProject}
-                className="flex items-center gap-1.5 ml-2"
-              >
-                <SparklesIcon className="h-3 w-3" />
-                <span className="text-xs">Generate Project</span>
-              </Button>
-            )}
           </div>
         </div>
         <Progress value={progressPercentage} className="h-2" />
-        {canGenerateProject && !isProjectCompleted && (
+        {canGenerateProject && !isConversationCompleted && (
           <p className="text-xs text-muted-foreground mt-2">
             💡 You can generate your project anytime. More questions provide
             richer context for better results.

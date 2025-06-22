@@ -19,7 +19,7 @@ interface StreamMessageParams {
 }
 
 interface StreamSummaryParams {
-  conversationId: string
+  projectId: string
   chatMessages: Array<CoreMessage>
 }
 
@@ -63,7 +63,7 @@ class OpenRouter {
     return message
   }
 
-  streamSummary({ chatMessages, conversationId }: StreamSummaryParams) {
+  streamSummary({ chatMessages, projectId }: StreamSummaryParams) {
     const summary = streamObject({
       model: this.provider.chat('anthropic/claude-3.5-sonnet'),
       schema: summarySchema,
@@ -74,12 +74,12 @@ class OpenRouter {
           throw Error('Object is not defined')
         }
 
-        const typedObject = object as AppIdeaSummary
-        const name = typedObject.appOverview.projectName
+        const appIdeaSummaryJson = object as AppIdeaSummary
+        const name = appIdeaSummaryJson.appOverview.projectName
         await createProjectSummary({
-          conversationId,
-          name: name,
-          appIdeaSummaryJson: typedObject,
+          projectId,
+          name,
+          appIdeaSummaryJson,
         })
       },
     })

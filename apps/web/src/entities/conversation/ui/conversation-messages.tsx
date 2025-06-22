@@ -8,11 +8,11 @@ import {
   MemoizedChatBubble,
 } from '@/components/chat'
 import { ScrollArea, ScrollBar } from '@/shared/components/ui/scroll-area'
-import { ProjectComplete } from './project-complete'
-import { useProject } from './project-provider'
+import { ConversationComplete } from './conversation-complete'
+import { useConversation } from './conversation-provider'
 
-export const ProjectMessages = () => {
-  const { messages, isProjectCompleted } = useProject()
+export const ConversationMessages = () => {
+  const { messages, isConversationCompleted } = useConversation()
   if (messages.length === 0) return null
 
   return (
@@ -35,7 +35,7 @@ export const ProjectMessages = () => {
             </ChatBubble>
           ))}
 
-          {isProjectCompleted && <ProjectComplete />}
+          {isConversationCompleted && <ConversationComplete />}
         </ChatMessageList>
         <ScrollBar orientation="vertical" />
       </ScrollArea>

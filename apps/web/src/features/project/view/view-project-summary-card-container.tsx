@@ -1,8 +1,5 @@
 import Link from 'next/link'
-import type { summarySchema } from '@repo/ai'
-import type { DeepPartial } from 'ai'
 import { ArrowLeftIcon } from 'lucide-react'
-import type z from 'zod'
 import { ViewProjectSummaryCard } from '@/features/project/view/view-project-summary-card'
 import { getUserProjectByIdAction } from '@/lib/actions'
 import { Button } from '@/shared/components/ui/button'
@@ -38,9 +35,6 @@ export const ViewProjectSummaryCardContainer = async ({
   }
 
   const project = projectData.data
-  const projectSummary = project?.appIdeaSummaryJson as DeepPartial<
-    z.infer<typeof summarySchema>
-  >
 
-  return <ViewProjectSummaryCard summary={projectSummary} />
+  return <ViewProjectSummaryCard project={project} />
 }

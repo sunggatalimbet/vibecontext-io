@@ -100,19 +100,19 @@ export async function createUserProject({
 }
 
 export type CreateProjectSummaryDto = {
-  conversationId: string
+  projectId: string
   name: string
   appIdeaSummaryJson: Record<string, unknown>
 }
 
 export async function createProjectSummary({
-  conversationId,
+  projectId,
   name,
   appIdeaSummaryJson,
 }: CreateProjectSummaryDto): Promise<Array<Project | undefined>> {
   // Validate input
-  if (!conversationId.trim()) {
-    throw new InvalidInputError('conversationId', 'Conversation ID is required')
+  if (!projectId.trim()) {
+    throw new InvalidInputError('projectId', 'Project ID is required')
   }
 
   if (!name.trim()) {
@@ -121,13 +121,12 @@ export async function createProjectSummary({
 
   return withAuth(async user => {
     return await db
-      .insert(projects)
-      .values({
+      .update(projects)
+      .set({
         name,
         appIdeaSummaryJson,
-        conversationId,
-        userId: user.id,
       })
+      .where(and(eq(projects.id, projectId), eq(projects.userId, user.id)))
       .returning()
   })
 }

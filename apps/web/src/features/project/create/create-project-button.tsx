@@ -1,62 +1,39 @@
-/**
- * @file: create-project-button.tsx
- * @description: Client-side create project button that navigates to conversation page
- * @dependencies: React useTransition, Next.js redirect, shadcn/ui components
- * @created: 2025-01-22
- */
-
 'use client'
 
-import { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { PlusIcon } from 'lucide-react'
-import { createUserConversationAction } from '@/lib/actions'
-import { AsyncButtonContent } from '@/shared/components/async-button-content'
-import { Button, type ButtonProps } from '@/shared/components/ui/button'
-import { cn } from '@/shared/lib/utils'
+import { SparklesIcon } from 'lucide-react'
+import { createUserProjectAction } from '@/lib/actions/project'
+import { Button } from '@/shared/components/ui/button'
 
-interface CreateProjectButtonProps extends ButtonProps {
-  isSidebar?: boolean
+interface CreateProjectButtonProps {
+  conversationId: string
 }
 
 export const CreateProjectButton = ({
-  variant = 'outline',
-  className,
-  isSidebar = false,
-  ...props
+  conversationId,
 }: CreateProjectButtonProps) => {
-  const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
-  function handleCreateProject() {
-    startTransition(async () => {
-      const result = await createUserConversationAction()
-      if (!result.success) {
-        throw new Error(result.error.message ?? 'Unexpected error occurred')
-      }
-      router.push(`/conversations/${result.data.id}`)
-    })
-  }
+  async function handleGenerateProject() {
+    const createdProject = await createUserProjectAction(conversationId)
 
-  const buttonClassName = cn(
-    'cursor-pointer',
-    isSidebar &&
-      'w-full justify-start gap-2 px-2 h-9 text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-primary',
-    className
-  )
+    if (!createdProject.success) {
+      console.error(createdProject.error.message)
+      return
+    }
+
+    router.push(`/projects/${createdProject.data.id}`)
+  }
 
   return (
     <Button
-      onClick={handleCreateProject}
-      variant={isSidebar ? 'ghost' : variant}
-      disabled={isPending}
-      className={buttonClassName}
-      {...props}
+      variant="default"
+      size="sm"
+      onClick={handleGenerateProject}
+      className="flex items-center gap-1.5 ml-2"
     >
-      <AsyncButtonContent isLoading={isPending} loadingText="Creating...">
-        <PlusIcon className="h-4 w-4" />
-        <span className="ml-2">Start New Project</span>
-      </AsyncButtonContent>
+      <SparklesIcon className="h-3 w-3" />
+      <span className="text-xs">Generate Project</span>
     </Button>
   )
 }
