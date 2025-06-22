@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import {
   getConversationById,
   getConversationMessages,
@@ -88,6 +89,7 @@ export async function deleteConversationAction(
 ): Promise<DataResponse<{ message: string; deletedId: string }>> {
   try {
     const deletedConversation = await deleteConversation(conversationId)
+    revalidatePath('/', 'layout')
 
     return {
       success: true,

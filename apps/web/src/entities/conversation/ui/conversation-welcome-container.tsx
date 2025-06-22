@@ -1,16 +1,16 @@
 'use client'
 
 import { cn } from '@/shared/lib/utils'
-import { useProject } from './project-provider'
+import { useConversation } from './conversation-provider'
 
-interface ProjectWelcomeContainerProps {
+interface ConversationWelcomeContainerProps {
   children: React.ReactNode
 }
 
-export const ProjectWelcomeContainer = ({
+export const ConversationWelcomeContainer = ({
   children,
-}: ProjectWelcomeContainerProps) => {
-  const { messages } = useProject()
+}: ConversationWelcomeContainerProps) => {
+  const { messages } = useConversation()
   const welcomeContainer = cn(
     'flex flex-col items-center justify-center flex-shrink-0 text-center transition-all duration-500 ease-in-out',
     {

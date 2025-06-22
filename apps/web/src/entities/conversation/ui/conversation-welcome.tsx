@@ -1,6 +1,6 @@
 import { MessageCircleIcon } from 'lucide-react'
 
-export const ProjectWelcome = () => {
+export const ConversationWelcome = () => {
   return (
     <>
       <h1 className="text-4xl font-bold font-satoshi italic tracking-tight mb-4">

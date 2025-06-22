@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowRightIcon } from 'lucide-react'
-import { CreateProjectButton } from '@/features/project/create'
+import { CreateConversationButton } from '@/features/conversation/create'
 import { Button } from '@/shared/components/ui/button'
 
 export default function DashboardPage() {
@@ -44,7 +44,7 @@ export default function DashboardPage() {
 
       {/* Call to Action */}
       <div className="w-full flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">
-        <CreateProjectButton
+        <CreateConversationButton
           variant={'outline'}
           size="lg"
           className="px-8 py-3"

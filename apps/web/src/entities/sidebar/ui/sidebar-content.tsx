@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { getUserConversations, getUserProjects } from '@repo/db'
 import { FolderIcon, LogOutIcon, MessageCircleIcon } from 'lucide-react'
 import { SidebarProjectsAccordionContent } from '@/entities/sidebar/ui/sidebar-projects-accordion-content'
-import { CreateProjectButton } from '@/features/project/create'
+import { CreateConversationButton } from '@/features/conversation/create'
 import {
   Accordion,
   AccordionContent,
@@ -52,7 +52,7 @@ export const SidebarContent = () => {
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col gap-1">
-                <CreateProjectButton isSidebar />
+                <CreateConversationButton isSidebar />
                 <Suspense fallback={<SidebarProjectsSkeleton />}>
                   <SidebarConversationsAccordionContent
                     conversationsPromise={conversationsPromise}
@@ -78,7 +78,6 @@ export const SidebarContent = () => {
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col gap-1">
-                <CreateProjectButton isSidebar />
                 <Suspense fallback={<SidebarProjectsSkeleton />}>
                   <SidebarProjectsAccordionContent
                     projectsPromise={projectsPromise}

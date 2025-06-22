@@ -5,9 +5,13 @@
  * @created: 2025-01-07
  */
 
+'use client'
+
+import { useEffect, useRef } from 'react'
+import { experimental_useObject as useObject } from '@ai-sdk/react'
+import { getErrorDetails, type Project } from '@repo/db'
 import { type DeepPartial } from 'ai'
 import { type z } from 'zod'
-import { type MockDataState } from '@/entities/project/lib/mock/project-summary'
 import {
   ProjectSummaryHeader,
   ProjectSummaryNoData,
@@ -21,17 +25,65 @@ import {
   ProjectSummaryFooter,
   ProjectSummaryConstraints,
 } from '@/entities/project/ui/summary'
-import { type summarySchema } from '@/lib/schemas'
+import { summarySchema } from '@/lib/schemas'
 
-interface ProjectSummaryCardProps {
-  summary: DeepPartial<z.infer<typeof summarySchema>>
-  // Testing prop to override with mock data
-  testingMode?: MockDataState
+interface ViewProjectSummaryCardProps {
+  project: Project | undefined
 }
 
 export const ViewProjectSummaryCard = ({
-  summary,
-}: ProjectSummaryCardProps) => {
+  project,
+}: ViewProjectSummaryCardProps) => {
+  const existingSummary = project?.appIdeaSummaryJson as DeepPartial<
+    z.infer<typeof summarySchema>
+  >
+
+  const hasRequestedSummary = useRef(false)
+
+  const {
+    object: summary,
+    submit: generateSummary,
+    isLoading: isSummaryGenerating,
+  } = useObject({
+    api: '/api/summary',
+    schema: summarySchema,
+    initialValue: existingSummary,
+  })
+
+  // Auto-generate summary if it doesn't exist
+  useEffect(() => {
+    try {
+      if (
+        !existingSummary &&
+        project?.conversationId &&
+        !isSummaryGenerating &&
+        !hasRequestedSummary.current
+      ) {
+        hasRequestedSummary.current = true
+        generateSummary({
+          conversationId: project.conversationId,
+          projectId: project.id,
+        })
+      }
+    } catch (err) {
+      const errorDetails = getErrorDetails(err)
+      console.error('createUserConversationAction error:', errorDetails)
+    }
+  }, [
+    existingSummary,
+    project?.conversationId,
+    project?.id,
+    isSummaryGenerating,
+    generateSummary,
+  ])
+
+  const displaySummary = summary || existingSummary
+
+  // Complete skeleton when no project name exists
+  if (!displaySummary || !displaySummary.appOverview?.projectName) {
+    return <ProjectSummaryNoData />
+  }
+
   const {
     appOverview,
     targetUsers,
@@ -39,13 +91,7 @@ export const ViewProjectSummaryCard = ({
     technicalApproach,
     mvpScope,
     futureConsiderations,
-  } = summary
-
-  // Complete skeleton when no project name exists
-
-  if (!appOverview?.projectName) {
-    return <ProjectSummaryNoData />
-  }
+  } = displaySummary
 
   const highPriorityFeatures =
     coreFeatures?.filter(f => f?.priority === 'High') || []

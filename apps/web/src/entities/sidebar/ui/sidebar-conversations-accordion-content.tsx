@@ -1,7 +1,8 @@
 'use client'
 
-import { use, useState, useTransition } from 'react'
+import { use, useOptimistic, useState, useTransition } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { type ConversationOmitUserId } from '@repo/db'
 import { TrashIcon } from 'lucide-react'
 import { toast } from 'sonner'
@@ -28,11 +29,17 @@ interface SidebarConversationsAccordionContentProps {
 export const SidebarConversationsAccordionContent = ({
   conversationsPromise,
 }: SidebarConversationsAccordionContentProps) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-
-  const { currentPath } = useSidebar()
+  const router = useRouter()
   const conversations = use(conversationsPromise)
+  const { currentPath } = useSidebar()
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const [optimisticConversations, removeOptimisticConversation] = useOptimistic(
+    conversations,
+    (state: Array<ConversationOmitUserId>, conversationIdToRemove: string) =>
+      state.filter(conversation => conversation.id !== conversationIdToRemove)
+  )
 
   const handleDeleteConversation = (
     conversationId: string,
@@ -42,23 +49,35 @@ export const SidebarConversationsAccordionContent = ({
     e.stopPropagation()
 
     startTransition(async () => {
-      const deletedConversationData =
-        await deleteConversationAction(conversationId)
+      removeOptimisticConversation(conversationId)
+      try {
+        const deletedConversationData =
+          await deleteConversationAction(conversationId)
 
-      if (!deletedConversationData.success) {
-        toast.error(`Failed to delete conversation. Try again.`)
-        return
+        if (!deletedConversationData.success) {
+          toast.error(`Failed to delete conversation. Try again.`)
+          return
+        }
+
+        const deletedConversation = deletedConversationData.data
+        toast.success(deletedConversation.message)
+        setIsDialogOpen(prevIsDialogOpen => !prevIsDialogOpen)
+
+        if (currentPath === `/conversations/${conversationId}`) {
+          router.push('/dashboard')
+        } else {
+          router.refresh()
+        }
+      } catch (error) {
+        console.error(error)
+        toast.error('Failed to delete conversation. Please try again.')
       }
-
-      const deletedConversation = deletedConversationData.data
-      toast.success(deletedConversation.message)
-      setIsDialogOpen(prevIsDialogOpen => !prevIsDialogOpen)
     })
   }
 
   return (
     <>
-      {conversations.map(conversation => {
+      {optimisticConversations.map(conversation => {
         const projectPath = `/conversations/${conversation.id}`
         const isActive = currentPath === projectPath
 

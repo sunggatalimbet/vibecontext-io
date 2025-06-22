@@ -1,19 +1,21 @@
 import { Suspense } from 'react'
 import {
-  CreateProject,
-  CreateProjectSkeleton,
-} from '@repo/web/src/features/project/create'
+  CreateConversation,
+  CreateConversationSkeleton,
+} from '@/features/conversation/create'
 
-interface NewProjectPageProps {
+interface ConversationPageProps {
   params: Promise<{ id: string }>
 }
 
-export default async function NewProjectPage({ params }: NewProjectPageProps) {
+export default async function ConversationPage({
+  params,
+}: ConversationPageProps) {
   const { id } = await params
 
   return (
-    <Suspense fallback={<CreateProjectSkeleton />}>
-      <CreateProject id={id} />
+    <Suspense fallback={<CreateConversationSkeleton />}>
+      <CreateConversation id={id} />
     </Suspense>
   )
 }

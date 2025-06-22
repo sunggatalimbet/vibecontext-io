@@ -1,23 +1,23 @@
 'use client'
 
-import Link from 'next/link'
-import { ArrowUpIcon, Sparkles } from 'lucide-react'
+import { ArrowUpIcon } from 'lucide-react'
 import { ChatInput } from '@/components/chat'
+import { CreateProjectButton } from '@/features/project/create'
 import { Button } from '@/shared/components/ui/button'
-import { useProject } from './project-provider'
+import { useConversation } from './conversation-provider'
 
-export const ProjectInput = () => {
+export const ConversationInput = () => {
   const {
     input,
     status,
+    isConversationCompleted,
     conversation,
-    isProjectCompleted,
     canGenerateProject,
     userMessageCount,
     remainingMessages,
     handleInputChange,
     handleSubmit,
-  } = useProject()
+  } = useConversation()
 
   const chatInputPlaceholder =
     userMessageCount === 0
@@ -26,7 +26,7 @@ export const ProjectInput = () => {
         ? `Continue describing your idea... (${remainingMessages} questions remaining)`
         : "Final question - let's wrap up your idea!"
 
-  if (isProjectCompleted) {
+  if (isConversationCompleted) {
     return (
       <div className="flex-shrink-0 border-t bg-background/80 backdrop-blur-sm">
         <div className="max-w-4xl mx-auto p-4">
@@ -40,7 +40,7 @@ export const ProjectInput = () => {
     )
   }
 
-  const isInputDisabled = status !== 'ready' || isProjectCompleted
+  const isInputDisabled = status !== 'ready' || isConversationCompleted
   const isSubmitDisabled = !input.trim() || isInputDisabled
 
   return (
@@ -60,14 +60,7 @@ export const ProjectInput = () => {
                   detailed and accurate project documentation.
                 </p>
               </div>
-              <Link
-                href={`/projects/generate?conversationId=${conversation.id}`}
-              >
-                <Button size="sm" className="ml-3 flex items-center gap-1.5">
-                  <Sparkles className="h-3 w-3" />
-                  Generate Project
-                </Button>
-              </Link>
+              <CreateProjectButton conversationId={conversation.id} />
             </div>
           </div>
         )}
@@ -81,7 +74,7 @@ export const ProjectInput = () => {
             value={input}
             onChange={handleInputChange}
             placeholder={chatInputPlaceholder}
-            className=" border-0 bg-transparent shadow-none focus-visible:ring-0"
+            className="border-0 bg-transparent shadow-none focus-visible:ring-0"
             disabled={isInputDisabled}
           />
           <Button

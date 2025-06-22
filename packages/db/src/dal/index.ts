@@ -14,5 +14,6 @@ export {
   getUserProjectById,
   getUserProjectsWithDocs,
   getUserProjectByConversationId,
+  createUserProject,
   createProjectSummary,
 } from './projects'

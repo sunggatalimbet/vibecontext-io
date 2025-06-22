@@ -1,7 +1,7 @@
 import { getUserProjectsWithDocs } from '@repo/db'
 import { FolderIcon } from 'lucide-react'
+import { CreateConversationButton } from '@/features/conversation/create'
 import { ProjectCard } from '@/features/project'
-import { CreateProjectButton } from '@/features/project/create'
 
 export default async function ProjectsPage() {
   const projects = await getUserProjectsWithDocs()
@@ -19,7 +19,7 @@ export default async function ProjectsPage() {
             Manage and explore your AI-assisted development projects
           </p>
         </div>
-        <CreateProjectButton />
+        <CreateConversationButton />
       </div>
 
       {hasProjects ? (
@@ -36,11 +36,11 @@ export default async function ProjectsPage() {
             <FolderIcon className="h-24 w-24 text-muted-foreground/30 mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">No projects yet</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Start your first project to begin transforming your app ideas into
-              structured development plans.
+              Start your first conversation to begin transforming your app ideas
+              into structured development plans.
             </p>
           </div>
-          <CreateProjectButton />
+          <CreateConversationButton />
         </div>
       )}
     </div>
