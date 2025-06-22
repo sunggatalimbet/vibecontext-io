@@ -23,6 +23,7 @@ export const ProjectProgress = () => {
   } = useProject()
 
   const handleGenerateProject = () => {
+    // send request to create a project
     router.push(`/projects/generate?conversationId=${conversation.id}`)
   }
 

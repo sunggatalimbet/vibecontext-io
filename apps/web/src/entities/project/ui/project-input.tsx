@@ -81,7 +81,7 @@ export const ProjectInput = () => {
             value={input}
             onChange={handleInputChange}
             placeholder={chatInputPlaceholder}
-            className=" border-0 bg-transparent shadow-none focus-visible:ring-0"
+            className="border-0 bg-transparent shadow-none focus-visible:ring-0"
             disabled={isInputDisabled}
           />
           <Button

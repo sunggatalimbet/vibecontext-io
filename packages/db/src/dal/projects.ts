@@ -74,6 +74,31 @@ export async function getUserProjectsWithDocs(): Promise<
   })
 }
 
+export type CreateUserProjectDto = {
+  conversationId: string
+}
+
+export async function createUserProject({
+  conversationId,
+}: CreateUserProjectDto): Promise<{ id: string }> {
+  if (!conversationId.trim()) {
+    throw new InvalidInputError('conversationId', 'Conversation ID is required')
+  }
+
+  return withAuth(async user => {
+    const result = await db
+      .insert(projects)
+      .values({
+        userId: user.id,
+        name: 'New Project',
+        conversationId: conversationId,
+      })
+      .returning({ id: projects.id })
+
+    return result[0]
+  })
+}
+
 export type CreateProjectSummaryDto = {
   conversationId: string
   name: string

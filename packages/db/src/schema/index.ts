@@ -40,9 +40,11 @@ export const projects = pgTable('projects', {
     .notNull()
     .references(() => profiles.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
-  conversationId: uuid('conversation_id').references(() => conversations.id, {
-    onDelete: 'cascade',
-  }),
+  conversationId: uuid('conversation_id')
+    .notNull()
+    .references(() => conversations.id, {
+      onDelete: 'cascade',
+    }),
   appIdeaSummaryJson: json('app_idea_summary_json'),
   createdAt: timestamp('created_at', { withTimezone: true })
     .defaultNow()
