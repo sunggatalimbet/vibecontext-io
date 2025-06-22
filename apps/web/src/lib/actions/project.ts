@@ -37,7 +37,7 @@ export async function createUserProjectAction(
 ): Promise<DataResponse<{ id: string }>> {
   try {
     if (!conversationId || typeof conversationId !== 'string') {
-      throw new Error('Invalid project ID provided')
+      throw new Error('Invalid conversation ID provided')
     }
 
     const project = await createUserProject({ conversationId })

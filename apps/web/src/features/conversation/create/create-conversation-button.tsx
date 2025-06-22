@@ -28,7 +28,7 @@ export const CreateConversationButton = ({
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
-  function handleCreateProject() {
+  function handleCreateConversation() {
     startTransition(async () => {
       const result = await createUserConversationAction()
       if (!result.success) {
@@ -47,7 +47,7 @@ export const CreateConversationButton = ({
 
   return (
     <Button
-      onClick={handleCreateProject}
+      onClick={handleCreateConversation}
       variant={isSidebar ? 'ghost' : variant}
       disabled={isPending}
       className={buttonClassName}

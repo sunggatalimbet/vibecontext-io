@@ -9,7 +9,7 @@
 
 import { useEffect, useRef } from 'react'
 import { experimental_useObject as useObject } from '@ai-sdk/react'
-import type { Project } from '@repo/db'
+import { getErrorDetails, type Project } from '@repo/db'
 import { type DeepPartial } from 'ai'
 import { type z } from 'zod'
 import {
@@ -52,17 +52,22 @@ export const ViewProjectSummaryCard = ({
 
   // Auto-generate summary if it doesn't exist
   useEffect(() => {
-    if (
-      !existingSummary &&
-      project?.conversationId &&
-      !isSummaryGenerating &&
-      !hasRequestedSummary.current
-    ) {
-      hasRequestedSummary.current = true
-      generateSummary({
-        conversationId: project.conversationId,
-        projectId: project.id,
-      })
+    try {
+      if (
+        !existingSummary &&
+        project?.conversationId &&
+        !isSummaryGenerating &&
+        !hasRequestedSummary.current
+      ) {
+        hasRequestedSummary.current = true
+        generateSummary({
+          conversationId: project.conversationId,
+          projectId: project.id,
+        })
+      }
+    } catch (err) {
+      const errorDetails = getErrorDetails(err)
+      console.error('createUserConversationAction error:', errorDetails)
     }
   }, [
     existingSummary,
